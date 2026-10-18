@@ -34,7 +34,21 @@ async function ensureData() {
   database = await db.openDatabase(DATA);
   await database.importJsonOnce(CONTENT_FILE);
   await database.seedCatalogOnce();
+  await database.importPosts(staticPosts());
   dropRemovedAdmins();
+}
+
+function staticPosts() {
+  const dir = path.join(ROOT, "pages", "post");
+  let names = [];
+  try { names = fs.readdirSync(dir); } catch (err) { return []; }
+  return names.filter((name) => name.endsWith(".html") && !name.startsWith("_")).map((name) => {
+    const slug = name.slice(0, -".html".length);
+    const parsed = db.parseStaticPost(fs.readFileSync(path.join(dir, name), "utf8"), slug);
+    if (!parsed) return null;
+    parsed.id = crypto.createHash("sha256").update("merkuur-post:" + slug).digest("hex").slice(0, 16);
+    return parsed;
+  }).filter(Boolean);
 }
 
 function readJson(file, fallback) {

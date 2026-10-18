@@ -35,6 +35,56 @@ function applyCopy(copy){
     if(typeof value==="string"&&value)node.textContent=value;
   });
 }
+function metaDate(iso){
+  var date=new Date(iso);
+  if(isNaN(date.getTime()))return "";
+  return date.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"});
+}
+function renderBlog(news){
+  if((location.pathname.replace(/\/$/,"")||"/")!=="/blog")return;
+  var box=document.querySelector("main .cards");
+  if(!box||!news||!news.length)return;
+  box.replaceChildren();
+  news.forEach(function(item){
+    var card=document.createElement("article");
+    card.className="card";
+    card.setAttribute("data-item",item.id);
+    card.setAttribute("data-kind","news");
+    var src=safeSrc(item.image);
+    if(src){
+      var img=document.createElement("img");
+      img.alt="";
+      img.loading="lazy";
+      img.src=src;
+      card.appendChild(img);
+    }
+    var body=document.createElement("div");
+    var when=metaDate(item.createdAt);
+    if(when){
+      var meta=document.createElement("p");
+      meta.className="meta";
+      meta.textContent=when;
+      body.appendChild(meta);
+    }
+    var title=document.createElement("h2");
+    title.textContent=item.title||"";
+    body.appendChild(title);
+    if(item.excerpt){
+      var excerpt=document.createElement("p");
+      excerpt.textContent=item.excerpt;
+      body.appendChild(excerpt);
+    }
+    var href=item.url||(item.slug?"/post/"+item.slug:"");
+    if(href&&(href.charAt(0)==="/"||/^https?:\/\//.test(href))){
+      var link=document.createElement("a");
+      link.href=href;
+      link.textContent="Loe edasi →";
+      body.appendChild(link);
+    }
+    card.appendChild(body);
+    box.appendChild(card);
+  });
+}
 function renderPeople(list){
   var box=document.querySelector("main .people");
   if(!box||!list||!list.length)return;
@@ -85,6 +135,7 @@ Promise.all([contentReq,meReq]).then(function(pair){
   var me=pair[1];
   if(haldusWanted&&!me){location.replace("/admin");return;}
   renderPeople(data.people);
+  renderBlog(data.news);
   applyCopy(data.copy);
   if(!me)return;
   var editor=document.createElement("script");

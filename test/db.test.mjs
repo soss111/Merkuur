@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { driverFor, openDatabase } from "../db.js";
+import { driverFor, openDatabase, parseStaticPost } from "../db.js";
 
 test("DATABASE_URL selects postgres or a sqlite file", () => {
   const local = driverFor("", "/tmp/merkuur-data");
@@ -53,4 +53,48 @@ test("an empty catalog is filled once from the public page", async () => {
   assert.equal(content.stats.workshops, "3500+");
   assert.equal(content.stats.youth, "30 000");
   assert.equal(content.stats.asOf, "detsember 2023");
+});
+
+test("blog files fill empty post rows and leave an edited post alone", async () => {
+  const parsed = parseStaticPost(
+    "<h1>Ida-Viru projektis osales kokku 354 osalejat</h1><p class=\"meta\">Dec 1, 2024</p><div class=\"prose\"><p>27 õpituba 354le noorele.</p><h2>Partnerid</h2><p>Aitäh.</p></div><img src=\"https://example.com/a.jpg\">",
+    "ida-viru-projektis-osales-kokku-354-osalejat"
+  );
+  assert.equal(parsed.createdAt, "2024-12-01T12:00:00.000Z");
+  assert.match(parsed.body, /354le noorele/);
+  assert.match(parsed.body, /Partnerid/);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "merkuur-posts-"));
+  const database = await openDatabase(dir, "");
+  await database.seedCatalogOnce();
+  await database.importPosts([Object.assign({ id: "aabbccddeeff0011" }, parsed)]);
+  const filled = await database.postBySlug(parsed.slug);
+  assert.match(filled.body, /354le noorele/);
+  assert.equal(filled.title, "Ida-Viru projektis osales kokku 354 osalejat");
+  assert.equal(filled.image.startsWith("https://static.wixstatic.com/"), true);
+  await database.insertPost({
+    id: "cafebabe00000001",
+    slug: "oma-postitus",
+    title: "Oma pealkiri",
+    excerpt: "juba",
+    body: "hoia see alles",
+    url: "/post/oma-postitus",
+    image: "https://example.com/kept.jpg",
+    createdAt: "2024-01-01T00:00:00.000Z"
+  });
+  await database.importPosts([{
+    id: "ffffffffffffffff",
+    slug: "oma-postitus",
+    title: "Teine",
+    excerpt: "uus",
+    body: "asenda",
+    url: "/post/oma-postitus",
+    image: "https://example.com/new.jpg",
+    createdAt: "2020-01-01T00:00:00.000Z"
+  }]);
+  const kept = await database.postBySlug("oma-postitus");
+  assert.equal(kept.body, "hoia see alles");
+  assert.equal(kept.title, "Oma pealkiri");
+  assert.equal(kept.image, "https://example.com/kept.jpg");
+  const again = await database.readContent();
+  assert.equal(again.news.filter((item) => item.slug === parsed.slug).length, 1);
 });

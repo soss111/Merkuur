@@ -31,7 +31,7 @@ var kinds={
     {name:"href",label:"Link",max:500,placeholder:"/tootoad või https://"},
     {name:"file",label:"Pilt",type:"file"}
   ]},
-  news:{add:"Lisa postitus",edit:"Muuda postitust",fresh:"Uus postitus",box:"#uudised .grid",fields:[
+  news:{add:"Lisa postitus",edit:"Muuda postitust",fresh:"Uus postitus",box:"#uudised .grid, main .cards",fields:[
     {name:"title",label:"Pealkiri",required:true,max:180},
     {name:"excerpt",label:"Lühikirjeldus",tag:"textarea",max:400},
     {name:"body",label:"Tekst",tag:"textarea",max:8000},
