@@ -513,8 +513,19 @@ function publicContent(content) {
     news: content.news,
     gallery: content.gallery,
     services: content.services,
-    roadmap: content.roadmap
+    roadmap: content.roadmap,
+    supportUrl: content.supportUrl || ""
   };
+}
+
+function paymentUrl(value) {
+  const raw = clip(value, 500);
+  if (!raw) return "";
+  const url = safeUrl(raw);
+  if (!url || !url.startsWith("https://")) {
+    throw Object.assign(new Error("Makselink peab olema https-aadress."), { status: 400 });
+  }
+  return url;
 }
 
 async function saveStats(body) {
@@ -734,6 +745,12 @@ async function handle(req, res) {
         await database.saveAddress(address);
         return send(res, 200, { address: address });
       }
+      if (req.method === "PUT" && pathname === "/api/support") {
+        const body = await readBody(req);
+        const supportUrl = paymentUrl(body.supportUrl);
+        await database.saveSupportUrl(supportUrl);
+        return send(res, 200, { supportUrl: supportUrl });
+      }
       if (req.method === "PUT" && pathname === "/api/stats") {
         const stats = await saveStats(await readBody(req));
         return send(res, 200, { stats: stats });
@@ -769,6 +786,8 @@ async function handle(req, res) {
           const id = parts[3];
           if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });
           const item = await updateRoadmap(id, await readBody(req));
+          return send(res, 200, item);
+        }
         if (req.method === "PUT" && parts.length === 4) {
           const id = parts[3];
           if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });

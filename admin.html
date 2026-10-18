@@ -108,6 +108,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <button class="btn ghost" type="button" data-tab="roadmap" aria-selected="false">Teekond</button>
    <button class="btn ghost" type="button" data-tab="stats" aria-selected="false">Arvud</button>
    <button class="btn ghost" type="button" data-tab="address" aria-selected="false">Aadress</button>
+   <button class="btn ghost" type="button" data-tab="support" aria-selected="false">Toetamine</button>
    <button class="btn ghost" type="button" data-tab="admins" aria-selected="false">Haldurid</button>
   </div>
 
@@ -207,6 +208,15 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <h2>Aadress jaluses</h2>
    <form id="form-address">
     <label>Aadress<input name="address" maxlength="240" placeholder="Tänav, linn"></label>
+    <button class="btn" type="submit">Salvesta</button>
+   </form>
+  </section>
+
+  <section class="view panel" id="view-support">
+   <h2>Toetamise makselink</h2>
+   <p class="lead">Avaliku lehe nupp „Soovin toetada teie ägedaid tegevusi“ avab selle aadressi uues aknas. Tühi väli peidab nupu.</p>
+   <form id="form-support">
+    <label>Makselink<input name="supportUrl" type="url" maxlength="500" placeholder="https://"></label>
     <button class="btn" type="submit">Salvesta</button>
    </form>
   </section>
@@ -398,6 +408,7 @@ function load(){
     renderList("services",document.getElementById("list-services"),function(item){return item.title;});
     renderRoadmap();
     document.querySelector("#form-address [name=address]").value=data.address||"";
+    document.querySelector("#form-support [name=supportUrl]").value=data.supportUrl||"";
     var stats=data.stats||{};
     ["since","workshops","youth","mobiles","solutions","asOf"].forEach(function(key){
       var input=document.querySelector("#form-stats [name="+key+"]");
@@ -464,6 +475,10 @@ document.getElementById("form-stats").addEventListener("submit",function(e){
 document.getElementById("form-address").addEventListener("submit",function(e){
   e.preventDefault();
   api("/api/address",{method:"PUT",body:{address:e.target.address.value}}).then(function(){say("Aadress on salvestatud.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-support").addEventListener("submit",function(e){
+  e.preventDefault();
+  api("/api/support",{method:"PUT",body:{supportUrl:e.target.supportUrl.value}}).then(function(d){e.target.supportUrl.value=d.supportUrl||"";say(d.supportUrl?"Makselink on salvestatud.":"Maksenupp on peidetud.");}).catch(function(err){say(err.message,true);});
 });
 document.getElementById("form-admin").addEventListener("submit",function(e){
   e.preventDefault();
