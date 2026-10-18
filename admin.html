@@ -127,9 +127,10 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
     <label>Lühikirjeldus<textarea name="excerpt" maxlength="400"></textarea></label>
     <label>Tekst<textarea name="body" maxlength="8000" placeholder="Postituse sisu. Tühi väli jätab selle lühikeseks uudiseks."></textarea></label>
     <div class="row two">
-     <label>Link<input name="url" type="text" placeholder="https:// või /post/…"></label>
+     <label>Sektsioon<select class="section" name="section"></select></label>
      <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
     </div>
+    <label class="external" hidden>Muu aadress<input name="external" type="text" placeholder="https:// või /post/…" maxlength="400"></label>
     <p class="keep" id="news-keep" hidden>Praegune pilt jääb alles, kui uut ei vali.</p>
     <div class="form-actions"><button class="btn" type="submit">Lisa lehele</button><button class="btn ghost" type="button" data-cancel hidden>Katkesta</button></div>
    </form>
@@ -142,9 +143,10 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
     <label>Nimi<input name="title" required maxlength="160"></label>
     <label>Kirjeldus<textarea name="summary" maxlength="400"></textarea></label>
     <div class="row two">
-     <label>Link<input name="href" placeholder="/tootoad või https://"></label>
+     <label>Sektsioon<select class="section" name="section"></select></label>
      <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
     </div>
+    <label class="external" hidden>Muu aadress<input name="external" type="text" placeholder="https://" maxlength="400"></label>
     <p class="keep" id="service-keep" hidden>Praegune pilt jääb alles, kui uut ei vali.</p>
     <div class="form-actions"><button class="btn" type="submit">Lisa lehele</button><button class="btn ghost" type="button" data-cancel hidden>Katkesta</button></div>
    </form>
@@ -200,6 +202,52 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <div class="list" id="list-admins"></div>
   </section>
  </section>
+ <select id="section-links" hidden>
+  <option value="">Ilma lingita</option>
+  <optgroup label="Avalehe sektsioon">
+   <option value="#teenused">Teenused</option>
+   <option value="#varustus">Kooli varustus</option>
+   <option value="#pood">Makerset'id</option>
+   <option value="#teemad">Töötoa teemad</option>
+   <option value="#kellele">Kellele</option>
+   <option value="#meist">Meist</option>
+   <option value="#projektid">Projektid</option>
+   <option value="#verstapostid">Verstapostid</option>
+   <option value="#teekond">Teekond</option>
+   <option value="#tagasiside">Tagasiside</option>
+   <option value="#galerii">Galerii</option>
+   <option value="#uudised">Blogi</option>
+   <option value="#meeskond">Meeskond</option>
+   <option value="#frantsiis">Frantsiis</option>
+   <option value="#kontakt">Kontakt</option>
+  </optgroup>
+  <optgroup label="Alamleht">
+   <option value="/tootoad">Töötoad</option>
+   <option value="/huviringid">Huviringid</option>
+   <option value="/gümnaasiumi-valikkursus-cnc">Valikkursus</option>
+   <option value="/õpik-arvjuhitavad-seadmed-cnc">Digiõpik</option>
+   <option value="/futureclassroomlab">Tehnoloogiaklass</option>
+   <option value="/mobileworkshops">Mobiilsed töökojad</option>
+   <option value="/bettercareer">Karjäär</option>
+   <option value="/teambuilding">Meeskonnaüritused</option>
+   <option value="/synnipaevad">Sünnipäevad</option>
+   <option value="/meeskond">Meeskond</option>
+   <option value="/blog">Blogi</option>
+   <option value="/toeoetubade-galerii">Pildigalerii</option>
+   <option value="/videod">Videod</option>
+   <option value="/meediakajastus">Meediakajastus</option>
+   <option value="/merkuuri-toeoetubade-kaart">Tegevuskaart</option>
+   <option value="/lab4stem">Erasmus+ Lab4Stem</option>
+   <option value="/leader">Leader</option>
+   <option value="/smarthgrowth">Erasmus+ SmarthGrowth</option>
+   <option value="/teaduse-populariseerimine-2023">Teaduse populariseerimine</option>
+   <option value="/idaviruprojekt">Ida-Viru projekt 2023</option>
+   <option value="/ida-viru-projekt-2024">Ida-Viru projekt 2024</option>
+   <option value="/progetiiger">Progetiiger</option>
+  </optgroup>
+  <option value="https://mw.yrgel.com">E-pood</option>
+  <option value="external">Muu aadress</option>
+ </select>
 </main>
 <script>
 (function(){
@@ -238,11 +286,54 @@ var formMeta={
   gallery:{form:"form-gallery",heading:"Uus foto",editHeading:"Muuda fotot",note:"gallery-keep",requiredFile:true}
 };
 function formOf(kind){return document.getElementById(formMeta[kind].form);}
+function mountSections(){
+  var source=document.getElementById("section-links");
+  document.querySelectorAll("select.section").forEach(function(select){
+    select.replaceChildren();
+    Array.from(source.children).forEach(function(node){select.appendChild(node.cloneNode(true));});
+    if(select.form&&select.form.id==="form-news"&&select.options[0])select.options[0].textContent="Selle postituse leht";
+    select.addEventListener("change",function(){syncExternal(select);});
+    syncExternal(select);
+  });
+}
+function syncExternal(select){
+  if(!select||!select.form)return;
+  var field=select.form.querySelector(".external");
+  if(!field)return;
+  var input=field.querySelector("input");
+  var on=select.value==="external";
+  field.hidden=!on;
+  input.required=on;
+  if(!on)input.value="";
+}
+function setLink(form,value){
+  var select=form.querySelector("select.section");
+  var input=form.querySelector(".external input");
+  var known=false;
+  Array.from(select.options).forEach(function(option){
+    if(option.value===value&&option.value!=="external")known=true;
+  });
+  if(!value||known){select.value=value||"";input.value="";}
+  else{select.value="external";input.value=value;}
+  syncExternal(select);
+  if(select.value==="external")input.value=value||"";
+}
+function linkValue(form){
+  var select=form.querySelector("select.section");
+  if(select.value==="external"){
+    var url=form.external.value.trim();
+    if(!url)throw new Error("Lisa aadress.");
+    return url;
+  }
+  return select.value;
+}
 function stopEdit(){
   if(!editing)return;
   var meta=formMeta[editing.kind];
   var f=formOf(editing.kind);
   f.reset();
+  var section=f.querySelector("select.section");
+  if(section)syncExternal(section);
   if(f.file)f.file.required=!!meta.requiredFile;
   f.querySelector("button[type=submit]").textContent="Lisa lehele";
   f.querySelector("[data-cancel]").hidden=true;
@@ -257,8 +348,8 @@ function startEdit(kind,item){
   var meta=formMeta[kind];
   var f=formOf(kind);
   if(kind==="testimonials"){f.quote.value=item.quote||"";f.name.value=item.name||"";f.role.value=item.role||"";f.org.value=item.org||"";}
-  if(kind==="news"){f.title.value=item.title||"";f.excerpt.value=item.excerpt||"";f.body.value=item.body||"";f.url.value=item.url||"";f.file.value="";}
-  if(kind==="services"){f.title.value=item.title||"";f.summary.value=item.summary||"";f.href.value=item.href||"";f.file.value="";}
+  if(kind==="news"){f.title.value=item.title||"";f.excerpt.value=item.excerpt||"";f.body.value=item.body||"";setLink(f,item.url||"");f.file.value="";}
+  if(kind==="services"){f.title.value=item.title||"";f.summary.value=item.summary||"";setLink(f,item.href||"");f.file.value="";}
   if(kind==="gallery"){f.caption.value=item.caption||"";f.file.required=false;f.file.value="";}
   f.querySelector("button[type=submit]").textContent="Salvesta muudatused";
   f.querySelector("[data-cancel]").hidden=false;
@@ -274,7 +365,7 @@ function saveContent(kind,body){
   return api(path,{method:method,body:body}).then(function(){
     var f=formOf(kind);
     if(editing&&editing.kind===kind)stopEdit();
-    else f.reset();
+    else{f.reset();var section=f.querySelector("select.section");if(section)syncExternal(section);}
     return load();
   });
 }
@@ -353,7 +444,7 @@ document.getElementById("form-feedback").addEventListener("submit",function(e){
 document.getElementById("form-news").addEventListener("submit",function(e){
   e.preventDefault();var f=e.target;
   upload(f.file.files[0]).then(function(url){
-    var body={title:f.title.value,excerpt:f.excerpt.value,body:f.body.value,url:f.url.value};
+    var body={title:f.title.value,excerpt:f.excerpt.value,body:f.body.value,url:linkValue(f)};
     if(url)body.image=url;
     return saveContent("news",body);
   }).then(function(){say("Blogipostitus on lehel.");}).catch(function(err){say(err.message,true);});
@@ -361,7 +452,7 @@ document.getElementById("form-news").addEventListener("submit",function(e){
 document.getElementById("form-service").addEventListener("submit",function(e){
   e.preventDefault();var f=e.target;
   upload(f.file.files[0]).then(function(url){
-    var body={title:f.title.value,summary:f.summary.value,href:f.href.value};
+    var body={title:f.title.value,summary:f.summary.value,href:linkValue(f)};
     if(url)body.image=url;
     return saveContent("services",body);
   }).then(function(){say("Teenus on lehel.");}).catch(function(err){say(err.message,true);});
@@ -429,6 +520,7 @@ document.getElementById("form-password").addEventListener("submit",function(e){
     return api("/api/auth/me");
   }).then(showApp).catch(function(err){say(err.message,true);});
 });
+mountSections();
 api("/api/auth/me").then(showApp).catch(function(){
   document.getElementById("login").hidden=false;
   api("/api/auth/config").then(function(cfg){

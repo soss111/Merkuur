@@ -166,6 +166,10 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /src="files\/merkuur-logo\.png"/);
     assert.match(admin.text, /GitHubi eelvaade ei võta sisselogimist vastu/);
     assert.match(admin.text, /id="form-stats"/);
+    assert.match(admin.text, /id="section-links"/);
+    assert.match(admin.text, /<option value="\/tootoad">Töötoad<\/option>/);
+    assert.match(admin.text, /<option value="external">Muu aadress<\/option>/);
+    assert.match(admin.text, /select class="section"/);
     assert.match(admin.text, /\/api\/stats/);
     assert.match(admin.text, /Muuda/);
     assert.match(admin.text, /Katkesta/);

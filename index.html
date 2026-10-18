@@ -1123,8 +1123,8 @@ contentReq.then(function(data){
         var body=node("div");
         body.appendChild(node("h3",null,item.title));
         if(item.excerpt)body.appendChild(node("p",null,item.excerpt));
-        var href=safeHref(item.url);
-        if(href){var a=node("a",null,"Loe edasi →");a.href=href;if(/^https?:/.test(href)){a.target="_blank";a.rel="noopener";}body.appendChild(a);}
+        var href=safePage(item.url);
+        if(href){var a=node("a",null,"Loe edasi →");a.href=href;if(/^https?:/.test(href)&&new URL(href).origin!==location.origin){a.target="_blank";a.rel="noopener";}body.appendChild(a);}
         card.appendChild(body);
         grid.appendChild(card);
       });
