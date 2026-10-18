@@ -214,6 +214,26 @@ section{padding:72px 0}
 .tiles a:hover{background:var(--highlight);transform:translateY(-3px);box-shadow:0 14px 28px rgba(18,52,58,.08)}
 .tiles a:hover b,.tiles a:hover span{color:var(--ink)}
 #varustus .tiles{margin-top:32px}
+.topic-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px;margin-top:28px}
+.topic{
+  position:relative;text-align:left;cursor:pointer;font:inherit;color:var(--ink);
+  background:var(--surface);border:1.5px solid var(--line);border-radius:18px;
+  padding:16px 44px 16px 16px;min-height:72px;height:100%;
+  box-shadow:0 8px 22px rgba(18,52,58,.04);
+}
+.topic b{display:block;font-family:"Outfit",system-ui,sans-serif;font-weight:650;font-size:1.12rem;letter-spacing:-.02em;line-height:1.25}
+.topic span{display:block;margin-top:4px;color:var(--muted);font-size:.95rem;line-height:1.35}
+.topic:hover{background:var(--highlight)}
+.topic:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.topic[aria-pressed="true"]{background:var(--highlight);border-color:var(--accent)}
+.topic[aria-pressed="true"]::after{
+  content:"";position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;background:var(--accent);
+}
+.topic[aria-pressed="true"]::before{
+  content:"";position:absolute;top:21px;right:23px;width:5px;height:9px;z-index:1;
+  border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:rotate(45deg);
+}
+.topic-note{margin:16px 0 0;min-height:1.4em;font-weight:650}
 
 #pood{background:var(--birch);color:var(--ink)}
 #pood h2,#pood .lead{color:inherit}
@@ -509,7 +529,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 <div class="wrap bar">
  <a class="logo" href="#top"><img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_120,h_120,al_c,q_85/a.jpg" width="44" height="44">Merkuur</a>
  <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
- <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a class="nav-mile" href="#verstapostid">Verstapostid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
+ <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="#teemad">Teemad</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a class="nav-mile" href="#verstapostid">Verstapostid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
 </div>
 </header>
 
@@ -544,7 +564,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
  <p class="lead">Töötame välja ja viime ellu mobiilseid töökodasid ja töötubasid, korraldame huvi-, koolitus- ja nõustamistegevusi ning tõstame tehnoloogia-, innovatsiooni- ja ettevõtlusteadlikkust.</p>
  <div class="keywords"><span>LOOVUS</span><span>INNOVAATILISUS</span><span>KARJÄÄRITEADLIKKUS</span><span>ETTEVÕTLIKKUS</span></div>
  <div class="grid">
-  <article class="card"><img loading="lazy" alt="Metalli töötuba Neeme Koolis" src="https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg"><div><h3>Töötoad</h3><p>Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele.</p><div class="actions"><a href="#kontakt" data-teenus="Töötuba">Küsi pakkumist</a><a class="quiet" href="/tootoad">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Metalli töötuba Neeme Koolis" src="https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg"><div><h3>Töötoad</h3><p>Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele. Teemasid saab omavahel kokku panna.</p><div class="actions"><a href="#kontakt" data-teenus="Töötuba">Küsi pakkumist</a><a class="quiet" href="#teemad">Vali teemad →</a><a class="quiet" href="/tootoad">Loe lähemalt →</a></div></div></article>
   <article class="card"><img loading="lazy" alt="Noor metalli huviline" src="https://static.wixstatic.com/media/a7f28e_d96711c8a73f4287a56272f4e6fe22a1~mv2.jpg/v1/fill/w_980,h_732,al_c,q_85/a.jpg"><div><h3>Tehnoloogiatunnid</h3><p>Mobiilsed huviringid, koolitused ja gümnaasiumi inseneeria valikkursused – seadmed otse klassiruumis.</p><div class="actions"><a href="#kontakt" data-teenus="Tehnoloogiatund / huviring">Küsi pakkumist</a><a class="quiet" href="/huviringid">Loe lähemalt →</a></div></div></article>
   <article class="card"><img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Õpilahenduste arendus</h3><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja õppematerjalid, mis aitavad tehnoloogiat koolitundi tuua.</p><div class="actions"><a href="#kontakt" data-teenus="Õppematerjalid / digiõpik">Küsi pakkumist</a><a class="quiet" href="/õpik-arvjuhitavad-seadmed-cnc">Loe lähemalt →</a></div></div></article>
   <article class="card"><img loading="lazy" alt="Noored uudistamas mobiilset töökoda" src="https://static.wixstatic.com/media/a7f28e_c34f073e4336408ca677769001eef86c~mv2_d_4943_3296_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Makerspace ja tehnoloogiaklass</h3><p>Rajame koolidele ja noortekeskustele tehnoloogia õppeklassi – seadmed, sisu ja koolitus ühes paketis.</p><div class="actions"><a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass">Küsi pakkumist</a><a class="quiet" href="/futureclassroomlab">Loe lähemalt →</a></div></div></article>
@@ -581,6 +601,26 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   </div>
   <img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_900,h_650,al_c,q_85/a.jpg">
  </div>
+</div></section>
+
+<section id="teemad"><div class="wrap">
+ <div class="kicker">Töötoa teemad</div>
+ <h2>Teemad, mida saab kokku panna</h2>
+ <p class="lead">Vali üks või mitu. Need saab ühte töötuppa, projektipäeva või üritusse kokku panna – valik läheb päringuga kaasa.</p>
+ <div class="topic-pick">
+  <button type="button" class="topic" data-topic="Metall" aria-pressed="false"><b>Metall</b><span>Metallitöö</span></button>
+  <button type="button" class="topic" data-topic="Puit" aria-pressed="false"><b>Puit</b><span>Puidutöö</span></button>
+  <button type="button" class="topic" data-topic="Arvjuhitavad seadmed" aria-pressed="false"><b>Arvjuhitavad seadmed</b><span>3D-printer, lasergraveerija ja CNC-frees</span></button>
+  <button type="button" class="topic" data-topic="Elektroonika" aria-pressed="false"><b>Elektroonika</b></button>
+  <button type="button" class="topic" data-topic="Bioonika" aria-pressed="false"><b>Bioonika</b><span>Loodusest inspireeritud inseneeria</span></button>
+  <button type="button" class="topic" data-topic="Pneumaatika" aria-pressed="false"><b>Pneumaatika</b></button>
+  <button type="button" class="topic" data-topic="Inseneeria" aria-pressed="false"><b>Inseneeria</b></button>
+  <button type="button" class="topic" data-topic="Karjääriinfo" aria-pressed="false"><b>Karjääriinfo</b><span>Karjääriinfo ja nõustamine</span></button>
+  <button type="button" class="topic" data-topic="Noorteinfo" aria-pressed="false"><b>Noorteinfo</b></button>
+  <button type="button" class="topic" data-topic="Ettevõtlus" aria-pressed="false"><b>Ettevõtlus</b><span>Ettevõtlusteadlikkus</span></button>
+ </div>
+ <p class="topic-note" id="topic-note">Vali üks või mitu teemat.</p>
+ <div class="cta"><a class="btn" href="#kontakt" data-teenus="Töötuba">Küsi pakkumist valitud teemadega</a></div>
 </div></section>
 
 <section id="vaartus"><div class="wrap">
@@ -793,7 +833,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   <article class="card"><img loading="lazy" alt="" src="https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_700,h_460,fp_0.50_0.50,q_90/a.jpg"><div><h3>Ida-Viru projektis osales kokku 354 osalejat</h3><a href="/post/ida-viru-projektis-osales-kokku-354-osalejat">Loe edasi →</a></div></article>
   <article class="card"><img loading="lazy" alt="" src="https://static.wixstatic.com/media/a7f28e_9792dc3de2404bb69f8caebfb630e963~mv2.jpg/v1/fill/w_700,h_460,fp_0.50_0.50,q_90/a.jpg"><div><h3>Tule töötuppa! Või muidu tuleb töötuba sinu juurde!</h3><a href="/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde">Loe edasi →</a></div></article>
  </div>
- <div class="proj"><a href="/kalender-1">Kalender</a><a href="/meediakajastus">Meediakajastus</a><a href="/videod">Videod</a><a href="/toeoetubade-galerii">Pildigalerii</a><a href="/merkuuri-toeoetubade-kaart">Tegevuskaart</a></div>
+ <div class="proj"><a href="#teemad">Teemad</a><a href="/meediakajastus">Meediakajastus</a><a href="/videod">Videod</a><a href="/toeoetubade-galerii">Pildigalerii</a><a href="/merkuuri-toeoetubade-kaart">Tegevuskaart</a></div>
  <div class="cta"><a class="btn" href="/blog">Kõik postitused</a></div>
 </div></section>
 
@@ -834,12 +874,13 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
  <div class="sheet">
   <div class="order">
    <h3>Kuidas tellida</h3>
-   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega. Frantsiisi puhul kirjuta, kus ja kellega tahad tegutseda.</p>
+   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Teemad, mida kokku panna, saad valida ülal. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega. Frantsiisi puhul kirjuta, kus ja kellega tahad tegutseda.</p>
   </div>
   <form id="cform" class="cform" novalidate>
    <div class="row"><label>Nimi<input name="nimi" required autocomplete="name"></label><label>E-post<input name="email" type="email" required autocomplete="email"></label></div>
    <div class="row"><label>Mis huvitab?<select name="teenus" required><option value="">Vali…</option><option>Töötuba</option><option>Kooli varustamine / tehnoloogiaklass</option><option>Tehnoloogiatund / huviring</option><option>Makerset / komplekti valik</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Seadmete koolitus / demo</option><option>Õppematerjalid / digiõpik</option><option>Frantsiis / partnerlus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
    <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn, kool või riik"></label></div>
+   <p class="hint" id="topic-summary">Teemasid pole veel valitud. <a href="#teemad">Vali teemad</a></p>
    <label>Sõnum<textarea name="sonum" rows="4"></textarea></label>
    <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu andmeid kasutatakse päringule vastamiseks (<a href="#privaatsus" data-open="privaatsus">privaatsuspoliitika</a>).</label>
    <p class="hint">Nupp avab sinu e-posti programmi. Kiirema vastuse saad helistades: <a href="tel:+37251854040">Lauri +372 51 85 404</a> või <a href="tel:+37253039287">Liis +372 53 039 287</a>.</p>
@@ -848,7 +889,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   </form>
   <details id="privaatsus" class="priv"><summary>Privaatsuspoliitika</summary>
    <p><b>Kes me oleme.</b> Andmete vastutav töötleja on Merkuur OÜ (registrikood 11544602), info@merkuur.eu.</p>
-   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, e-posti, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
+   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, e-posti, valitud töötoa teemasid, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
    <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
    <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
    <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
@@ -874,6 +915,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <a href="https://www.facebook.com/mobileworkshops/">Facebook</a>
    <a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a>
    <a href="#kontakt">Küsi pakkumist</a>
+   <a href="#teemad">Teemad</a>
    <a href="#frantsiis">Frantsiis</a>
    <a href="#tunnustused">Tunnustused</a>
    <a href="#verstapostid">Verstapostid</a>
@@ -898,11 +940,37 @@ document.querySelectorAll("[data-teenus]").forEach(function(a){
   for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===want){sel.value=sel.options[i].value||sel.options[i].text;break;}}
  });
 });
+function selectedTopics(){
+ return [].map.call(document.querySelectorAll("#teemad .topic[aria-pressed='true']"),function(b){return b.getAttribute("data-topic");});
+}
+function syncTopics(){
+ var list=selectedTopics();
+ var text=list.join(" + ");
+ var note=document.getElementById("topic-note");
+ var sum=document.getElementById("topic-summary");
+ if(note)note.textContent=text?("Kokku: "+text):"Vali üks või mitu teemat.";
+ if(sum){
+  sum.replaceChildren();
+  sum.appendChild(document.createTextNode(text?("Valitud teemad: "+text+". "):"Teemasid pole veel valitud. "));
+  var a=document.createElement("a");
+  a.href="#teemad";
+  a.textContent=text?"Muuda teemasid":"Vali teemad";
+  sum.appendChild(a);
+ }
+}
+document.querySelectorAll("#teemad .topic").forEach(function(b){
+ b.addEventListener("click",function(){
+  b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")==="true"?"false":"true");
+  syncTopics();
+ });
+});
+syncTopics();
 document.getElementById("cform").addEventListener("submit",function(e){
  e.preventDefault();var f=e.target,note=document.getElementById("fnote");
  if(!f.nimi.value.trim()||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.ok.checked){note.textContent="Palun täida nimi, e-post ja nõusolek.";return;}
  if(!f.teenus.value){note.textContent="Palun vali, mis sind huvitab.";return;}
- var body=["Nimi: "+f.nimi.value,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
+ var topics=selectedTopics();
+ var body=["Nimi: "+f.nimi.value,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Teemad: "+(topics.length?topics.join(", "):"—"),"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
  note.textContent="Avame sinu e-posti programmi – vaata sõnum üle ja vajuta Saada.";
  location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+f.teenus.value)+"&body="+encodeURIComponent(body);
 });

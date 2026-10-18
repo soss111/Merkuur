@@ -91,6 +91,13 @@ test("admin auth and published content", async () => {
     assert.doesNotMatch(home.text, /https:\/\/www\.merkuur\.eu\/tootoad/);
     assert.match(home.text, /href="\/tootoad"/);
     assert.match(home.text, /href="\/post\/ida-viru-projektis-osales-kokku-354-osalejat"/);
+    assert.match(home.text, /Teemad, mida saab kokku panna/);
+    assert.match(home.text, /data-topic="Pneumaatika"/);
+    assert.match(home.text, /data-topic="Noorteinfo"/);
+    assert.doesNotMatch(home.text, /kalender-1/);
+    const oldCalendar = await fetch(BASE + "/kalender-1", { redirect: "manual" });
+    assert.equal(oldCalendar.status, 302);
+    assert.equal(oldCalendar.headers.get("location"), "/#teemad");
 
     const workshop = await call("/tootoad");
     assert.equal(workshop.status, 200);
