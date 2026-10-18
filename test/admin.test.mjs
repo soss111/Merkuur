@@ -166,6 +166,12 @@ test("admin auth and published content", async () => {
 
     const open = await call("/api/content");
     assert.deepEqual(open.json.testimonials, []);
+    assert.equal(open.json.services.length, 6);
+    assert.equal(open.json.services[0].title, "Töötoad");
+    assert.equal(open.json.news.length, 3);
+    assert.equal(open.json.news[0].url, "/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde-1");
+    assert.equal(open.json.gallery.length, 4);
+    assert.equal(open.json.gallery[0].caption, "Neeme küla");
     assert.deepEqual(open.json.stats, {
       since: "2016",
       workshops: "3500+",
@@ -294,8 +300,9 @@ test("admin auth and published content", async () => {
     assert.doesNotMatch(storyPage.text, /<script>alert\(1\)<\/script>/);
 
     const stored = await call("/api/content");
-    assert.equal(stored.json.services[0].title, "Koolitund ratastel");
-    assert.equal(stored.json.services[0].href, "/tootoad");
+    assert.equal(stored.json.services.length, 7);
+    assert.ok(stored.json.services.some((item) => item.title === "Koolitund ratastel" && item.href === "/tootoad"));
+    assert.equal(stored.json.services[0].title, "Töötoad");
 
     const removed = await call("/api/content/testimonials/" + quote.json.id, { method: "DELETE" });
     assert.equal(removed.status, 200);

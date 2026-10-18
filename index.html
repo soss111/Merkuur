@@ -974,13 +974,13 @@ bg.addEventListener("click",function(){var o=nv.classList.toggle("open");bg.setA
 nv.querySelectorAll("a").forEach(function(a){a.addEventListener("click",closeNav);});
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeNav();});
 document.querySelectorAll("[data-open]").forEach(function(a){a.addEventListener("click",function(){var d=document.getElementById(a.getAttribute("data-open"));if(d)d.open=true;});});
-document.querySelectorAll("[data-teenus]").forEach(function(a){
- a.addEventListener("click",function(){
-  var sel=document.querySelector("#cform select[name=teenus]");
-  if(!sel)return;
-  var want=a.getAttribute("data-teenus");
-  for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===want){sel.value=sel.options[i].value||sel.options[i].text;break;}}
- });
+document.addEventListener("click",function(e){
+ var a=e.target.closest("[data-teenus]");
+ if(!a)return;
+ var sel=document.querySelector("#cform select[name=teenus]");
+ if(!sel)return;
+ var want=a.getAttribute("data-teenus");
+ for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===want){sel.value=sel.options[i].value||sel.options[i].text;break;}}
 });
 function selectedTopics(){
  return [].map.call(document.querySelectorAll("#teemad .topic[aria-pressed='true']"),function(b){return b.getAttribute("data-topic");});
@@ -1093,10 +1093,19 @@ contentReq.then(function(data){
       data.testimonials.forEach(function(t){addQuote(t, box);});
     }
   }
+  var teenusByHref={
+    "/tootoad":"Töötuba",
+    "/huviringid":"Tehnoloogiatund / huviring",
+    "/õpik-arvjuhitavad-seadmed-cnc":"Õppematerjalid / digiõpik",
+    "/futureclassroomlab":"Kooli varustamine / tehnoloogiaklass",
+    "/mobileworkshops":"Töötuba",
+    "/bettercareer":"Karjäärinõustamine / karjääritöötuba"
+  };
   if(data.news&&data.news.length){
     var grid=document.querySelector("#uudised .grid");
     if(grid){
-      data.news.slice().reverse().forEach(function(item){
+      grid.replaceChildren();
+      data.news.forEach(function(item){
         var card=node("article","card");
         var imgSrc=safeHref(item.image);
         if(imgSrc){var img=node("img");img.alt="";img.loading="lazy";img.src=imgSrc;card.appendChild(img);}
@@ -1106,13 +1115,14 @@ contentReq.then(function(data){
         var href=safeHref(item.url);
         if(href){var a=node("a",null,"Loe edasi →");a.href=href;if(/^https?:/.test(href)){a.target="_blank";a.rel="noopener";}body.appendChild(a);}
         card.appendChild(body);
-        grid.insertBefore(card,grid.firstChild);
+        grid.appendChild(card);
       });
     }
   }
   if(data.gallery&&data.gallery.length){
     var gal=document.querySelector("#galerii .gallery");
     if(gal){
+      gal.replaceChildren();
       data.gallery.forEach(function(item){
         var src=safeHref(item.image);
         if(!src)return;
@@ -1128,6 +1138,7 @@ contentReq.then(function(data){
   if(data.services&&data.services.length){
     var services=document.querySelector("#teenused .grid");
     if(services){
+      services.replaceChildren();
       data.services.forEach(function(item){
         var card=node("article","card");
         var imgSrc=safeHref(item.image);
@@ -1138,9 +1149,15 @@ contentReq.then(function(data){
         var actions=node("div","actions");
         var ask=node("a",null,"Küsi pakkumist");
         ask.href="#kontakt";
-        if(item.title)ask.setAttribute("data-teenus",item.title);
-        actions.appendChild(ask);
         var moreHref=safePage(item.href);
+        var teenus=teenusByHref[moreHref];
+        if(teenus)ask.setAttribute("data-teenus",teenus);
+        actions.appendChild(ask);
+        if(moreHref==="/tootoad"){
+          var topics=node("a","quiet","Vali teemad →");
+          topics.href="#teemad";
+          actions.appendChild(topics);
+        }
         if(moreHref&&moreHref!=="#kontakt"){
           var more=node("a","quiet","Loe lähemalt →");
           more.href=moreHref;
