@@ -1,0 +1,4 @@
+node_modules/
+data/sessions.json
+data/uploads/*
+!data/uploads/.gitkeep

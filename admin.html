@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Haldus – Merkuur</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23171b20'/%3E%3Cpath d='M22 74V28l28 30 28-30v46' fill='none' stroke='%23ff6a13' stroke-width='10' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ece9e1;--surface:#f7f5ef;--ink:#16191d;--muted:#555c66;--accent:#ff6a13;--hazard:#ffc400;--shadow:#16191d;--steel:#171b20;
+--hz:repeating-linear-gradient(-45deg,var(--hazard) 0 12px,var(--steel) 12px 24px)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Barlow",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:var(--steel);color:#f4f1ea}
+header::after{content:"";display:block;height:10px;background:var(--hz)}
+.bar{max-width:980px;margin:0 auto;padding:0 20px;height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font:800 1.6rem/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#f4f1ea;text-decoration:none}
+.bar a.back{color:var(--hazard);font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+main{max-width:980px;margin:0 auto;padding:36px 20px 64px}
+h1,h2{font-family:"Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;line-height:.95;margin:0 0 12px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem)}
+h2{font-size:1.8rem;margin-top:8px}
+h2::after{content:"";display:block;width:72px;height:7px;margin-top:10px;background:linear-gradient(90deg,var(--accent) 0 46px,var(--hazard) 46px)}
+.kicker{display:inline-block;background:var(--hazard);color:#16191d;font:600 .74rem "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;margin-bottom:10px}
+.panel{background:var(--surface);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--shadow);padding:20px;margin:18px 0}
+.lead{color:var(--muted);max-width:68ch}
+ol.steps{margin:12px 0 0;padding-left:1.2em}
+ol.steps li{margin:.4em 0}
+code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86rem;background:#fff;border:1px solid var(--ink);padding:1px 5px}
+label{display:grid;gap:6px;font:600 .74rem "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;margin-top:12px}
+input,textarea{font:500 1rem "Barlow",system-ui,sans-serif;padding:12px;border:2px solid var(--ink);border-radius:3px;background:var(--bg);color:var(--ink);width:100%;min-height:48px}
+textarea{min-height:110px;resize:vertical}
+input:focus,textarea:focus{outline:3px solid var(--hazard);outline-offset:1px}
+.row{display:grid;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:14px;background:var(--accent);color:#16191d;border:2px solid #16191d;box-shadow:4px 4px 0 #16191d;padding:10px 16px;font:700 1.05rem "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none}
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 #16191d}
+.btn.ghost{background:transparent}
+.btn.danger{background:var(--hazard)}
+.who{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.who b{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1.4rem;text-transform:uppercase}
+.note{min-height:1.3em;font-weight:700}
+.note.bad{color:#9d1c12}
+.list{display:grid;gap:10px;margin-top:14px}
+.item{border:2px solid var(--ink);padding:12px;background:var(--bg);display:grid;gap:4px}
+.item b{font-family:"Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;font-size:1.2rem}
+.item button{justify-self:start;margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.tabs button{margin-top:0}
+.tabs button[aria-selected="true"]{background:var(--hazard)}
+.view{display:none}
+.view.on{display:block}
+#google-btn{margin-top:16px;min-height:48px}
+.file{font-family:"Barlow",system-ui,sans-serif;text-transform:none;letter-spacing:0;font-weight:500}
+@media(min-width:720px){.row.two{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div class="bar"><a class="logo" href="/">Merkuur</a><a class="back" href="/">← Avalik leht</a></div></header>
+<main>
+ <div class="kicker">Haldus</div>
+ <h1>Lisa lehele uut</h1>
+ <p class="lead">Logi sisse Gmailiga. Pärast seda saad avalikule lehele lisada tagasisidet, uudiseid, galeriipilte ja aadressi.</p>
+ <p class="note" id="status" role="status"></p>
+
+ <section id="setup" class="panel" hidden>
+  <h2>Google'i sisselogimine pole veel ühendatud</h2>
+  <p>Server vajab Google Cloud OAuth kliendi ID-d. Salasõna ei ole vaja, ainult avalik kliendi ID.</p>
+  <ol class="steps">
+   <li>Ava <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console → Credentials</a>.</li>
+   <li>Loo OAuth client, tüüp Web application.</li>
+   <li>Lisa lubatud JavaScripti päritolu: <code>https://www.merkuur.eu</code> ja testimiseks <code>http://localhost:8787</code>.</li>
+   <li>Kirjuta kliendi ID faili <code>data/admin.config.json</code> väljale <code>googleClientId</code>.</li>
+   <li>Vaikimisi on lubatud <code>info@merkuur.eu</code>. Esimene õnnestunud Google'i sisselogimine lisatakse samuti halduriks, seejärel uks sulgub.</li>
+   <li>Käivita server uuesti käsuga <code>node server.js</code> ja ava <code>/admin</code>.</li>
+  </ol>
+ </section>
+
+ <section id="login" class="panel" hidden>
+  <h2>Logi sisse Gmailiga</h2>
+  <p>Kasuta Google'i kontot. Sisse pääsevad ainult haldurite nimekirjas olevad aadressid.</p>
+  <div id="google-btn"></div>
+ </section>
+
+ <section id="app" hidden>
+  <div class="panel who">
+   <div>Sisse logitud kui <b id="who"></b></div>
+   <button class="btn ghost" id="logout" type="button">Logi välja</button>
+  </div>
+  <div class="tabs" role="tablist">
+   <button class="btn" type="button" data-tab="feedback" aria-selected="true">Tagasiside</button>
+   <button class="btn ghost" type="button" data-tab="news" aria-selected="false">Uudis</button>
+   <button class="btn ghost" type="button" data-tab="gallery" aria-selected="false">Galerii</button>
+   <button class="btn ghost" type="button" data-tab="address" aria-selected="false">Aadress</button>
+   <button class="btn ghost" type="button" data-tab="admins" aria-selected="false">Haldurid</button>
+  </div>
+
+  <section class="view on panel" id="view-feedback">
+   <h2>Uus tagasiside</h2>
+   <form id="form-feedback">
+    <label>Tekst<textarea name="quote" required maxlength="800"></textarea></label>
+    <div class="row two">
+     <label>Nimi<input name="name" required maxlength="120"></label>
+     <label>Roll<input name="role" maxlength="120" placeholder="õpetaja"></label>
+    </div>
+    <label>Kool või organisatsioon<input name="org" maxlength="160"></label>
+    <button class="btn" type="submit">Lisa lehele</button>
+   </form>
+   <div class="list" id="list-feedback"></div>
+  </section>
+
+  <section class="view panel" id="view-news">
+   <h2>Uus uudis</h2>
+   <form id="form-news">
+    <label>Pealkiri<input name="title" required maxlength="180"></label>
+    <label>Lühikirjeldus<textarea name="excerpt" maxlength="400"></textarea></label>
+    <div class="row two">
+     <label>Link<input name="url" type="url" placeholder="https://"></label>
+     <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+    </div>
+    <button class="btn" type="submit">Lisa lehele</button>
+   </form>
+   <div class="list" id="list-news"></div>
+  </section>
+
+  <section class="view panel" id="view-gallery">
+   <h2>Uus galeriipilt</h2>
+   <form id="form-gallery">
+    <label>Allkiri<input name="caption" required maxlength="120"></label>
+    <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required></label>
+    <button class="btn" type="submit">Lisa lehele</button>
+   </form>
+   <div class="list" id="list-gallery"></div>
+  </section>
+
+  <section class="view panel" id="view-address">
+   <h2>Aadress jaluses</h2>
+   <form id="form-address">
+    <label>Aadress<input name="address" maxlength="240" placeholder="Tänav, linn"></label>
+    <button class="btn" type="submit">Salvesta</button>
+   </form>
+  </section>
+
+  <section class="view panel" id="view-admins">
+   <h2>Haldurid</h2>
+   <p class="lead">Need Google'i kontod saavad lehele andmeid lisada.</p>
+   <form id="form-admin">
+    <label>Gmail või Google'i e-post<input name="email" type="email" required placeholder="nimi@gmail.com"></label>
+    <button class="btn" type="submit">Lisa haldur</button>
+   </form>
+   <div class="list" id="list-admins"></div>
+  </section>
+ </section>
+</main>
+<script>
+(function(){
+var statusEl=document.getElementById("status");
+function say(text,bad){statusEl.textContent=text||"";statusEl.className=bad?"note bad":"note";}
+function api(path,opts){
+  opts=opts||{};
+  return fetch(path,{method:opts.method||"GET",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:opts.body?JSON.stringify(opts.body):undefined}).then(function(res){
+    return res.json().catch(function(){return {};}).then(function(data){
+      if(!res.ok)throw new Error(data.error||"Viga");
+      return data;
+    });
+  });
+}
+function upload(file){
+  if(!file)return Promise.resolve("");
+  if(file.size>4*1024*1024)return Promise.reject(new Error("Pilt on liiga suur (max 4 MB)."));
+  return new Promise(function(resolve,reject){
+    var reader=new FileReader();
+    reader.onerror=function(){reject(new Error("Pilti ei saanud lugeda."));};
+    reader.onload=function(){api("/api/upload",{method:"POST",body:{dataUrl:reader.result}}).then(function(d){resolve(d.url);}).catch(reject);};
+    reader.readAsDataURL(file);
+  });
+}
+var content={testimonials:[],news:[],gallery:[],address:""};
+var admins=[];
+function renderList(kind,box,label){
+  box.replaceChildren();
+  (content[kind]||[]).forEach(function(item){
+    var row=document.createElement("article");
+    row.className="item";
+    var title=document.createElement("b");
+    title.textContent=label(item);
+    var extra=document.createElement("span");
+    extra.textContent=item.excerpt||item.quote||item.org||"";
+    var btn=document.createElement("button");
+    btn.className="btn danger";btn.type="button";btn.textContent="Kustuta";
+    btn.addEventListener("click",function(){
+      if(!confirm("Kustutan selle?"))return;
+      api("/api/content/"+kind+"/"+item.id,{method:"DELETE"}).then(load).catch(function(err){say(err.message,true);});
+    });
+    row.append(title,extra,btn);
+    box.appendChild(row);
+  });
+}
+function renderAdmins(){
+  var box=document.getElementById("list-admins");
+  box.replaceChildren();
+  admins.forEach(function(email){
+    var row=document.createElement("article");
+    row.className="item";
+    var title=document.createElement("b");
+    title.textContent=email;
+    var btn=document.createElement("button");
+    btn.className="btn danger";btn.type="button";btn.textContent="Eemalda";
+    btn.addEventListener("click",function(){
+      api("/api/admins",{method:"DELETE",body:{email:email}}).then(function(d){admins=d.allowedEmails;renderAdmins();say("Haldur eemaldatud.");}).catch(function(err){say(err.message,true);});
+    });
+    row.append(title,btn);
+    box.appendChild(row);
+  });
+}
+function load(){
+  return api("/api/content").then(function(data){
+    content=data;
+    renderList("testimonials",document.getElementById("list-feedback"),function(item){return item.name+(item.org?" · "+item.org:"");});
+    renderList("news",document.getElementById("list-news"),function(item){return item.title;});
+    renderList("gallery",document.getElementById("list-gallery"),function(item){return item.caption;});
+    document.querySelector("#form-address [name=address]").value=data.address||"";
+  });
+}
+document.querySelectorAll(".tabs button").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected","false");b.classList.add("ghost");});
+    btn.setAttribute("aria-selected","true");btn.classList.remove("ghost");
+    document.querySelectorAll(".view").forEach(function(v){v.classList.remove("on");});
+    document.getElementById("view-"+btn.getAttribute("data-tab")).classList.add("on");
+  });
+});
+document.getElementById("form-feedback").addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target;
+  api("/api/content/testimonials",{method:"POST",body:{quote:f.quote.value,name:f.name.value,role:f.role.value,org:f.org.value}}).then(function(){f.reset();return load();}).then(function(){say("Tagasiside on lehel.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-news").addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target;
+  upload(f.file.files[0]).then(function(url){
+    return api("/api/content/news",{method:"POST",body:{title:f.title.value,excerpt:f.excerpt.value,url:f.url.value,image:url}});
+  }).then(function(){f.reset();return load();}).then(function(){say("Uudis on lehel.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-gallery").addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target;
+  upload(f.file.files[0]).then(function(url){
+    if(!url)throw new Error("Lisa pilt.");
+    return api("/api/content/gallery",{method:"POST",body:{caption:f.caption.value,image:url}});
+  }).then(function(){f.reset();return load();}).then(function(){say("Pilt on galeriis.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-address").addEventListener("submit",function(e){
+  e.preventDefault();
+  api("/api/address",{method:"PUT",body:{address:e.target.address.value}}).then(function(){say("Aadress on salvestatud.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-admin").addEventListener("submit",function(e){
+  e.preventDefault();
+  api("/api/admins",{method:"POST",body:{email:e.target.email.value}}).then(function(d){admins=d.allowedEmails;e.target.reset();renderAdmins();say("Haldur lisatud.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("logout").addEventListener("click",function(){
+  api("/api/auth/logout",{method:"POST",body:{}}).then(function(){location.reload();});
+});
+function showApp(me){
+  document.getElementById("setup").hidden=true;
+  document.getElementById("login").hidden=true;
+  document.getElementById("app").hidden=false;
+  document.getElementById("who").textContent=me.email;
+  admins=me.allowedEmails||[];
+  renderAdmins();
+  load().catch(function(err){say(err.message,true);});
+}
+function startGoogle(clientId){
+  var s=document.createElement("script");
+  s.src="https://accounts.google.com/gsi/client?hl=et";
+  s.async=true;
+  s.onload=function(){
+    google.accounts.id.initialize({
+      client_id:clientId,
+      callback:function(resp){
+        api("/api/auth/google",{method:"POST",body:{credential:resp.credential}}).then(function(){
+          return api("/api/auth/me");
+        }).then(showApp).catch(function(err){say(err.message,true);});
+      }
+    });
+    google.accounts.id.renderButton(document.getElementById("google-btn"),{
+      type:"standard",theme:"filled_black",size:"large",text:"signin_with",shape:"rectangular",locale:"et",width:320
+    });
+  };
+  s.onerror=function(){say("Google'i sisselogimise nuppu ei saanud laadida.",true);};
+  document.head.appendChild(s);
+}
+Promise.all([api("/api/auth/config"),api("/api/auth/me").catch(function(){return null;})]).then(function(pair){
+  var cfg=pair[0],me=pair[1];
+  if(me&&me.email)return showApp(me);
+  if(!cfg.configured){document.getElementById("setup").hidden=false;return;}
+  document.getElementById("login").hidden=false;
+  if(cfg.allowFirstGoogleLogin)say("Esimene Google'i kontoga sisselogimine saab halduriks. Pärast seda pääsevad sisse ainult nimekirjas olevad aadressid.");
+  startGoogle(cfg.clientId);
+}).catch(function(err){say(err.message,true);});
+})();
+</script>
+</body>
+</html>
