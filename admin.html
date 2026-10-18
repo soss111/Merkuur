@@ -78,10 +78,8 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 <header><div class="bar"><a class="logo" href="index.html"><img alt="Merkuur" src="files/merkuur-logo.png" width="52" height="52">Merkuur</a><a class="back" href="index.html">← Avalik leht</a></div></header>
 <main>
  <div class="kicker">Haldus</div>
- <h1>Lisa lehele uut</h1>
- <p class="lead">Logi sisse. Seejärel avaneb sama avalik leht, kus saad teksti, teenuseid, teekonda, tagasisidet, fotosid, uudiseid, arve ja aadressi kohapeal muuta ja lisada.</p>
  <h1>Haldus</h1>
- <p class="lead">Siin saad lehe sisu lisada, muuta ja järjekorda seada. Muudatused ilmuvad avalikule lehele.</p>
+ <p class="lead">Logi sisse. Seejärel avaneb sama avalik leht, kus saad teksti, teenuseid, teekonda, tagasisidet, fotosid, uudiseid, arve ja aadressi kohapeal muuta ja lisada.</p>
  <p class="note" id="status" role="status"></p>
 
  <section id="login" class="panel" hidden>
@@ -358,7 +356,17 @@ function closeComposer(kind){
   var f=formOf(kind);
   if(editing&&editing.kind===kind)editing=null;
   f.reset();
+  if(f.file)f.file.required=!!meta.requiredFile;
   f.hidden=true;
+  f.querySelector("button[type=submit]").textContent="Lisa lehele";
+  var cancel=f.querySelector("[data-cancel]");
+  if(cancel)cancel.hidden=true;
+  var heading=headingOf(kind);
+  if(heading)heading.textContent=meta.section;
+  if(meta.note)document.getElementById(meta.note).hidden=true;
+  var section=f.querySelector("select.section");
+  if(section)syncExternal(section);
+}
 function mountSections(){
   var source=document.getElementById("section-links");
   document.querySelectorAll("select.section").forEach(function(select){
@@ -411,9 +419,10 @@ function stopEdit(){
   f.querySelector("button[type=submit]").textContent="Lisa lehele";
   var cancel=f.querySelector("[data-cancel]");
   if(cancel)cancel.hidden=true;
-  var heading=headingOf(kind);
+  var heading=headingOf(editing.kind);
   if(heading)heading.textContent=meta.section;
   if(meta.note)document.getElementById(meta.note).hidden=true;
+  editing=null;
 }
 function openComposer(kind){
   ["testimonials","news","services","gallery","roadmap"].forEach(closeComposer);
