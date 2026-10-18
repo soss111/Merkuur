@@ -1,7 +1,14 @@
 {
   "name": "merkuur",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node -e \"console.log('Static export is not used. node server.js serves the site and /api.')\""
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
   }
 }

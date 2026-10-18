@@ -852,7 +852,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
    <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
    <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
-   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega. Haldusleht /admin kasutab sisselogimiseks Google'i kontot ja seansi küpsist; avaliku lehe külastajale seda küpsist ei seata.</p>
+   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega. Haldusleht /admin saadab sisselogimiskoodi samasse teenusesse, mida kasutab metalHUB haldus, ja seab seansi küpsise; avaliku lehe külastajale seda küpsist ei seata.</p>
   </details>
  </div>
 </div></section>
@@ -930,6 +930,12 @@ function safeHref(v){
   try{var u=new URL(v,location.origin);if(u.protocol==="http:"||u.protocol==="https:")return u.href;}catch(e){}
   return "";
 }
+function safePage(v){
+  if(!v)return "";
+  if(v.charAt(0)==="#"&&/^#[A-Za-z0-9-]+$/.test(v))return v;
+  if(v.charAt(0)==="/"&&v.charAt(1)!=="/"&&v.indexOf("..")===-1)return v;
+  return safeHref(v);
+}
 function node(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
 fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(function(data){
   if(!data)return;
@@ -977,6 +983,34 @@ fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(functio
         fig.appendChild(img);
         fig.appendChild(node("figcaption",null,item.caption||""));
         gal.appendChild(fig);
+      });
+    }
+  }
+  if(data.services&&data.services.length){
+    var services=document.querySelector("#teenused .grid");
+    if(services){
+      data.services.forEach(function(item){
+        var card=node("article","card");
+        var imgSrc=safeHref(item.image);
+        if(imgSrc){var img=node("img");img.alt=item.title||"";img.loading="lazy";img.src=imgSrc;card.appendChild(img);}
+        var body=node("div");
+        body.appendChild(node("h3",null,item.title));
+        if(item.summary)body.appendChild(node("p",null,item.summary));
+        var actions=node("div","actions");
+        var ask=node("a",null,"Küsi pakkumist");
+        ask.href="#kontakt";
+        if(item.title)ask.setAttribute("data-teenus",item.title);
+        actions.appendChild(ask);
+        var moreHref=safePage(item.href);
+        if(moreHref&&moreHref!=="#kontakt"){
+          var more=node("a","quiet","Loe lähemalt →");
+          more.href=moreHref;
+          if(/^https?:/.test(moreHref)){more.target="_blank";more.rel="noopener";}
+          actions.appendChild(more);
+        }
+        body.appendChild(actions);
+        card.appendChild(body);
+        services.appendChild(card);
       });
     }
   }

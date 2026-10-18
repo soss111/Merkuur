@@ -1,4 +1,7 @@
 node_modules/
 data/sessions.json
+data/content.sqlite
+data/content.sqlite-wal
+data/content.sqlite-shm
 data/uploads/*
 !data/uploads/.gitkeep
