@@ -71,7 +71,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 <main>
  <div class="kicker">Haldus</div>
  <h1>Lisa lehele uut</h1>
- <p class="lead">Logi sisse Gmailiga. Tagasiside, blogipostitused, fotod, teenused ja teekond salvestatakse andmebaasi ning ilmuvad avalikule lehele.</p>
+ <p class="lead">Logi sisse. Seejärel avaneb sama avalik leht, kus saad teksti, teenuseid, teekonda, tagasisidet, fotosid, uudiseid, arve ja aadressi kohapeal muuta ja lisada.</p>
  <p class="note" id="status" role="status"></p>
 
  <section id="login" class="panel" hidden>
@@ -472,14 +472,8 @@ document.getElementById("form-admin").addEventListener("submit",function(e){
 document.getElementById("logout").addEventListener("click",function(){
   api("/api/auth/logout",{method:"POST",body:{}}).then(function(){location.reload();});
 });
-function showApp(me){
-  say("");
-  document.getElementById("login").hidden=true;
-  document.getElementById("app").hidden=false;
-  document.getElementById("who").textContent=me.email;
-  admins=me.allowedEmails||[];
-  renderAdmins();
-  load().catch(function(err){say(err.message,true);});
+function showApp(){
+  location.replace("/?haldus=1");
 }
 var loginEmail="";
 document.getElementById("form-email").addEventListener("submit",function(e){

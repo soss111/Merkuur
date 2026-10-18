@@ -325,8 +325,22 @@ function api(driver) {
         news: (await driver.all("SELECT * FROM posts ORDER BY created_at DESC")).map(mapPost),
         gallery: (await driver.all("SELECT * FROM photos ORDER BY created_at DESC")).map(mapPhoto),
         services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService),
-        roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep)
+        roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep),
+        copy: await this.readCopy()
       };
+    },
+    async readCopy() {
+      let stored = {};
+      try { stored = JSON.parse(await driver.setting("copy", "")) || {}; } catch (err) { stored = {}; }
+      const copy = {};
+      if (!stored || typeof stored !== "object" || Array.isArray(stored)) return copy;
+      Object.keys(stored).forEach((key) => {
+        if (/^[a-z0-9:-]{1,80}$/.test(key) && typeof stored[key] === "string" && stored[key].trim()) copy[key] = stored[key].trim();
+      });
+      return copy;
+    },
+    async saveCopy(copy) {
+      await driver.setSetting("copy", JSON.stringify(copy));
     },
     async countOf(table) {
       const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
@@ -367,6 +381,11 @@ function api(driver) {
     async findStep(id) {
       const row = await driver.get("SELECT * FROM steps WHERE id = ?", [id]);
       return row ? mapStep(row) : null;
+    },
+    async setCreatedAt(table, id, createdAt) {
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
+      if (!allowed[table]) throw new Error("Tundmatu tabel.");
+      await driver.run("UPDATE " + table + " SET created_at = ? WHERE id = ?", [createdAt, id]);
     },
     async updateStep(item) {
       await driver.run(
