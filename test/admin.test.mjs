@@ -137,6 +137,8 @@ test("admin auth and published content", async () => {
     assert.equal(hiddenPage.status, 404);
     const css = await call("/site.css");
     assert.equal(css.status, 200);
+    assert.match(css.text, /\.logo img\{[^}]*min-width:52px/);
+    assert.match(team.text, /class="foot-brand"/);
     const icon = await call("/favicon.ico");
     assert.equal(icon.status, 200);
     const logo = await call("/files/merkuur-logo.png");
@@ -147,6 +149,7 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /Logi sisse Gmailiga/);
     assert.match(admin.text, /Saada kood/);
     assert.match(admin.text, /\/api\/auth\/code/);
+    assert.match(admin.text, /\/files\/merkuur-logo\.png/);
     assert.match(admin.text, /id="form-stats"/);
     assert.match(admin.text, /\/api\/stats/);
 

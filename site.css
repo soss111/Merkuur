@@ -79,10 +79,10 @@ header{
 }
 .bar{display:flex;align-items:center;height:72px;gap:16px}
 .logo{
-  display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--header-ink);
+  display:flex;align-items:center;gap:10px;flex:none;text-decoration:none;color:var(--header-ink);
   font-weight:700;letter-spacing:-.02em;font-size:1.35rem;line-height:1;
 }
-.logo img{width:44px;height:44px;object-fit:cover;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(18,52,58,.12)}
+.logo img{width:52px;height:52px;min-width:52px;max-width:none;flex:none;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(18,52,58,.12)}
 nav{display:flex;gap:14px;align-items:center;margin-left:auto}
 nav a{
   text-decoration:none;color:var(--header-ink);font-size:.92rem;font-weight:550;
@@ -154,6 +154,7 @@ main{padding:28px 0 64px}
 footer{background:var(--deep);color:#d5e6e1;padding:28px 0 18px}
 footer a{color:#fff;text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
 .foot{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:18px}
+.foot-brand img{width:72px;height:72px;min-width:72px;max-width:none;object-fit:contain;border-radius:18px;background:#fff;margin:0 0 12px}
 .foot-label{margin:0 0 6px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#9fc9be}
 .legal{margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);color:#9fc9be;font-size:.92rem}
 @media (prefers-color-scheme:dark){
