@@ -356,6 +356,11 @@ test("gmail code login uses the metalhub login service", async () => {
   await new Promise((resolve) => login.listen(0, "127.0.0.1", resolve));
   const loginApi = "http://127.0.0.1:" + login.address().port + "/api/exec";
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "merkuur-login-"));
+  fs.writeFileSync(path.join(dataDir, "admin.config.json"), JSON.stringify({
+    googleClientId: "",
+    allowedEmails: ["info@merkuur.eu", "lauri.soosaar@venten.ee"],
+    allowFirstGoogleLogin: true
+  }));
   const port = 8792;
   const base = "http://127.0.0.1:" + port;
   const child = await startServer(dataDir, { port: port, loginApi: loginApi });
@@ -364,6 +369,11 @@ test("gmail code login uses the metalhub login service", async () => {
     const stranger = await call("/api/auth/code", { method: "POST", body: { email: "other@gmail.com" } });
     assert.equal(stranger.status, 403);
     assert.equal(hits.length, 0);
+    const removed = await call("/api/auth/code", { method: "POST", body: { email: "lauri.soosaar@venten.ee" } });
+    assert.equal(removed.status, 403);
+    assert.equal(hits.length, 0);
+    const stored = JSON.parse(fs.readFileSync(path.join(dataDir, "admin.config.json"), "utf8"));
+    assert.equal(stored.allowedEmails.includes("lauri.soosaar@venten.ee"), false);
 
     const sent = await call("/api/auth/code", { method: "POST", body: { email: "LauriSoosaar@gmail.com" } });
     assert.equal(sent.status, 200);
@@ -380,6 +390,8 @@ test("gmail code login uses the metalhub login service", async () => {
     const me = await call("/api/auth/me");
     assert.equal(me.status, 200);
     assert.equal(me.json.email, "laurisoosaar@gmail.com");
+    assert.equal(me.json.allowedEmails.includes("lauri.soosaar@venten.ee"), false);
+    assert.equal(me.json.allowedEmails.includes("laurisoosaar@gmail.com"), true);
   } finally {
     child.kill("SIGTERM");
     login.close();
