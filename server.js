@@ -33,6 +33,7 @@ async function ensureData() {
   if (!fs.existsSync(SESSION_FILE)) writeJson(SESSION_FILE, {});
   database = await db.openDatabase(DATA);
   await database.importJsonOnce(CONTENT_FILE);
+  await database.seedCatalogOnce();
 }
 
 function readJson(file, fallback) {

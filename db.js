@@ -109,6 +109,117 @@ function statsFrom(raw) {
   return stats;
 }
 
+const SEED_SERVICES = [
+  {
+    id: "5eed5e4700000001",
+    title: "Töötoad",
+    summary: "Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele. Teemasid saab omavahel kokku panna.",
+    href: "/tootoad",
+    image: "https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg",
+    createdAt: "2016-01-01T00:00:01.000Z"
+  },
+  {
+    id: "5eed5e4700000002",
+    title: "Tehnoloogiatunnid",
+    summary: "Mobiilsed huviringid, koolitused ja gümnaasiumi inseneeria valikkursused – seadmed otse klassiruumis.",
+    href: "/huviringid",
+    image: "https://static.wixstatic.com/media/a7f28e_d96711c8a73f4287a56272f4e6fe22a1~mv2.jpg/v1/fill/w_980,h_732,al_c,q_85/a.jpg",
+    createdAt: "2016-01-01T00:00:02.000Z"
+  },
+  {
+    id: "5eed5e4700000003",
+    title: "Õpilahenduste arendus",
+    summary: "Digiõpik «Arvjuhitavad seadmed», tunnikavad ja õppematerjalid, mis aitavad tehnoloogiat koolitundi tuua.",
+    href: "/õpik-arvjuhitavad-seadmed-cnc",
+    image: "https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg",
+    createdAt: "2016-01-01T00:00:03.000Z"
+  },
+  {
+    id: "5eed5e4700000004",
+    title: "Makerspace ja tehnoloogiaklass",
+    summary: "Rajame koolidele ja noortekeskustele tehnoloogia õppeklassi – seadmed, sisu ja koolitus ühes paketis.",
+    href: "/futureclassroomlab",
+    image: "https://static.wixstatic.com/media/a7f28e_c34f073e4336408ca677769001eef86c~mv2_d_4943_3296_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg",
+    createdAt: "2016-01-01T00:00:04.000Z"
+  },
+  {
+    id: "5eed5e4700000005",
+    title: "Mobiilsed töökojad",
+    summary: "Iseehitatud liikuv õppeklass: metalli- ja puidutöökoda ratastel. Tuleme kooliõuele, külla või üritusele – seadmed ja tööriistad kaasas.",
+    href: "/mobileworkshops",
+    image: "https://static.wixstatic.com/media/a7f28e_a8fffa03b3bd41cd9d7cf3f80f7251c6~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg",
+    createdAt: "2016-01-01T00:00:05.000Z"
+  },
+  {
+    id: "5eed5e4700000006",
+    title: "Karjääriteemad",
+    summary: "Karjääriinfo ja -nõustamine (individuaalne ja grupinõustamine) ning karjääriteadlikkust tõstvad tegevused. Neid juhib Liis, kogenud karjäärinõustaja.",
+    href: "/bettercareer",
+    image: "https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg",
+    createdAt: "2016-01-01T00:00:06.000Z"
+  }
+];
+
+const SEED_POSTS = [
+  {
+    id: "5eed905700000001",
+    slug: "tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde-1",
+    title: "Tule töötuppa! Või muidu tuleb töötuba sinu juurde!",
+    excerpt: "",
+    body: "",
+    url: "/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde-1",
+    image: "https://static.wixstatic.com/media/a7f28e_68073d44abf044bf913b61f880205682~mv2.jpg/v1/fill/w_700,h_460,fp_0.50_0.50,q_90/a.jpg",
+    createdAt: "2025-01-20T12:00:00.000Z"
+  },
+  {
+    id: "5eed905700000002",
+    slug: "ida-viru-projektis-osales-kokku-354-osalejat",
+    title: "Ida-Viru projektis osales kokku 354 osalejat",
+    excerpt: "",
+    body: "",
+    url: "/post/ida-viru-projektis-osales-kokku-354-osalejat",
+    image: "https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_700,h_460,fp_0.50_0.50,q_90/a.jpg",
+    createdAt: "2024-12-01T12:00:00.000Z"
+  },
+  {
+    id: "5eed905700000003",
+    slug: "tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde",
+    title: "Tule töötuppa! Või muidu tuleb töötuba sinu juurde!",
+    excerpt: "",
+    body: "",
+    url: "/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde",
+    image: "https://static.wixstatic.com/media/a7f28e_9792dc3de2404bb69f8caebfb630e963~mv2.jpg/v1/fill/w_700,h_460,fp_0.50_0.50,q_90/a.jpg",
+    createdAt: "2024-07-10T12:00:00.000Z"
+  }
+];
+
+const SEED_PHOTOS = [
+  {
+    id: "5eedf07000000001",
+    image: "https://static.wixstatic.com/media/a7f28e_1804c8ea80de4870aaba580d4528a812~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg",
+    caption: "Neeme küla",
+    createdAt: "2024-04-01T12:00:00.000Z"
+  },
+  {
+    id: "5eedf07000000002",
+    image: "https://static.wixstatic.com/media/a7f28e_a2de679276f844059b3e5e041ec508c1~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg",
+    caption: "Metalli töötuba, Tartu",
+    createdAt: "2024-03-01T12:00:00.000Z"
+  },
+  {
+    id: "5eedf07000000003",
+    image: "https://static.wixstatic.com/media/a7f28e_67ca9d735af24001a6ba630a22aa21d7~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg",
+    caption: "Mart Müllerbeck",
+    createdAt: "2024-02-01T12:00:00.000Z"
+  },
+  {
+    id: "5eedf07000000004",
+    image: "https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg",
+    caption: "Ida-Viru projekt",
+    createdAt: "2024-01-01T12:00:00.000Z"
+  }
+];
+
 function api(driver) {
   return {
     label: driver.label,
@@ -139,6 +250,18 @@ function api(driver) {
       }
       if (typeof raw.address === "string" && raw.address && !(await driver.setting("address", ""))) await driver.setSetting("address", raw.address);
       await driver.setSetting("imported_json", "1");
+    },
+    async seedCatalogOnce() {
+      if ((await this.countOf("services")) === 0) {
+        for (const item of SEED_SERVICES) await this.insertService(item);
+      }
+      if ((await this.countOf("posts")) === 0) {
+        for (const item of SEED_POSTS) await this.insertPost(item);
+      }
+      if ((await this.countOf("photos")) === 0) {
+        for (const item of SEED_PHOTOS) await this.insertPhoto(item);
+      }
+      if (!(await driver.setting("stats", ""))) await this.saveStats(DEFAULT_STATS);
     },
     async readContent() {
       let stored = null;
