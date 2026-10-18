@@ -40,6 +40,10 @@ test("an empty catalog is filled once from the public page", async () => {
   assert.equal(content.gallery.length, 4);
   assert.equal(content.gallery[0].caption, "Neeme küla");
   assert.equal(content.gallery[3].caption, "Ida-Viru projekt");
+  assert.equal(content.roadmap.length, 5);
+  assert.equal(content.roadmap[0].title, "Tutvumine");
+  assert.equal(content.roadmap[0].tag, "Tasuta vestlus");
+  assert.equal(content.roadmap[4].title, "Tugi ja areng");
   assert.deepEqual(content.testimonials, []);
   assert.equal(content.stats.workshops, "3500+");
   assert.equal(content.stats.youth, "30 000");

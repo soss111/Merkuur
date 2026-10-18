@@ -362,8 +362,24 @@ async function imageFromDataUrl(dataUrl) {
   return "/uploads/" + name;
 }
 
+function roadmapFields(body) {
+  const title = clip(body.title, 80);
+  const detail = clip(body.detail, 400);
+  if (!title || !detail) throw Object.assign(new Error("Lisa etapi nimi ja kirjeldus."), { status: 400 });
+  return { title: title, detail: detail, tag: clip(body.tag, 40) };
+}
+
+async function updateRoadmap(id, body) {
+  const existing = await database.findStep(id);
+  if (!existing) throw Object.assign(new Error("Kirjet ei leitud."), { status: 404 });
+  const fields = roadmapFields(body);
+  const item = { id: id, title: fields.title, detail: fields.detail, tag: fields.tag, createdAt: existing.createdAt };
+  await database.updateStep(item);
+  return item;
+}
+
 async function addItem(kind, body) {
-  const tables = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" };
+  const tables = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps" };
   if (!tables[kind]) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (await database.countOf(tables[kind]) >= MAX_ITEMS) throw Object.assign(new Error("Kirjeid on juba maksimaalselt."), { status: 400 });
   const createdAt = new Date().toISOString();
@@ -404,6 +420,12 @@ async function addItem(kind, body) {
     await database.insertPhoto(item);
     return item;
   }
+  if (kind === "roadmap") {
+    const fields = roadmapFields(body);
+    const item = { id: id, title: fields.title, detail: fields.detail, tag: fields.tag, createdAt: createdAt };
+    await database.insertStep(item);
+    return item;
+  }
   const title = clip(body.title, 160);
   if (!title) throw Object.assign(new Error("Lisa teenuse nimi."), { status: 400 });
   const href = serviceHref(body.href);
@@ -422,7 +444,8 @@ function publicContent(content) {
     testimonials: content.testimonials,
     news: content.news,
     gallery: content.gallery,
-    services: content.services
+    services: content.services,
+    roadmap: content.roadmap
   };
 }
 
@@ -669,10 +692,16 @@ async function handle(req, res) {
       }
 
       const parts = pathname.split("/").filter(Boolean);
-      if (parts[0] === "api" && parts[1] === "content" && parts[2] && ["testimonials", "news", "gallery", "services"].indexOf(parts[2]) !== -1) {
+      if (parts[0] === "api" && parts[1] === "content" && parts[2] && ["testimonials", "news", "gallery", "services", "roadmap"].indexOf(parts[2]) !== -1) {
         if (req.method === "POST" && parts.length === 3) {
           const item = await addItem(parts[2], await readBody(req));
           return send(res, 201, item);
+        }
+        if (req.method === "PUT" && parts[2] === "roadmap" && parts.length === 4) {
+          const id = parts[3];
+          if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });
+          const item = await updateRoadmap(id, await readBody(req));
+          return send(res, 200, item);
         }
         if (req.method === "DELETE" && parts.length === 4) {
           const id = parts[3];

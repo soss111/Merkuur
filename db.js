@@ -40,6 +40,13 @@ const TABLES = [
   `CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS steps (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    detail TEXT NOT NULL DEFAULT '',
+    tag TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL
   )`
 ];
 
@@ -89,6 +96,10 @@ function mapPhoto(row) {
 
 function mapService(row) {
   return { id: row.id, title: row.title, summary: row.summary, href: row.href, image: row.image, createdAt: row.created_at };
+}
+
+function mapStep(row) {
+  return { id: row.id, title: row.title, detail: row.detail, tag: row.tag, createdAt: row.created_at };
 }
 
 const DEFAULT_STATS = {
@@ -193,6 +204,44 @@ const SEED_POSTS = [
   }
 ];
 
+const SEED_STEPS = [
+  {
+    id: "5eed70ad00000001",
+    title: "Tutvumine",
+    detail: "Räägime eesmärkidest, sihtrühmast ja ajast. Soovi korral tellid seadmete demo.",
+    tag: "Tasuta vestlus",
+    createdAt: "2016-03-01T00:00:01.000Z"
+  },
+  {
+    id: "5eed70ad00000002",
+    title: "Töötuba",
+    detail: "Mobiilne töötuba või tehnoloogiatund tuleb kohale ja õpilased proovivad ise.",
+    tag: "Mobiilsed töökojad",
+    createdAt: "2016-03-01T00:00:02.000Z"
+  },
+  {
+    id: "5eed70ad00000003",
+    title: "Huviring ja kursus",
+    detail: "Regulaarne huviring või gümnaasiumi CNC valikkursus annab sügavamad oskused.",
+    tag: "Tehnoloogiatunnid",
+    createdAt: "2016-03-01T00:00:03.000Z"
+  },
+  {
+    id: "5eed70ad00000004",
+    title: "Oma klassiruum",
+    detail: "Rajame makerspace'i või tehnoloogiaklassi: seadmed, sisu ja õpetajate koolitus.",
+    tag: "Õppeklass",
+    createdAt: "2016-03-01T00:00:04.000Z"
+  },
+  {
+    id: "5eed70ad00000005",
+    title: "Tugi ja areng",
+    detail: "Õppematerjalid, digiõpik, makerset'id ja nõustamine hoiavad tegevuse käimas.",
+    tag: "E-pood · koolitused",
+    createdAt: "2016-03-01T00:00:05.000Z"
+  }
+];
+
 const SEED_PHOTOS = [
   {
     id: "5eedf07000000001",
@@ -261,6 +310,9 @@ function api(driver) {
       if ((await this.countOf("photos")) === 0) {
         for (const item of SEED_PHOTOS) await this.insertPhoto(item);
       }
+      if ((await this.countOf("steps")) === 0) {
+        for (const item of SEED_STEPS) await this.insertStep(item);
+      }
       if (!(await driver.setting("stats", ""))) await this.saveStats(DEFAULT_STATS);
     },
     async readContent() {
@@ -272,11 +324,12 @@ function api(driver) {
         testimonials: (await driver.all("SELECT * FROM feedback ORDER BY created_at DESC")).map(mapFeedback),
         news: (await driver.all("SELECT * FROM posts ORDER BY created_at DESC")).map(mapPost),
         gallery: (await driver.all("SELECT * FROM photos ORDER BY created_at DESC")).map(mapPhoto),
-        services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService)
+        services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService),
+        roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep)
       };
     },
     async countOf(table) {
-      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1 };
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
       if (!allowed[table]) throw new Error("Tundmatu tabel.");
       const row = await driver.get("SELECT COUNT(*) AS n FROM " + table);
       return Number(row.n);
@@ -305,8 +358,24 @@ function api(driver) {
         [item.id, item.title, item.summary, item.href, item.image, item.createdAt]
       );
     },
+    async insertStep(item) {
+      await driver.run(
+        "INSERT INTO steps (id, title, detail, tag, created_at) VALUES (?, ?, ?, ?, ?)",
+        [item.id, item.title, item.detail, item.tag, item.createdAt]
+      );
+    },
+    async findStep(id) {
+      const row = await driver.get("SELECT * FROM steps WHERE id = ?", [id]);
+      return row ? mapStep(row) : null;
+    },
+    async updateStep(item) {
+      await driver.run(
+        "UPDATE steps SET title = ?, detail = ?, tag = ? WHERE id = ?",
+        [item.title, item.detail, item.tag, item.id]
+      );
+    },
     async deleteItem(kind, id) {
-      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
+      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps" }[kind];
       if (!table) return false;
       const changes = await driver.run("DELETE FROM " + table + " WHERE id = ?", [id]);
       return changes > 0;

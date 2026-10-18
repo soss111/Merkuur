@@ -166,6 +166,8 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /src="files\/merkuur-logo\.png"/);
     assert.match(admin.text, /GitHubi eelvaade ei võta sisselogimist vastu/);
     assert.match(admin.text, /id="form-stats"/);
+    assert.match(admin.text, /data-tab="roadmap"/);
+    assert.match(admin.text, /id="form-roadmap"/);
     assert.match(admin.text, /\/api\/stats/);
 
     const hidden = await call("/data/admin.config.json");
@@ -186,6 +188,9 @@ test("admin auth and published content", async () => {
     assert.equal(open.json.news[0].url, "/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde-1");
     assert.equal(open.json.gallery.length, 4);
     assert.equal(open.json.gallery[0].caption, "Neeme küla");
+    assert.equal(open.json.roadmap.length, 5);
+    assert.equal(open.json.roadmap[0].title, "Tutvumine");
+    assert.equal(open.json.roadmap[4].title, "Tugi ja areng");
     assert.deepEqual(open.json.stats, {
       since: "2016",
       workshops: "3500+",
@@ -199,6 +204,8 @@ test("admin auth and published content", async () => {
 
     const denied = await call("/api/content/testimonials", { method: "POST", body: { quote: "Tere", name: "Mari" } });
     assert.equal(denied.status, 401);
+    const roadmapDenied = await call("/api/content/roadmap", { method: "POST", body: { title: "Uus etapp", detail: "Kirjeldus" } });
+    assert.equal(roadmapDenied.status, 401);
     const noConsent = await call("/api/feedback", { method: "POST", body: { quote: "Tere", name: "Mari" } });
     assert.equal(noConsent.status, 400);
     const guest = await call("/api/feedback", { method: "POST", body: { quote: "Väga hea töötuba", name: "Kati Kask", role: "õpetaja", org: "Neeme Kool", ok: true } });
@@ -313,8 +320,37 @@ test("admin auth and published content", async () => {
     assert.match(storyPage.text, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
     assert.doesNotMatch(storyPage.text, /<script>alert\(1\)<\/script>/);
 
+    const emptyStep = await call("/api/content/roadmap", { method: "POST", body: { title: " ", detail: "" } });
+    assert.equal(emptyStep.status, 400);
+    const step = await call("/api/content/roadmap", {
+      method: "POST",
+      body: { title: "Järgmine samm", detail: "Uus etapp teekonna lõppu.", tag: "Koostöö" }
+    });
+    assert.equal(step.status, 201);
+    const edited = await call("/api/content/roadmap/" + step.json.id, {
+      method: "PUT",
+      body: { title: "Järgmine samm, muudetud", detail: "Kirjeldus on uus.", tag: "Partnerlus" }
+    });
+    assert.equal(edited.status, 200);
+    assert.equal(edited.json.id, step.json.id);
+    assert.equal(edited.json.createdAt, step.json.createdAt);
+    const missing = await call("/api/content/roadmap/0123456789abcdef", {
+      method: "PUT",
+      body: { title: "Puudub", detail: "Ei ole." }
+    });
+    assert.equal(missing.status, 404);
+
     const stored = await call("/api/content");
     assert.equal(stored.json.services.length, 7);
+    assert.equal(stored.json.roadmap.length, 6);
+    assert.equal(stored.json.roadmap[0].title, "Tutvumine");
+    assert.equal(stored.json.roadmap[5].title, "Järgmine samm, muudetud");
+    assert.equal(stored.json.roadmap[5].detail, "Kirjeldus on uus.");
+    assert.equal(stored.json.roadmap[5].tag, "Partnerlus");
+    const dropped = await call("/api/content/roadmap/" + step.json.id, { method: "DELETE" });
+    assert.equal(dropped.status, 200);
+    const afterStep = await call("/api/content");
+    assert.equal(afterStep.json.roadmap.length, 5);
     assert.ok(stored.json.services.some((item) => item.title === "Koolitund ratastel" && item.href === "/tootoad"));
     assert.equal(stored.json.services[0].title, "Töötoad");
 
