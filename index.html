@@ -4,376 +4,393 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid</title>
-<meta name="description" content="Tehnoloogia ja inseneeria töötoad, tehnoloogiatunnid, õpilahenduste arendus, makerspace'i ja tehnoloogiaklasside rajamine ning mobiilsed töökojad.">
-<meta name="theme-color" content="#171b20">
+<meta name="description" content="Telli mobiilne töötuba, tehnoloogiaklass või makerset. Merkuur viib tehnoloogia ja inseneeria üle Eesti kohale. Otsime frantsiisipartnereid üle maailma.">
+<meta name="theme-color" content="#0f6e5c">
 <meta property="og:title" content="Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.merkuur.eu">
 <meta property="og:image" content="https://static.wixstatic.com/media/a7f28e_213e5225ab8e411cbaf145b82b54c3d9~mv2_d_4032_3024_s_4_2.jpg/v1/fit/w_1600,h_900,al_c/a.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23171b20'/%3E%3Cpath d='M22 74V28l28 30 28-30v46' fill='none' stroke='%23ff6a13' stroke-width='10' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f6e5c'/%3E%3Cpath d='M28 68V34l22 22 22-22v34' fill='none' stroke='white' stroke-width='8' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500..700&family=Source+Sans+3:wght@400..700&display=swap" rel="stylesheet">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Merkuur","url":"https://www.merkuur.eu","email":"info@merkuur.eu","telephone":"+372 51 85 404","sameAs":["https://www.facebook.com/mobileworkshops/"]}</script>
 <style>
 :root{
-  --bg:#ece9e1;
-  --surface:#f7f5ef;
-  --ink:#16191d;
-  --muted:#555c66;
-  --line:#16191d;
-  --accent:#ff6a13;
-  --accent-ink:#16191d;
-  --deep:#171b20;
-  --hazard:#ffc400;
-  --shadow:#16191d;
-  --steel:#171b20;
-  --hz:repeating-linear-gradient(-45deg,var(--hazard) 0 12px,var(--steel) 12px 24px);
-  --dots:radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.5px) 0 0/22px 22px;
+  --bg:#f4f7f4;
+  --surface:#ffffff;
+  --ink:#1a2e32;
+  --muted:#5c6d72;
+  --line:#d5e2dc;
+  --accent:#0f6e5c;
+  --accent-deep:#0b5648;
+  --accent-ink:#ffffff;
+  --highlight:#e5f6f0;
+  --birch:#f8f1e6;
+  --deep:#12343a;
+  --header:#ffffff;
+  --header-ink:#1a2e32;
+  --shadow:0 14px 34px rgba(18,52,58,.08);
+  --radius:22px;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#111418;
-    --surface:#1a1f25;
-    --ink:#eeebe3;
-    --muted:#a2abb7;
-    --line:#c9c3b6;
-    --accent:#ff7a2b;
-    --accent-ink:#16191d;
-    --deep:#0b0e11;
-    --shadow:#000;
-    --steel:#171b20;
+    --bg:#0e1a1d;
+    --surface:#173034;
+    --ink:#e7f3ef;
+    --muted:#a9c2bb;
+    --line:#2a4a46;
+    --accent:#3dbea6;
+    --accent-deep:#8ee8d4;
+    --accent-ink:#04221c;
+    --highlight:#1a3d38;
+    --birch:#1a2c2a;
+    --deep:#081416;
+    --header:#102226;
+    --header-ink:#e7f3ef;
+    --shadow:0 14px 34px rgba(0,0,0,.35);
     color-scheme:dark;
   }
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:96px}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
 body{
   margin:0;
-  font-family:"Barlow",system-ui,sans-serif;
+  font-family:"Source Sans 3",system-ui,sans-serif;
   font-size:1.0625rem;
-  background:var(--bg);
+  background:
+    radial-gradient(900px 420px at -10% -10%, #d9f3ea 0%, transparent 60%),
+    radial-gradient(700px 380px at 110% 0%, #ffe8dc 0%, transparent 55%),
+    var(--bg);
   color:var(--ink);
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
-img{max-width:100%;display:block;background:#d9d3c6}
+img{max-width:100%;display:block;background:#e6eeea}
 a{color:inherit}
-::selection{background:var(--hazard);color:#16191d}
-:focus-visible{outline:3px solid var(--hazard);outline-offset:3px}
+::selection{background:var(--highlight);color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .skip{
   position:absolute;left:12px;top:0;transform:translateY(-140%);
-  z-index:80;background:var(--hazard);color:#16191d;text-decoration:none;
-  padding:10px 14px;font:700 .95rem/1 "Barlow Condensed","Arial Narrow",sans-serif;
-  letter-spacing:.06em;text-transform:uppercase;border:2px solid #16191d;
+  z-index:80;background:var(--accent);color:var(--accent-ink);text-decoration:none;
+  padding:10px 14px;font:650 .95rem/1 "Outfit",system-ui,sans-serif;
+  border-radius:999px;
 }
 .skip:focus{transform:none;top:10px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
-h1,h2,h3,.logo,nav a,.btn,.stats b,.hero-facts b,.foot-brand strong{
-  font-family:"Barlow Condensed","Arial Narrow",sans-serif;
+h1,h2,h3,.logo,nav a,.btn,.stats b,.hero-facts b,.foot-brand p,.foot-label,.tiles b,.gains b,.person b,.quote figcaption b,.priv summary{
+  font-family:"Outfit",system-ui,sans-serif;
 }
-h1,h2,h3{overflow-wrap:break-word;text-wrap:balance;margin:0}
-h1{font-weight:800;text-transform:uppercase;letter-spacing:0;line-height:.92}
-h2{font-weight:800;font-size:clamp(2rem,4.4vw,3.15rem);line-height:.96;text-transform:uppercase;letter-spacing:.01em;margin:0 0 16px}
-h2::after{content:"";display:block;width:92px;height:8px;margin-top:14px;background:linear-gradient(90deg,var(--accent) 0 60px,var(--hazard) 60px)}
-h3{text-transform:uppercase;letter-spacing:.02em;font-weight:700}
-.kicker,.road .tag,.keywords span,.gallery figcaption,.hero-facts span,.hero-asof,.asof,.role,.partners span,.cform label,.quote figcaption span{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-}
+h1,h2,h3{overflow-wrap:break-word;text-wrap:balance;margin:0;font-weight:650;letter-spacing:-.02em}
+h1{line-height:1.05}
+h2{font-size:clamp(1.85rem,3.6vw,2.7rem);line-height:1.12;margin:0 0 14px}
+h2::after{content:"";display:block;width:46px;height:4px;margin-top:12px;border-radius:99px;background:var(--accent)}
+h3{font-weight:650;letter-spacing:-.015em}
 .kicker{
-  display:inline-block;margin:0 0 12px;font-size:.74rem;font-weight:600;
-  background:var(--hazard);color:#16191d;padding:5px 10px;letter-spacing:.14em;
-  text-transform:uppercase;border-radius:2px;
+  display:inline-block;margin:0 0 12px;font-family:"Outfit",system-ui,sans-serif;
+  font-size:.75rem;font-weight:650;background:var(--highlight);color:var(--accent-deep);
+  padding:5px 12px;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;
 }
 
 header{
-  position:sticky;top:0;z-index:40;background:var(--steel);
-  border-bottom:0;
+  position:sticky;top:0;z-index:40;
+  background:var(--header);
+  border-bottom:1px solid var(--line);
 }
-header::after{content:"";display:block;height:10px;background:var(--hz)}
 .bar{display:flex;align-items:center;height:72px;gap:16px}
 .logo{
-  display:flex;align-items:center;gap:10px;text-decoration:none;color:#f4f1ea;
-  font-weight:800;letter-spacing:.12em;font-size:1.7rem;text-transform:uppercase;line-height:1;
+  display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--header-ink);
+  font-weight:700;letter-spacing:-.02em;font-size:1.35rem;line-height:1;
 }
-.logo img{width:44px;height:44px;object-fit:cover;border-radius:2px;border:2px solid var(--hazard);background:#fff}
-nav{display:flex;gap:18px;align-items:center;margin-left:auto}
+.logo img{width:44px;height:44px;object-fit:cover;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(18,52,58,.12)}
+nav{display:flex;gap:14px;align-items:center;margin-left:auto}
 nav a{
-  text-decoration:none;color:#f4f1ea;text-transform:uppercase;letter-spacing:.06em;
-  font-size:.78rem;font-weight:600;position:relative;padding:8px 0;
+  text-decoration:none;color:var(--header-ink);font-size:.92rem;font-weight:550;
+  position:relative;padding:8px 0;
 }
 nav a:not(.btn)::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hazard);
-  transform:scaleX(0);transform-origin:left;transition:transform .16s ease;
+  content:"";position:absolute;left:0;right:0;bottom:2px;height:2px;background:var(--accent);
+  border-radius:99px;transform:scaleX(0);transform-origin:left;transition:transform .16s ease;
 }
-nav a:not(.btn):hover{color:var(--hazard)}
+nav a:not(.btn):hover{color:var(--accent)}
 nav a:not(.btn):hover::after,nav a:not(.btn):focus-visible::after{transform:scaleX(1)}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;min-height:48px;
-  background:var(--accent);color:var(--accent-ink);padding:12px 18px;border-radius:3px;
-  font-weight:700;text-decoration:none;border:2px solid var(--ink);text-transform:uppercase;
-  letter-spacing:.06em;font-size:1.08rem;box-shadow:4px 4px 0 var(--shadow);cursor:pointer;
-  transition:transform .12s ease,box-shadow .12s ease,background .12s ease,color .12s ease;
+  background:var(--accent);color:var(--accent-ink);padding:12px 22px;border-radius:999px;
+  font-weight:650;text-decoration:none;border:0;font-size:1.05rem;cursor:pointer;
+  box-shadow:none;
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
 }
-.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--shadow)}
-.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--shadow)}
-.btn.ghost{background:transparent;color:#fff;border-color:#fff;box-shadow:4px 4px 0 rgba(255,255,255,.28)}
-.btn.ghost:hover{background:#fff;color:#16191d;box-shadow:3px 3px 0 var(--hazard)}
-.btn.ghost-dark{background:transparent;color:var(--ink);border-color:var(--ink)}
-header nav .btn{color:#16191d;padding:10px 14px;min-height:44px;box-shadow:3px 3px 0 var(--hazard);border-color:var(--accent)}
-header nav .btn:hover{box-shadow:1px 1px 0 var(--hazard);color:#16191d}
+.btn:hover{background:var(--accent-deep);transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,110,92,.22)}
+.btn:active{transform:none;box-shadow:none}
+.btn.ghost,.btn.ghost-dark{
+  background:var(--surface);color:var(--ink);border:1.5px solid var(--line);box-shadow:none;
+}
+.btn.ghost:hover,.btn.ghost-dark:hover{background:var(--highlight);color:var(--ink);border-color:var(--accent);box-shadow:none}
+header nav .btn{color:var(--accent-ink);padding:10px 16px;min-height:44px;border:0}
+header nav .btn:hover{color:var(--accent-ink)}
 .burger{
-  display:none;margin-left:auto;background:transparent;border:2px solid #f1efe9;border-radius:3px;
+  display:none;margin-left:auto;background:transparent;border:1.5px solid var(--line);border-radius:12px;
   width:46px;height:46px;padding:0;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;
 }
-.burger span{display:block;width:22px;height:3px;background:#f1efe9;transition:transform .2s ease,opacity .2s ease}
-.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.burger span{display:block;width:20px;height:2px;background:var(--header-ink);border-radius:99px;transition:transform .2s ease,opacity .2s ease}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
-.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-.hero{
-  display:flex;flex-direction:column;background:var(--steel);color:#fff;
-}
-.hero-photo{position:relative;min-height:300px;height:62vw;max-height:460px;overflow:hidden;background:#2a241c}
+.hero{color:var(--ink);padding:22px 20px 8px}
+.hero-photo{position:relative;min-height:240px;height:56vw;max-height:380px;overflow:hidden;border-radius:28px;background:#d5e4de;box-shadow:var(--shadow)}
 .hero-photo img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center 42%}
-.hero-photo::after{
-  content:"";position:absolute;inset:12px;border:2px solid rgba(255,255,255,.55);pointer-events:none;
-}
-.hero-panel{
-  position:relative;background:var(--dots),var(--steel);padding:32px 22px 28px 34px;
-}
-.hero-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:12px;background:var(--hz)}
-.hero .kicker{max-width:20em;background:transparent;color:var(--hazard);border:2px solid var(--hazard);box-shadow:none}
-.hero h1{font-size:clamp(2.5rem,11vw,3.5rem);max-width:14ch;color:#fff}
-.hero h1 span{display:block;color:var(--hazard);margin-top:.08em}
-.hero-panel p{max-width:42ch;font-size:1.08rem;color:rgba(255,255,255,.9);margin:16px 0 0}
+.hero-panel{position:relative;padding:26px 2px 8px}
+.hero .kicker{background:transparent;color:var(--accent);padding:0;letter-spacing:.12em}
+.hero h1{font-size:clamp(2.35rem,8vw,3.15rem);max-width:12em;color:var(--ink)}
+.hero h1 span{display:block;color:var(--accent);margin-top:.12em}
+.hero-panel p{max-width:38em;font-size:1.12rem;color:var(--muted);margin:16px 0 0}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
-.hero-dock{background:#101317;color:#fff}
-.hero-dock::before{content:"";display:block;height:8px;background:var(--hz)}
-.hero-facts{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0;padding:8px 0 0}
-.hero-facts li{padding:14px 12px 12px 0}
-.hero-facts b{
-  display:block;font-size:clamp(2rem,6vw,2.8rem);font-weight:800;line-height:.9;color:var(--hazard);letter-spacing:.01em;
-}
-.hero-facts span{
-  display:block;margin-top:6px;font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.78);
-}
-.hero-asof{
-  margin:0;padding:0 0 16px;font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.72);
-}
+.hero-more{margin:16px 0 0;font-size:1.02rem}
+.hero-more a{color:var(--accent);font-weight:700;text-underline-offset:3px}
+.hero-dock{color:var(--ink);padding-top:8px}
+.hero-facts{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0;padding:12px 0 8px}
+.hero-facts li{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 8px 20px rgba(18,52,58,.04)}
+.hero-facts b{display:block;font-size:clamp(1.7rem,5vw,2.2rem);font-weight:700;line-height:1;color:var(--accent);letter-spacing:-.03em}
+.hero-facts span{display:block;margin-top:4px;font-size:.92rem;font-weight:600;color:var(--muted)}
+.hero-asof{margin:4px 0 12px;font-size:.82rem;color:var(--muted)}
 
-.hz{height:14px;background:var(--hz)}
-section{padding:76px 0}
-.lead{color:var(--muted);max-width:62ch;font-size:1.08rem;margin:0}
+.hz{display:none}
+section{padding:72px 0}
+.lead{color:var(--muted);max-width:62ch;font-size:1.12rem;margin:0}
 .lead+.lead{margin-top:14px}
-.keywords{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
 .keywords span{
-  border:2px solid var(--ink);background:var(--surface);color:var(--ink);
-  padding:7px 12px;border-radius:2px;font-weight:600;font-size:.74rem;letter-spacing:.08em;
-  box-shadow:3px 3px 0 var(--shadow);
+  background:var(--highlight);color:var(--accent-deep);border-radius:999px;
+  padding:7px 12px;font-family:"Outfit",system-ui,sans-serif;font-weight:650;font-size:.75rem;letter-spacing:.06em;
 }
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:26px;margin-top:36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px;margin-top:32px}
 .card{
-  background:var(--surface);border:2px solid var(--ink);border-radius:4px;overflow:hidden;
-  display:flex;flex-direction:column;position:relative;box-shadow:6px 6px 0 var(--shadow);
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  display:flex;flex-direction:column;position:relative;box-shadow:var(--shadow);
   transition:transform .16s ease,box-shadow .16s ease;
 }
-.card:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--accent)}
-.card::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--accent);z-index:1}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(18,52,58,.12)}
 .card img{aspect-ratio:3/2;object-fit:cover;width:100%;transition:transform .45s ease}
-.card:hover img{transform:scale(1.045)}
-.card div{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;gap:0}
-.card h3{margin:0 0 8px;font-size:1.45rem}
+.card:hover img{transform:scale(1.03)}
+.card div{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1}
+.card h3{margin:0 0 8px;font-size:1.35rem}
 .card p{margin:0 0 16px;color:var(--muted);font-size:1rem;flex:1}
+.card .actions{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:auto}
 .card a{
-  align-self:flex-start;margin-top:auto;font-weight:700;color:var(--ink);text-decoration:none;
-  text-transform:uppercase;letter-spacing:.06em;font-size:1.08rem;border-bottom:3px solid var(--accent);padding-bottom:1px;
+  align-self:flex-start;font-weight:700;color:var(--accent);text-decoration:none;font-size:1rem;
 }
-.card:hover a{border-bottom-color:var(--hazard)}
+.card a.quiet{color:var(--muted);font-weight:600;font-size:.98rem}
+.card a.quiet:hover{color:var(--ink)}
+.card a:not(.quiet):hover{text-decoration:underline;text-underline-offset:3px}
 #teenused .grid{counter-reset:svc}
 #teenused .card{counter-increment:svc}
 #teenused .card::after{
   content:counter(svc,decimal-leading-zero);
-  position:absolute;top:16px;left:12px;z-index:2;
-  font:700 .85rem/1 "IBM Plex Mono",ui-monospace,monospace;
-  background:var(--hazard);color:#16191d;border:2px solid #16191d;
-  padding:6px 8px;box-shadow:3px 3px 0 #16191d;
+  position:absolute;top:14px;left:14px;z-index:2;
+  font:650 .8rem/1 "Outfit",system-ui,sans-serif;
+  background:#fff;color:var(--accent);border-radius:999px;
+  padding:6px 9px;box-shadow:0 6px 16px rgba(18,52,58,.15);
 }
 
-#varustus,#meist,#projektid,#meeskond{background:var(--surface)}
-.split{display:grid;grid-template-columns:1fr;gap:26px;align-items:center}
+#varustus,#vaartus,#projektid,#kontakt{background:color-mix(in srgb, var(--surface) 72%, transparent)}
+.split{display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
 .split>*{min-width:0}
-.split img{
-  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:2px solid var(--ink);
-  box-shadow:10px 10px 0 var(--shadow);
-}
+.split img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:24px;box-shadow:var(--shadow)}
 .check{list-style:none;padding:0;margin:18px 0 4px;display:grid;gap:10px}
 .check li{padding-left:34px;position:relative}
-.check li::before{content:"";position:absolute;left:0;top:.28em;width:18px;height:18px;background:var(--accent);border:2px solid var(--ink);border-radius:2px}
-.check li::after{content:"";position:absolute;left:6px;top:.42em;width:5px;height:9px;border:solid var(--ink);border-width:0 3px 3px 0;transform:rotate(45deg)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;margin-top:28px}
+.check li::before{content:"";position:absolute;left:0;top:.25em;width:20px;height:20px;background:var(--accent);border-radius:50%}
+.check li::after{content:"";position:absolute;left:7px;top:.48em;width:4px;height:8px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin-top:28px}
 .tiles a{
-  display:block;text-decoration:none;border:2px solid var(--ink);border-radius:4px;padding:18px 18px 16px;
-  min-height:44px;transition:transform .15s ease,box-shadow .15s ease,background .15s ease,color .15s ease;
+  display:block;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:18px 18px 16px;min-height:44px;box-shadow:0 8px 22px rgba(18,52,58,.04);
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
 }
-.tiles b{display:block;font:800 1.4rem/1.05 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px}
-.tiles span{display:block;font-size:.98rem;line-height:1.45}
-.tiles.light a{background:var(--surface);color:var(--ink);box-shadow:5px 5px 0 var(--shadow)}
-.tiles.light b{color:var(--ink)}
-.tiles.light a:hover{background:var(--hazard);color:#16191d;transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--shadow)}
-.tiles.light a:hover b,.tiles.light a:hover span{color:#16191d}
-#varustus .tiles{margin-top:36px}
+.tiles b{display:block;font-weight:650;font-size:1.2rem;letter-spacing:-.02em;margin-bottom:6px}
+.tiles span{display:block;font-size:.98rem;line-height:1.45;color:var(--muted)}
+.tiles a:hover{background:var(--highlight);transform:translateY(-3px);box-shadow:0 14px 28px rgba(18,52,58,.08)}
+.tiles a:hover b,.tiles a:hover span{color:var(--ink)}
+#varustus .tiles{margin-top:32px}
 
-#pood{background:var(--dots),var(--deep);color:#fff}
-#pood h2,#pood .lead{color:#fff}
-#pood .lead{color:rgba(255,255,255,.9)}
-#pood .note{color:rgba(255,255,255,.78);max-width:52ch;margin:12px 0 0}
-#pood .split img{border-color:#fff;box-shadow:12px 12px 0 var(--hazard)}
+#pood{background:var(--birch);color:var(--ink)}
+#pood h2,#pood .lead{color:inherit}
+#pood .lead{color:var(--muted)}
+#pood .note{color:var(--muted);max-width:52ch;margin:12px 0 0}
+#pood .split img{box-shadow:var(--shadow)}
+.gains{display:grid;grid-template-columns:1fr;gap:14px;margin-top:28px}
+.gains article{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;box-shadow:0 8px 22px rgba(18,52,58,.04)}
+.gains b{display:block;font-size:1.2rem;font-weight:650;letter-spacing:-.02em;margin-bottom:8px}
+.gains p{margin:0;color:var(--muted)}
+#vaartus .cta{margin-top:26px}
+#frantsiis{background:var(--deep);color:#f4fbf8}
+#frantsiis h2{color:#fff}
+#frantsiis h2::after{background:#7ddec8}
+#frantsiis .kicker{background:rgba(255,255,255,.12);color:#d8fff4}
+#frantsiis .lead{color:rgba(244,251,248,.86);max-width:68ch}
+#frantsiis .check{margin-top:22px}
+#frantsiis .btn:not(.ghost){background:#fff;color:#12343a}
+#frantsiis .btn:not(.ghost):hover{background:#e7f6f1;color:#12343a}
+#frantsiis .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+#frantsiis .btn.ghost:hover{background:#fff;color:var(--deep);border-color:#fff}
+#frantsiis .en{
+  margin-top:32px;max-width:68ch;background:var(--surface);color:var(--ink);
+  border-radius:22px;padding:22px 22px 18px;
+}
+#frantsiis .en .kicker{background:var(--highlight);color:var(--accent-deep)}
+#frantsiis .en h2,#frantsiis .en h3{color:var(--ink)}
+#frantsiis .en h3{font-size:clamp(1.45rem,3vw,1.85rem);margin:0 0 10px}
+#frantsiis .en h3::after{content:"";display:block;width:46px;height:4px;margin-top:10px;border-radius:99px;background:var(--accent)}
+#frantsiis .en p{margin:0 0 12px}
+#frantsiis .en p:last-child{margin:0}
+#frantsiis .en a{color:var(--accent);font-weight:700;text-underline-offset:3px}
+.dock-cta{display:none}
 
-.stats{background:var(--dots),var(--deep);color:#fff}
-.stats section{padding:54px 0 42px}
-.stats .wrap{display:grid;grid-template-columns:1fr;gap:22px}
-.stats .wrap>div{text-align:left;border-left:5px solid var(--hazard);padding:4px 8px 4px 14px}
-.stats b{display:block;font-size:clamp(2.8rem,8vw,4rem);font-weight:800;line-height:.9;color:var(--hazard);text-transform:uppercase}
-.stats span{display:block;margin-top:6px;color:rgba(255,255,255,.88)}
-.stats .asof{text-align:center;margin:26px 20px 0;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.stats{background:transparent;color:var(--ink)}
+.stats section{padding:28px 0 48px}
+.stats .wrap{display:grid;grid-template-columns:1fr;gap:12px}
+.stats .wrap>div{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px}
+.stats b{display:block;font-size:clamp(2.2rem,6vw,3rem);font-weight:700;line-height:1;color:var(--accent);letter-spacing:-.03em}
+.stats span{display:block;margin-top:6px;color:var(--muted)}
+.stats .asof{text-align:center;margin:18px 20px 0;font-size:.82rem;color:var(--muted)}
 .slogan{
-  display:inline-block;margin:22px 0 8px;padding:12px 16px 10px;max-width:16em;
-  background:var(--hazard);color:#16191d;border:2px solid #16191d;box-shadow:6px 6px 0 #16191d;
-  font:800 clamp(1.55rem,3vw,2.05rem)/1.05 "Barlow Condensed","Arial Narrow",sans-serif;
-  text-transform:uppercase;
+  display:block;margin:22px 0 8px;padding:0;max-width:16em;
+  background:transparent;color:var(--accent);border:0;box-shadow:none;
+  font:650 clamp(1.45rem,3vw,1.85rem)/1.2 "Outfit",system-ui,sans-serif;
+  letter-spacing:-.02em;
 }
 .partners{margin:28px 0 0;color:var(--muted);font-size:.98rem;max-width:78ch}
 .partners span{
-  display:inline-block;background:var(--hazard);color:#16191d;font-weight:600;font-size:.72rem;
-  letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin:0 8px 6px 0;
+  display:inline-block;background:var(--highlight);color:var(--accent-deep);font-family:"Outfit",system-ui,sans-serif;
+  font-weight:650;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin:0 8px 6px 0;
 }
 
-.road{list-style:none;margin:40px 0 0;padding:0;position:relative;display:grid;gap:16px}
-.road::before{
-  content:"";position:absolute;left:21px;top:18px;bottom:18px;width:3px;
-  background:repeating-linear-gradient(180deg,var(--ink) 0 8px,transparent 8px 14px);
-}
+.road{list-style:none;margin:36px 0 0;padding:0;position:relative;display:grid;gap:14px}
+.road::before{content:"";position:absolute;left:19px;top:18px;bottom:18px;width:2px;background:var(--line);border-radius:99px}
 .road li{
-  position:relative;margin-left:64px;background:var(--surface);border:2px solid var(--ink);border-radius:4px;
-  box-shadow:5px 5px 0 var(--shadow);padding:16px 16px 16px;display:flex;flex-direction:column;min-width:0;
+  position:relative;margin-left:58px;background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  box-shadow:0 8px 22px rgba(18,52,58,.04);padding:16px;display:flex;flex-direction:column;min-width:0;
 }
 .road .n{
-  position:absolute;left:-64px;top:14px;width:46px;height:46px;border-radius:4px;background:var(--accent);color:#16191d;
-  border:2px solid #16191d;font:700 1.15rem/1 "IBM Plex Mono",ui-monospace,monospace;
-  display:grid;place-items:center;box-shadow:3px 3px 0 #16191d;z-index:1;
+  position:absolute;left:-58px;top:16px;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;
+  font:650 1rem/1 "Outfit",system-ui,sans-serif;display:grid;place-items:center;z-index:1;color:var(--accent-ink);
 }
-.road h3{margin:0 0 6px;font-size:1.35rem}
+.road h3{margin:0 0 6px;font-size:1.15rem}
 .road p{margin:0;color:var(--muted)}
 .road .tag{
-  align-self:flex-start;margin-top:12px;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  color:#16191d;background:var(--hazard);padding:3px 8px;border-radius:2px;
+  align-self:flex-start;margin-top:12px;font-family:"Outfit",system-ui,sans-serif;font-size:.72rem;font-weight:650;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--accent-deep);background:var(--highlight);padding:4px 8px;border-radius:999px;
 }
 
-.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:20px;margin-top:32px}
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:28px}
 .quote{
-  margin:0;position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:4px;
-  box-shadow:6px 6px 0 var(--shadow);padding:48px 20px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;
+  margin:0;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;
+  box-shadow:var(--shadow);padding:28px 20px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;
 }
-.quote::before{
-  content:"\201C";position:absolute;top:0;left:14px;font:800 4.2rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--accent);
-}
-.quote blockquote{margin:0;font-size:1.08rem;line-height:1.5}
-.quote figcaption{display:flex;flex-direction:column;gap:2px;border-top:2px dashed var(--ink);padding-top:12px}
-.quote figcaption b{font:800 1.15rem "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.03em}
-.quote figcaption span{font-size:.78rem;font-weight:500;color:var(--muted)}
-.todo{background:var(--hazard);color:#16191d;padding:0 .25em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.quote::before{content:"\201C";position:absolute;top:8px;left:16px;font:700 2.4rem/1 "Outfit",system-ui,sans-serif;color:var(--accent)}
+.quote blockquote{margin:18px 0 0;font-size:1.05rem;line-height:1.5}
+.quote figcaption{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:12px}
+.quote figcaption b{font-weight:650;font-size:1rem}
+.quote figcaption span{font-size:.85rem;color:var(--muted)}
+.todo{background:#ffe08a;color:#3d2e00;padding:0 .28em;border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 
-.gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
-.gallery figure{margin:0;position:relative;overflow:hidden;border:2px solid var(--ink);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);background:#d9d3c6}
-.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border:0;border-radius:0;transition:transform .45s ease}
-.gallery figure:hover img{transform:scale(1.05)}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}
+.gallery figure{margin:0;position:relative;overflow:hidden;border-radius:18px;background:#d5e4de;box-shadow:var(--shadow)}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:0;transition:transform .45s ease}
+.gallery figure:hover img{transform:scale(1.04)}
 .gallery figcaption{
-  position:absolute;left:0;right:0;bottom:0;margin:0;padding:32px 10px 8px;
-  font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;
-  background:linear-gradient(transparent,rgba(0,0,0,.82));
+  position:absolute;left:0;right:0;bottom:0;margin:0;padding:36px 12px 10px;
+  font-family:"Outfit",system-ui,sans-serif;font-size:.85rem;font-weight:600;color:#fff;
+  background:linear-gradient(transparent,rgba(10,30,32,.72));
 }
 
-.proj{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.proj{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .proj a{
-  border:2px solid var(--ink);background:var(--bg);color:var(--ink);padding:10px 14px;border-radius:3px;
-  text-decoration:none;font:500 .8rem/1.2 "IBM Plex Mono",ui-monospace,monospace;min-height:44px;
-  display:inline-flex;align-items:center;box-shadow:3px 3px 0 var(--shadow);
-  transition:transform .12s ease,background .12s ease,box-shadow .12s ease;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 14px;border-radius:999px;
+  text-decoration:none;font:600 .95rem/1.2 "Outfit",system-ui,sans-serif;min-height:44px;
+  display:inline-flex;align-items:center;
+  transition:background .12s ease,border-color .12s ease;
 }
-.proj a:hover{background:var(--hazard);color:#16191d;transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--shadow)}
-.awards{display:flex;flex-wrap:wrap;gap:18px;align-items:stretch;margin-top:28px}
+.proj a:hover{background:var(--highlight);border-color:var(--accent);color:var(--ink)}
+.awards{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch;margin-top:24px}
 .awards a{
-  background:#fff;border:2px solid var(--ink);border-radius:4px;padding:12px 16px;display:grid;place-items:center;
-  box-shadow:5px 5px 0 var(--shadow);transition:transform .15s ease,box-shadow .15s ease;
+  background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 16px;display:grid;place-items:center;
+  box-shadow:var(--shadow);transition:transform .15s ease;
 }
-.awards a:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--hazard)}
-.awards img{height:112px;width:auto;max-width:min(240px,70vw);object-fit:contain;background:transparent}
-.news .card h3{font-size:1.28rem}
+.awards a:hover{transform:translateY(-3px)}
+.awards img{height:96px;width:auto;max-width:min(220px,70vw);object-fit:contain;background:transparent}
+.honors{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px;margin-top:28px}
+.honors article{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0}
+.honors a{display:flex;flex-direction:column;height:100%;color:inherit;text-decoration:none}
+.honors img{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--bg)}
+.honors img.letter{object-fit:contain;padding:12px}
+.honors h3{font-size:1.08rem;line-height:1.3;margin:0;padding:14px 16px 6px}
+.honors .more{display:block;margin-top:auto;padding:8px 16px 16px;color:var(--accent);font-weight:650}
+.honors article:not(:has(a)) h3{padding-bottom:16px}
+.honors a:hover h3{color:var(--accent)}
+.honors a:hover img{transform:scale(1.03);transition:transform .35s ease}
+.news .card h3{font-size:1.2rem}
 
-#meeskond .split img{aspect-ratio:3/4;object-position:center 50%;box-shadow:14px 14px 0 var(--hazard)}
-.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin-top:28px}
-.person{
-  border:2px solid var(--ink);border-radius:4px;padding:18px 18px 12px;background:var(--surface);
-  box-shadow:5px 5px 0 var(--shadow);position:relative;
-}
-.person::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--accent)}
-.person b{display:block;font-size:1.5rem;text-transform:uppercase;margin-top:4px}
-.role{display:block;font-size:.75rem;font-weight:500;color:var(--muted);margin:2px 0 8px;text-transform:uppercase;letter-spacing:.05em}
-.person a{display:flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none;font-weight:600}
-.person a:hover{color:var(--accent)}
+#meeskond .split img{aspect-ratio:3/4;object-position:center 50%;border-radius:24px}
+.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;margin-top:28px}
+.person{border:1px solid var(--line);border-radius:18px;padding:18px 18px 12px;background:var(--surface);box-shadow:0 8px 22px rgba(18,52,58,.04)}
+.person b{display:block;font-size:1.25rem;font-weight:650;margin-top:4px}
+.role{display:block;font-size:.92rem;color:var(--muted);margin:2px 0 8px}
+.person a{display:flex;align-items:center;min-height:44px;color:var(--accent);text-decoration:none;font-weight:650}
+.person a:hover{text-decoration:underline;text-underline-offset:3px}
 .sheet{
-  margin-top:36px;background:var(--surface);border:2px solid var(--ink);border-radius:4px;
-  box-shadow:8px 8px 0 var(--shadow);padding:26px 20px 22px;max-width:820px;
+  margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:24px;
+  box-shadow:var(--shadow);padding:26px 22px 22px;max-width:820px;
 }
-.order{border-left:6px solid var(--accent);padding:2px 0 2px 14px;max-width:64ch}
-.order h3{margin:0 0 6px;font-size:1.45rem}
+.order{border-left:3px solid var(--accent);padding:2px 0 2px 14px;max-width:64ch}
+.order h3{margin:0 0 6px;font-size:1.3rem}
 .order p{margin:0;color:var(--muted)}
 .cform{margin-top:20px;display:grid;gap:14px}
 .cform .row{display:grid;grid-template-columns:1fr;gap:14px}
 .cform .row>*{min-width:0}
-.cform label{display:grid;gap:6px;font-size:.74rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.cform label{display:grid;gap:6px;font-family:"Outfit",system-ui,sans-serif;font-size:.78rem;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .cform input,.cform select,.cform textarea{
-  font:500 1rem "Barlow",system-ui,sans-serif;text-transform:none;letter-spacing:0;
-  padding:12px;border:2px solid var(--ink);border-radius:3px;background:var(--bg);color:var(--ink);width:100%;min-height:48px;
+  font:500 1rem "Source Sans 3",system-ui,sans-serif;text-transform:none;letter-spacing:0;
+  padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);width:100%;min-height:48px;
 }
 .cform textarea{min-height:120px;resize:vertical}
 .cform ::placeholder{color:var(--muted);opacity:1}
-.cform input:focus,.cform select:focus,.cform textarea:focus{outline:3px solid var(--hazard);outline-offset:1px}
-.cform .chk{display:flex;gap:10px;align-items:flex-start;font:500 .95rem/1.45 "Barlow",system-ui,sans-serif;text-transform:none;letter-spacing:0}
+.cform input:focus,.cform select:focus,.cform textarea:focus{outline:3px solid var(--accent);outline-offset:1px}
+.cform .chk{display:flex;gap:10px;align-items:flex-start;font:500 .98rem/1.45 "Source Sans 3",system-ui,sans-serif;text-transform:none;letter-spacing:0;color:var(--ink)}
 .cform .chk input{width:22px;height:22px;min-height:22px;margin-top:2px;accent-color:var(--accent)}
 .cform .chk a{text-decoration:underline;text-underline-offset:2px}
 .cform .btn{justify-self:start}
-.cform .note{margin:0;font-weight:600;min-height:1.4em}
-.priv{margin-top:8px;border:2px solid var(--ink);border-radius:4px;padding:12px 14px}
-.priv summary{cursor:pointer;font:800 1.25rem "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;min-height:44px;display:flex;align-items:center}
+.cform .hint{margin:0;font-size:.98rem;color:var(--muted)}
+.cform .hint a{font-weight:700;color:var(--accent);text-underline-offset:2px}
+.cform .note{margin:0;font-weight:650;min-height:1.4em}
+.priv{margin-top:8px;border:1px solid var(--line);border-radius:16px;padding:12px 16px;background:var(--bg)}
+.priv summary{cursor:pointer;font-weight:650;font-size:1.05rem;min-height:44px;display:flex;align-items:center}
 .priv p{color:var(--muted);margin:.7em 0 0}
-.priv a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
-.contact{background:var(--bg)}
+.priv a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
 
-footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
+footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 .foot{display:grid;grid-template-columns:1fr;gap:22px;padding-top:36px;padding-bottom:8px}
-.foot-brand img{width:72px;height:72px;object-fit:cover;border:2px solid var(--hazard);background:#fff;border-radius:2px}
-.foot-brand p{margin:12px 0 0;max-width:28ch;color:#f4f1ea;font:800 1.35rem/1.05 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase}
-.foot-label{margin:0 0 8px;color:#f4f1ea;font:800 1.15rem/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.12em;text-transform:uppercase}
-.foot-label::after{content:"";display:block;width:42px;height:5px;margin-top:8px;background:linear-gradient(90deg,var(--accent) 0 26px,var(--hazard) 26px)}
-.foot a{display:flex;align-items:center;min-height:44px;color:var(--hazard);text-decoration:none;font-weight:600}
+.foot-brand img{width:64px;height:64px;object-fit:cover;border-radius:18px;background:#fff}
+.foot-brand p{margin:12px 0 0;max-width:24ch;color:#fff;font-weight:650;font-size:1.25rem;line-height:1.25;letter-spacing:-.02em}
+.foot-label{margin:0 0 8px;color:#fff;font-weight:650;font-size:1rem}
+.foot a{display:flex;align-items:center;min-height:44px;color:#b7ebe0;text-decoration:none;font-weight:600}
 .foot a:hover{color:#fff}
 .legal{
   display:flex;flex-direction:column;gap:8px;margin-top:8px;padding-top:16px;padding-bottom:18px;
-  border-top:1px solid rgba(255,255,255,.16);color:#aeb6c2;font-size:.92rem;
+  border-top:1px solid rgba(255,255,255,.14);color:#9eb8b2;font-size:.92rem;
 }
-.legal a{color:var(--hazard)}
+.legal a{color:#b7ebe0}
 
 @media(min-width:640px){
   .cform .row{grid-template-columns:1fr 1fr}
   .stats .wrap{grid-template-columns:1fr 1fr}
   .hero-facts{grid-template-columns:repeat(4,1fr)}
-  .hero-facts li{padding:18px 16px 14px 0}
-  .foot{grid-template-columns:1.3fr 1fr 1fr;gap:28px}
+  .foot{grid-template-columns:1.4fr 1fr 1fr;gap:28px}
 }
 @media(min-width:800px){
+  .gains{grid-template-columns:repeat(3,1fr)}
   .gallery{grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:250px 250px;grid-auto-rows:250px}
   .gallery figure:nth-child(1){grid-column:1;grid-row:1/span 2}
   .gallery figure:nth-child(2){grid-column:2/span 2;grid-row:1}
@@ -385,50 +402,75 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
 @media(min-width:900px){
   .hero{
     display:grid;
-    grid-template-columns:minmax(0,1.4fr) minmax(320px,480px);
-    grid-template-rows:minmax(520px,1fr) auto;
-    min-height:calc(100svh - 82px);
+    grid-template-columns:minmax(0,1.15fr) minmax(300px,.9fr);
+    grid-template-rows:auto auto;
+    column-gap:48px;
+    row-gap:8px;
+    align-items:center;
+    padding:40px max(20px, calc((100% - 1160px) / 2)) 12px;
+    min-height:0;
   }
-  .hero-photo{grid-column:1;grid-row:1;height:auto;max-height:none;min-height:0}
-  .hero-panel{grid-column:2;grid-row:1;display:flex;flex-direction:column;justify-content:center;padding:36px 36px 36px 48px}
-  .hero h1{font-size:clamp(2.85rem,3.5vw,4.15rem)}
+  .hero-photo{grid-column:1;grid-row:1;height:auto;max-height:none;min-height:520px}
+  .hero-panel{grid-column:2;grid-row:1;display:flex;flex-direction:column;justify-content:center;padding:8px 0}
+  .hero h1{font-size:clamp(2.5rem,3.2vw,3.35rem)}
   .hero-dock{grid-column:1/-1;grid-row:2}
   .split{grid-template-columns:1.05fr .95fr;gap:48px}
-  .road{grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px}
+  .road{grid-template-columns:repeat(5,1fr);gap:14px;margin-top:36px}
   .road::before{display:none}
-  .road li{margin-left:0;padding:22px 14px 16px}
-  .road .n{position:static;width:42px;height:42px;margin-bottom:12px;box-shadow:3px 3px 0 #16191d}
+  .road li{margin-left:0;padding:18px 16px 16px}
+  .road .n{position:static;width:36px;height:36px;margin-bottom:12px}
   .road .tag{margin-top:auto}
-  section{padding:92px 0}
+  section{padding:88px 0}
 }
 @media(min-width:1000px){
-  .stats .wrap{grid-template-columns:repeat(4,1fr);gap:18px}
+  .stats .wrap{grid-template-columns:repeat(4,1fr);gap:14px}
 }
 @media(max-width:1100px){
   .burger{display:flex}
   header nav{
-    display:none;position:fixed;top:82px;left:0;right:0;bottom:0;margin:0;z-index:50;
-    background:#171b20;flex-direction:column;align-items:stretch;gap:0;
-    padding:6px 20px 28px;border-bottom:0;
-    overflow:auto;
+    display:none;position:fixed;top:73px;left:0;right:0;bottom:0;margin:0;z-index:50;
+    background:var(--bg);flex-direction:column;align-items:stretch;gap:0;
+    padding:8px 20px 28px;overflow:auto;
   }
   header nav.open{display:flex}
-  header nav a:not(.btn){display:flex;align-items:center;min-height:48px;padding:12px 0;border-bottom:1px solid #2c343d;font-size:1.15rem}
+  header nav a:not(.btn){display:flex;align-items:center;min-height:48px;padding:12px 0;border-bottom:1px solid var(--line);font-size:1.15rem;color:var(--ink)}
   header nav a:not(.btn)::after{display:none}
-  header nav .btn{margin-top:14px;text-align:center}
+  header nav .btn{margin-top:16px;text-align:center}
   body.nav-open{overflow:hidden}
+}
+@media(max-width:1100px){
+  .dock-cta{
+    display:flex;position:fixed;z-index:35;left:16px;right:16px;bottom:14px;
+    min-height:52px;align-items:center;justify-content:center;
+    background:var(--accent);color:var(--accent-ink);text-decoration:none;text-align:center;
+    border-radius:999px;box-shadow:0 10px 24px rgba(15,110,92,.28);
+    font:650 1.05rem/1 "Outfit",system-ui,sans-serif;padding:14px 16px;
+  }
+  .dock-cta[hidden]{display:none}
+  body.has-dock{padding-bottom:84px}
 }
 @media(max-width:560px){
   .cta .btn{flex:1 1 100%}
   .wrap{padding:0 16px}
-  section{padding:58px 0}
-  .sheet{padding:20px 14px 16px}
+  .hero{padding-left:16px;padding-right:16px}
+  section{padding:56px 0}
+  .sheet{padding:20px 16px 16px}
 }
 @media(max-height:760px) and (min-width:900px){
-  .hero{min-height:0}
-  .hero-panel{padding:24px 28px 24px 40px}
-  .hero h1{font-size:3rem}
+  .hero-photo{min-height:420px}
+  .hero h1{font-size:2.6rem}
   .hero-panel p{font-size:1rem}
+}
+@media (prefers-color-scheme:dark){
+  .btn.ghost,.btn.ghost-dark,#teenused .card::after{background:var(--surface)}
+  .hero{
+    background:transparent;
+  }
+  body{
+    background:
+      radial-gradient(800px 360px at 0% 0%, rgba(61,190,166,.16) 0%, transparent 60%),
+      var(--bg);
+  }
 }
 @keyframes rise{
   from{opacity:0;transform:translateY(8px)}
@@ -450,7 +492,7 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
 <div class="wrap bar">
  <a class="logo" href="#top"><img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_120,h_120,al_c,q_85/a.jpg" width="44" height="44">Merkuur</a>
  <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
- <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="https://www.merkuur.eu/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
+ <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="https://www.merkuur.eu/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
 </div>
 </header>
 
@@ -462,8 +504,9 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  <div class="hero-panel">
   <div class="kicker">Mobiilsed töötoad · Tehnoloogia · Inseneeria</div>
   <h1>Tule töötuppa!<span>Või töötuba tuleb sinu juurde.</span></h1>
-  <p>Viime tehnoloogia ja inseneeria praktilise kogemuse koolidesse, noortekeskustesse ja ettevõtetesse üle Eesti – 3D-printerid, CNC-seadmed ja päris tööriistad kohapeal.</p>
-  <div class="cta"><a class="btn" href="#teenused">Vaata teenuseid</a><a class="btn ghost" href="#pood">Makerset'id e-poes</a></div>
+  <p>Töötuba tuleb kooli, noortekeskusesse või ettevõttesse üle Eesti. Osalejad töötavad päris tööriistade, CNC-seadmete ja 3D-printeritega. Kirjuta meile – vastame pakkumisega.</p>
+  <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a><a class="btn ghost" href="#teenused">Vaata teenuseid</a></div>
+  <p class="hero-more"><a href="https://mw.yrgel.com" target="_blank" rel="noopener">või telli makerset e-poest →</a></p>
  </div>
  <div class="hero-dock">
   <div class="wrap">
@@ -484,12 +527,12 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  <p class="lead">Töötame välja ja viime ellu mobiilseid töökodasid ja töötubasid, korraldame huvi-, koolitus- ja nõustamistegevusi ning tõstame tehnoloogia-, innovatsiooni- ja ettevõtlusteadlikkust.</p>
  <div class="keywords"><span>LOOVUS</span><span>INNOVAATILISUS</span><span>KARJÄÄRITEADLIKKUS</span><span>ETTEVÕTLIKKUS</span></div>
  <div class="grid">
-  <article class="card"><img loading="lazy" alt="Metalli töötuba Neeme Koolis" src="https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg"><div><h3>Töötoad</h3><p>Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele.</p><a href="https://www.merkuur.eu/tootoad">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Noor metalli huviline" src="https://static.wixstatic.com/media/a7f28e_d96711c8a73f4287a56272f4e6fe22a1~mv2.jpg/v1/fill/w_980,h_732,al_c,q_85/a.jpg"><div><h3>Tehnoloogiatunnid</h3><p>Mobiilsed huviringid, koolitused ja gümnaasiumi inseneeria valikkursused – seadmed otse klassiruumis.</p><a href="https://www.merkuur.eu/huviringid">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Õpilahenduste arendus</h3><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja õppematerjalid, mis aitavad tehnoloogiat koolitundi tuua.</p><a href="https://www.merkuur.eu/õpik-arvjuhitavad-seadmed-cnc">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Noored uudistamas mobiilset töökoda" src="https://static.wixstatic.com/media/a7f28e_c34f073e4336408ca677769001eef86c~mv2_d_4943_3296_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Makerspace ja tehnoloogiaklass</h3><p>Rajame koolidele ja noortekeskustele tehnoloogia õppeklassi – seadmed, sisu ja koolitus ühes paketis.</p><a href="https://www.merkuur.eu/futureclassroomlab">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Mobiilne töökoda Tartus" src="https://static.wixstatic.com/media/a7f28e_a8fffa03b3bd41cd9d7cf3f80f7251c6~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Mobiilsed töökojad</h3><p>Iseehitatud liikuv õppeklass: metalli- ja puidutöökoda ratastel. Tuleme kooliõuele, külla või üritusele – seadmed ja tööriistad kaasas.</p><a href="https://www.merkuur.eu/mobileworkshops">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Karjääriteemad" src="https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Karjääriteemad</h3><p>Karjääriinfo ja -nõustamine (individuaalne ja grupinõustamine) ning karjääriteadlikkust tõstvad tegevused. Neid juhib Liis, kogenud karjäärinõustaja.</p><a href="https://www.merkuur.eu/bettercareer">Loe lähemalt →</a></div></article>
+  <article class="card"><img loading="lazy" alt="Metalli töötuba Neeme Koolis" src="https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg"><div><h3>Töötoad</h3><p>Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele.</p><div class="actions"><a href="#kontakt" data-teenus="Töötuba">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/tootoad">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Noor metalli huviline" src="https://static.wixstatic.com/media/a7f28e_d96711c8a73f4287a56272f4e6fe22a1~mv2.jpg/v1/fill/w_980,h_732,al_c,q_85/a.jpg"><div><h3>Tehnoloogiatunnid</h3><p>Mobiilsed huviringid, koolitused ja gümnaasiumi inseneeria valikkursused – seadmed otse klassiruumis.</p><div class="actions"><a href="#kontakt" data-teenus="Tehnoloogiatund / huviring">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/huviringid">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Õpilahenduste arendus</h3><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja õppematerjalid, mis aitavad tehnoloogiat koolitundi tuua.</p><div class="actions"><a href="#kontakt" data-teenus="Õppematerjalid / digiõpik">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/õpik-arvjuhitavad-seadmed-cnc">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Noored uudistamas mobiilset töökoda" src="https://static.wixstatic.com/media/a7f28e_c34f073e4336408ca677769001eef86c~mv2_d_4943_3296_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Makerspace ja tehnoloogiaklass</h3><p>Rajame koolidele ja noortekeskustele tehnoloogia õppeklassi – seadmed, sisu ja koolitus ühes paketis.</p><div class="actions"><a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/futureclassroomlab">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Mobiilne töökoda Tartus" src="https://static.wixstatic.com/media/a7f28e_a8fffa03b3bd41cd9d7cf3f80f7251c6~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Mobiilsed töökojad</h3><p>Iseehitatud liikuv õppeklass: metalli- ja puidutöökoda ratastel. Tuleme kooliõuele, külla või üritusele – seadmed ja tööriistad kaasas.</p><div class="actions"><a href="#kontakt" data-teenus="Töötuba">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/mobileworkshops">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Karjääriteemad" src="https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Karjääriteemad</h3><p>Karjääriinfo ja -nõustamine (individuaalne ja grupinõustamine) ning karjääriteadlikkust tõstvad tegevused. Neid juhib Liis, kogenud karjäärinõustaja.</p><div class="actions"><a href="#kontakt" data-teenus="Karjäärinõustamine / karjääritöötuba">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/bettercareer">Loe lähemalt →</a></div></div></article>
  </div>
 </div></section>
 
@@ -501,12 +544,12 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <h2>Tehnoloogiaklass või inseneerianurk – võtmed kätte</h2>
    <p class="lead">Sisustame kooli tehnoloogiaklassi või inseneerianurga koos kõigi vajalike tööriistade ja koolitusega. Sa saad töökorras õppekeskkonna, mitte hunniku seadmeid.</p>
    <ul class="check"><li><b>Sisustus</b> – töökeskkond, mis sobib õppetööks</li><li><b>Tööriistad ja seadmed</b> – kõik vajalik tegemiseks</li><li><b>Koolitus</b> – õpetajad oskavad ja julgevad kasutada</li></ul>
-   <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a></div>
+   <div class="cta"><a class="btn" href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass">Küsi pakkumist</a></div>
   </div>
  </div>
  <div class="tiles light">
-  <a href="#kontakt"><b>Tehnoloogiaklass</b><span>Terve klassiruum: sisustus, seadmed, tööriistad ja õpetajate koolitus.</span></a>
-  <a href="#kontakt"><b>Inseneerianurk</b><span>Kompaktne lahendus olemasoleva ruumi nurgas: tööriistad ja koolitus.</span></a>
+  <a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass"><b>Tehnoloogiaklass</b><span>Terve klassiruum: sisustus, seadmed, tööriistad ja õpetajate koolitus.</span></a>
+  <a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass"><b>Inseneerianurk</b><span>Kompaktne lahendus olemasoleva ruumi nurgas: tööriistad ja koolitus.</span></a>
  </div>
 </div></section>
 
@@ -517,10 +560,22 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <h2>Makerset'id kooli, ringi ja koju</h2>
    <p class="lead">Valmis komplektid tehnoloogia ja inseneeria õppimiseks – tellimine meie e-poest.</p>
    <p class="note">Ei tea, milline komplekt sobib? Kirjuta meile – aitame valida.</p>
-   <div class="cta"><a class="btn" href="https://mw.yrgel.com" target="_blank" rel="noopener">Külasta e-poodi →</a><a class="btn ghost" href="#kontakt">Küsi nõu</a></div>
+   <div class="cta"><a class="btn" href="https://mw.yrgel.com" target="_blank" rel="noopener">Külasta e-poodi →</a><a class="btn ghost" href="#kontakt" data-teenus="Makerset / komplekti valik">Küsi nõu</a></div>
   </div>
   <img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_900,h_650,al_c,q_85/a.jpg">
  </div>
+</div></section>
+
+<section id="vaartus"><div class="wrap">
+ <div class="kicker">Mida tellija saab</div>
+ <h2>Päris töö, mitte ainult tutvustus</h2>
+ <p class="lead">Kool, noortekeskus või ettevõte ei pea ise töökoda ehitama. Merkuur toob tööriistad kohale või jätab õppekeskkonna kooli. Hinna saad pakkumisega, enne kui midagi tellid.</p>
+ <div class="gains">
+  <article><b>Töötuba tuleb kohale</b><p>Osalejad teevad ise puidu- ja metallitööd, elektroonikat, bioonikat või CNC- ja 3D-tööd. Seadmed on kaasas: kooliõuele, laagrisse või üritusele.</p></article>
+  <article><b>Klass või nurk jääb kooli</b><p>Tehnoloogiaklass või inseneerianurk koos sisustuse, tööriistade, seadmete ja õpetajate koolitusega. Saad töökorras keskkonna, mitte hunniku kaste.</p></article>
+  <article><b>Järgmine tund on olemas</b><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja makerset'id, et tegevus jätkuks pärast külaskäiku. Kui komplekti valik on lahtine, aitame valida.</p></article>
+ </div>
+ <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a><a class="btn ghost-dark" href="#pood">Makerset'id</a></div>
 </div></section>
 
 <section id="kellele"><div class="wrap">
@@ -537,7 +592,6 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  </div>
 </div></section>
 
-<div class="hz" aria-hidden="true"></div>
 <div class="stats"><section><div class="wrap">
  <div><b>3500+</b><span>töötuba teaduse, tehnoloogia ja inseneeria vallas</span></div>
  <div><b>30 000</b><span>noort on töötubades osalenud</span></div>
@@ -619,9 +673,26 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
   <a href="https://www.merkuur.eu/leader">Leader projektid</a>
   <a href="https://www.merkuur.eu/teaduse-populariseerimine-2023">Teaduse populariseerimine</a>
   <a href="https://www.merkuur.eu/progetiiger">Progetiiger CNC</a>
-  <a href="https://www.merkuur.eu/tunnustused">Tunnustused</a>
+  <a href="#tunnustused">Tunnustused</a>
  </div>
 <p class="partners"><span>Toetajad ja partnerid</span> Haridus- ja Teadusministeerium · Eesti Noorsootöö Keskus · ETAg · HITSA · Startup Estonia · Erasmus+ · Euroopa Sotsiaalfond · FESTO Eesti</p>
+</div></section>
+
+<section id="tunnustused"><div class="wrap">
+ <div class="kicker">Tunnustused</div>
+ <h2>Meie töö märkamine</h2>
+ <div class="honors">
+  <article><a href="https://www.mkm.ee/et/uudised/eesti-ettevotlusprojekt-nimetati-euroopa-parimaks" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti ettevõtlusprojekt nimetati Euroopa parimaks" src="https://static.wixstatic.com/media/a7f28e_dcbc0b49dcd1471bb3e6db8c8643d0f1~mv2.jpeg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Eesti ettevõtlusprojekt nimetati Euroopa parimaks</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://blogs.ec.europa.eu/promotingenterprise/category/investing-in-entrepreneurial-skills/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA 2020 Shortlist – Investing in Entrepreneurial Skills" src="https://static.wixstatic.com/media/a7f28e_bf827391b1544b1c89b8c1391918f59f~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>EEPA 2020 Shortlist – Investing in Entrepreneurial Skills</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Osalesime Eesti parimate ettevõtete tänuüritusel" src="https://static.wixstatic.com/media/a7f28e_1cb72e3b2c054fc4a49359b20dcc7a8a~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Osalesime Eesti parimate ettevõtete tänuüritusel</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Tunnusta ettevõtluse edendajat 2020 võitja, Majandus- ja kommunikatsiooniministeerium" src="https://static.wixstatic.com/media/a7f28e_8a919d3a1a6a4fdeafde98c0a765a989~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>„Tunnusta ettevõtluse edendajat 2020 võitja“ Majandus- ja kommunikatsiooni&shy;ministeerium</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><img class="letter" loading="lazy" alt="Aasta ringijuht 2018/2019 Võsu kool" src="https://static.wixstatic.com/media/b2cbe8_d09b8a606ff748d5af7dbc0f126029df~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Aasta ringijuht 2018/2019 Võsu kool</h3></article>
+  <article><img class="letter" loading="lazy" alt="Kohila Mõisakooli tänukiri" src="https://static.wixstatic.com/media/b2cbe8_cd09524a4a7f4b04bf0037c6aa9f202e~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Kohila Mõisakooli tänukiri</h3></article>
+  <article><a href="http://www.toostusuudised.ee/uudised/2018/04/09/eesti-masinatoostuse-liit-valis-uue-noukogu-ja-tunnustas-parimaid" target="_blank" rel="noopener"><img loading="lazy" alt="Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab" src="https://static.wixstatic.com/media/a7f28e_1f6d06b78151421fbe0424309c019946~mv2_d_4128_2322_s_2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="http://joelahtme.kovtp.ee/documents/381171/18534457/02.2018+Jõelähtme+vallaleht+veebruar.pdf/e1c86097-8799-44d6-ae50-dfb36756f957?version=1.0" target="_blank" rel="noopener"><img loading="lazy" alt="Jõelähtme Haridustegu 2017 laureaat" src="https://static.wixstatic.com/media/a7f28e_7f7e300c5f1545a6a6ab9b077ba03f4d~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Jõelähtme Haridustegu 2017 laureaat</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="http://www.etag.ee/eesti-teaduse-populariseerimise-elutoopreemia-palvis-ene-ergma/" target="_blank" rel="noopener"><img loading="lazy" alt="Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_a3a609b742124ca28428495acc3eca35~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://www.kysk.ee/ajujahi-sotsiaalse-ettevotluse-eriauhinna-5000-voitis-mobiilsed-tootoad" target="_blank" rel="noopener"><img loading="lazy" alt="Parim sotsiaalne ettevõte, Ajujahi 10. hooaeg 2016/2017" src="https://static.wixstatic.com/media/a7f28e_ab241300e5c548e7812c89ef53b2bda0~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim sotsiaalne ettevõte (Ajujahi 10. hooaeg 2016/2017)</h3><span class="more">Loe lähemalt</span></a></article>
+ </div>
  <div class="awards">
   <a href="https://blogs.ec.europa.eu/promotingenterprise/tag/merkuur/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA Winner" src="https://static.wixstatic.com/media/a7f28e_ce09094dd0c141a687e6057ea9b80fba~mv2.png/v1/fill/w_270,h_422,al_c,q_85/a.png"></a>
   <a href="https://www.etag.ee/tegevused/konkursid/eesti-teaduse-populariseerimise-auhind/varasemad-konkursid/" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_01bcdaf1c177432fa8fce697a5b217ce~mv2.jpg/v1/fill/w_400,h_176,al_c,q_80/a.jpg"></a>
@@ -647,11 +718,28 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  </div>
 </div></section>
 
-<div class="hz" aria-hidden="true"></div>
+<section id="frantsiis"><div class="wrap">
+ <div class="kicker">Frantsiis</div>
+ <h2>Otsime frantsiisipartnereid üle maailma</h2>
+ <p class="lead">Merkuur on alates 2016. aastast viinud mobiilsed tehnoloogia- ja inseneeriatöötoad otse noorte juurde. Otsime inimesi ja organisatsioone, kes tahavad sama lähenemist oma riigis või piirkonnas käivitada.</p>
+ <ul class="check">
+  <li><b>Mudel.</b> Liikuv töökoda, praktilised töötoad ja õppelahendused, mida oleme Eestis arendanud.</li>
+  <li><b>Kellele.</b> Partnerile, kes tahab noortele anda päris tööriistadega tehnoloogia- ja inseneeriakogemuse.</li>
+  <li><b>Järgmine samm.</b> Kirjuta, kes sa oled ja kus tahaksid tegutseda. Räägime läbi, kas koostöö sobib.</li>
+ </ul>
+ <div class="cta"><a class="btn" href="#kontakt" data-teenus="Frantsiis / partnerlus">Kirjuta frantsiisist</a><a class="btn ghost" href="mailto:info@merkuur.eu?subject=Franchise%20partner">info@merkuur.eu</a></div>
+ <div class="en" lang="en">
+  <div class="kicker">Inglise keeles</div>
+  <h3>Franchise partners worldwide</h3>
+  <p>Since 2016, Merkuur has taken mobile technology and engineering workshops to young people in Estonia. We are looking for franchise partners anywhere in the world who want to start the same kind of work in their own country or region.</p>
+  <p>Email <a href="mailto:info@merkuur.eu?subject=Franchise%20partner">info@merkuur.eu</a>. Tell us who you are and where you would operate. We reply personally and agree each partnership directly.</p>
+ </div>
+</div></section>
+
 <section id="kontakt" class="contact"><div class="wrap">
  <div class="kicker">Kontakt</div>
- <h2>Võta meiega ühendust</h2>
- <p class="lead">Telli töötuba, tehnoloogiaklass või demo – kirjuta või helista.</p>
+ <h2>Küsi pakkumist</h2>
+ <p class="lead">Telli töötuba, tehnoloogiaklass või makerset – või kirjuta frantsiisist. Ütle, kellele, mitu inimest, millal ja kus.</p>
  <div class="people">
   <div class="person"><b>Lauri Soosaar</b><span class="role">Kaasasutaja, projektide tehniline arendaja</span><a href="tel:+37251854040">+372 51 85 404</a><a href="mailto:info@merkuur.eu">info@merkuur.eu</a></div>
   <div class="person"><b>Liis Proos</b><span class="role">Kaasasutaja, noorteprojektide eestvedaja, karjäärinõustaja</span><a href="tel:+37253039287">+372 53 039 287</a><a href="mailto:info@merkuur.eu">info@merkuur.eu</a></div>
@@ -660,14 +748,15 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  <div class="sheet">
   <div class="order">
    <h3>Kuidas tellida</h3>
-   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega.</p>
+   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega. Frantsiisi puhul kirjuta, kus ja kellega tahad tegutseda.</p>
   </div>
   <form id="cform" class="cform" novalidate>
    <div class="row"><label>Nimi<input name="nimi" required autocomplete="name"></label><label>E-post<input name="email" type="email" required autocomplete="email"></label></div>
-   <div class="row"><label>Mis teenus huvitab?<select name="teenus"><option>Kooli varustamine / tehnoloogiaklass</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Töötuba</option><option>Tehnoloogiatund / huviring</option><option>Tehnoloogiaklassi rajamine</option><option>Seadmete koolitus / demo</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
-   <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn / kool"></label></div>
+   <div class="row"><label>Mis huvitab?<select name="teenus" required><option value="">Vali…</option><option>Töötuba</option><option>Kooli varustamine / tehnoloogiaklass</option><option>Tehnoloogiatund / huviring</option><option>Makerset / komplekti valik</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Seadmete koolitus / demo</option><option>Õppematerjalid / digiõpik</option><option>Frantsiis / partnerlus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
+   <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn, kool või riik"></label></div>
    <label>Sõnum<textarea name="sonum" rows="4"></textarea></label>
    <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu andmeid kasutatakse päringule vastamiseks (<a href="#privaatsus" data-open="privaatsus">privaatsuspoliitika</a>).</label>
+   <p class="hint">Nupp avab sinu e-posti programmi. Kiirema vastuse saad helistades: <a href="tel:+37251854040">Lauri +372 51 85 404</a> või <a href="tel:+37253039287">Liis +372 53 039 287</a>.</p>
    <button class="btn" type="submit">Saada päring</button>
    <p class="note" id="fnote" role="status"></p>
   </form>
@@ -682,7 +771,6 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  </div>
 </div></section>
 </main>
-<div class="hz" aria-hidden="true"></div>
 <footer>
  <div class="wrap foot">
   <div class="foot-brand">
@@ -700,10 +788,13 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <a href="https://www.facebook.com/mobileworkshops/">Facebook</a>
    <a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a>
    <a href="#kontakt">Küsi pakkumist</a>
+   <a href="#frantsiis">Frantsiis</a>
+   <a href="#tunnustused">Tunnustused</a>
   </div>
  </div>
  <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="/admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
 </footer>
+<a class="dock-cta" id="dockcta" href="#kontakt" hidden>Küsi pakkumist</a>
 <script>
 (function(){
 var bg=document.getElementById("burger"),nv=document.getElementById("mnav");
@@ -712,13 +803,36 @@ bg.addEventListener("click",function(){var o=nv.classList.toggle("open");bg.setA
 nv.querySelectorAll("a").forEach(function(a){a.addEventListener("click",closeNav);});
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeNav();});
 document.querySelectorAll("[data-open]").forEach(function(a){a.addEventListener("click",function(){var d=document.getElementById(a.getAttribute("data-open"));if(d)d.open=true;});});
+document.querySelectorAll("[data-teenus]").forEach(function(a){
+ a.addEventListener("click",function(){
+  var sel=document.querySelector("#cform select[name=teenus]");
+  if(!sel)return;
+  var want=a.getAttribute("data-teenus");
+  for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===want){sel.value=sel.options[i].value||sel.options[i].text;break;}}
+ });
+});
 document.getElementById("cform").addEventListener("submit",function(e){
  e.preventDefault();var f=e.target,note=document.getElementById("fnote");
  if(!f.nimi.value.trim()||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.ok.checked){note.textContent="Palun täida nimi, e-post ja nõusolek.";return;}
+ if(!f.teenus.value){note.textContent="Palun vali, mis sind huvitab.";return;}
  var body=["Nimi: "+f.nimi.value,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
  note.textContent="Avame sinu e-posti programmi – vaata sõnum üle ja vajuta Saada.";
  location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+f.teenus.value)+"&body="+encodeURIComponent(body);
 });
+var dock=document.getElementById("dockcta");
+if(dock){
+ var hero=document.querySelector(".hero"),kontakt=document.getElementById("kontakt");
+ function syncDock(){
+  var mobile=window.matchMedia("(max-width:1100px)").matches;
+  var show=mobile&&hero.getBoundingClientRect().bottom<72&&kontakt.getBoundingClientRect().top>window.innerHeight-20&&!document.body.classList.contains("nav-open");
+  dock.hidden=!show;
+  document.body.classList.toggle("has-dock",show);
+ }
+ addEventListener("scroll",syncDock,{passive:true});
+ addEventListener("resize",syncDock);
+ new MutationObserver(syncDock).observe(document.body,{attributes:true,attributeFilter:["class"]});
+ syncDock();
+}
 })();
 </script>
 <script>

@@ -68,6 +68,10 @@ test("admin auth and published content", async () => {
     assert.equal(home.status, 200);
     assert.match(home.text, /Haldus/);
     assert.match(home.text, /\/api\/content/);
+    assert.match(home.text, /frantsiisipartnereid/);
+    assert.match(home.text, /Franchise partners worldwide/);
+    assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
+    assert.match(home.text, /Ajujahi 10\. hooaeg/);
 
     const admin = await call("/admin");
     assert.equal(admin.status, 200);
