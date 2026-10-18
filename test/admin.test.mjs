@@ -68,6 +68,8 @@ test("admin auth and published content", async () => {
     assert.equal(home.status, 200);
     assert.match(home.text, /Haldus/);
     assert.match(home.text, /\/api\/content/);
+    assert.match(home.text, /frantsiisipartnereid/);
+    assert.match(home.text, /Franchise partners worldwide/);
 
     const admin = await call("/admin");
     assert.equal(admin.status, 200);

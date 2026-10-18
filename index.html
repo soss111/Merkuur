@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid</title>
-<meta name="description" content="Tehnoloogia ja inseneeria töötoad, tehnoloogiatunnid, õpilahenduste arendus, makerspace'i ja tehnoloogiaklasside rajamine ning mobiilsed töökojad.">
+<meta name="description" content="Telli mobiilne töötuba, tehnoloogiaklass või makerset. Merkuur viib tehnoloogia ja inseneeria üle Eesti kohale. Otsime frantsiisipartnereid üle maailma.">
 <meta name="theme-color" content="#171b20">
 <meta property="og:title" content="Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid">
 <meta property="og:type" content="website">
@@ -149,6 +149,8 @@ header nav .btn:hover{box-shadow:1px 1px 0 var(--hazard);color:#16191d}
 .hero h1 span{display:block;color:var(--hazard);margin-top:.08em}
 .hero-panel p{max-width:42ch;font-size:1.08rem;color:rgba(255,255,255,.9);margin:16px 0 0}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.hero-more{margin:16px 0 0;font-size:1rem}
+.hero-more a{color:var(--hazard);font-weight:700;text-underline-offset:3px}
 .hero-dock{background:#101317;color:#fff}
 .hero-dock::before{content:"";display:block;height:8px;background:var(--hz)}
 .hero-facts{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0;padding:8px 0 0}
@@ -186,11 +188,14 @@ section{padding:76px 0}
 .card div{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;gap:0}
 .card h3{margin:0 0 8px;font-size:1.45rem}
 .card p{margin:0 0 16px;color:var(--muted);font-size:1rem;flex:1}
+.card .actions{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:auto}
 .card a{
-  align-self:flex-start;margin-top:auto;font-weight:700;color:var(--ink);text-decoration:none;
+  align-self:flex-start;font-weight:700;color:var(--ink);text-decoration:none;
   text-transform:uppercase;letter-spacing:.06em;font-size:1.08rem;border-bottom:3px solid var(--accent);padding-bottom:1px;
 }
-.card:hover a{border-bottom-color:var(--hazard)}
+.card a.quiet{border-bottom-color:transparent;color:var(--muted);font-size:.98rem}
+.card a.quiet:hover{border-bottom-color:var(--ink);color:var(--ink)}
+.card:hover a:not(.quiet){border-bottom-color:var(--hazard)}
 #teenused .grid{counter-reset:svc}
 #teenused .card{counter-increment:svc}
 #teenused .card::after{
@@ -230,6 +235,23 @@ section{padding:76px 0}
 #pood .lead{color:rgba(255,255,255,.9)}
 #pood .note{color:rgba(255,255,255,.78);max-width:52ch;margin:12px 0 0}
 #pood .split img{border-color:#fff;box-shadow:12px 12px 0 var(--hazard)}
+.gains{display:grid;grid-template-columns:1fr;gap:16px;margin-top:28px}
+.gains article{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:18px 18px 16px;box-shadow:5px 5px 0 var(--shadow)}
+.gains b{display:block;font:800 1.45rem/1.05 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;margin-bottom:8px}
+.gains p{margin:0;color:var(--muted)}
+#vaartus .cta{margin-top:26px}
+#frantsiis{background:var(--dots),var(--deep);color:#fff}
+#frantsiis .lead{color:rgba(255,255,255,.9);max-width:68ch}
+#frantsiis .check{margin-top:22px}
+#frantsiis .en{
+  margin-top:32px;max-width:68ch;background:var(--surface);color:var(--ink);
+  border:2px solid var(--hazard);box-shadow:8px 8px 0 var(--hazard);padding:22px 22px 18px;
+}
+#frantsiis .en h3{font-size:clamp(1.6rem,3vw,2.1rem);margin:0 0 10px}
+#frantsiis .en p{margin:0 0 12px}
+#frantsiis .en p:last-child{margin:0}
+#frantsiis .en a{color:inherit;font-weight:700;text-underline-offset:3px}
+.dock-cta{display:none}
 
 .stats{background:var(--dots),var(--deep);color:#fff}
 .stats section{padding:54px 0 42px}
@@ -345,6 +367,8 @@ section{padding:76px 0}
 .cform .chk input{width:22px;height:22px;min-height:22px;margin-top:2px;accent-color:var(--accent)}
 .cform .chk a{text-decoration:underline;text-underline-offset:2px}
 .cform .btn{justify-self:start}
+.cform .hint{margin:0;font-size:.98rem;color:var(--muted)}
+.cform .hint a{font-weight:700;text-underline-offset:2px}
 .cform .note{margin:0;font-weight:600;min-height:1.4em}
 .priv{margin-top:8px;border:2px solid var(--ink);border-radius:4px;padding:12px 14px}
 .priv summary{cursor:pointer;font:800 1.25rem "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;min-height:44px;display:flex;align-items:center}
@@ -374,6 +398,7 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
   .foot{grid-template-columns:1.3fr 1fr 1fr;gap:28px}
 }
 @media(min-width:800px){
+  .gains{grid-template-columns:repeat(3,1fr)}
   .gallery{grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:250px 250px;grid-auto-rows:250px}
   .gallery figure:nth-child(1){grid-column:1;grid-row:1/span 2}
   .gallery figure:nth-child(2){grid-column:2/span 2;grid-row:1}
@@ -418,6 +443,18 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
   header nav .btn{margin-top:14px;text-align:center}
   body.nav-open{overflow:hidden}
 }
+@media(max-width:1100px){
+  .dock-cta{
+    display:flex;position:fixed;z-index:35;left:12px;right:12px;bottom:12px;
+    min-height:52px;align-items:center;justify-content:center;
+    background:var(--accent);color:#16191d;text-decoration:none;text-align:center;
+    border:2px solid #16191d;border-radius:3px;box-shadow:4px 4px 0 #16191d;
+    font:700 1.2rem/1 "Barlow Condensed","Arial Narrow",sans-serif;
+    letter-spacing:.06em;text-transform:uppercase;padding:14px 16px;
+  }
+  .dock-cta[hidden]{display:none}
+  body.has-dock{padding-bottom:84px}
+}
 @media(max-width:560px){
   .cta .btn{flex:1 1 100%}
   .wrap{padding:0 16px}
@@ -450,7 +487,7 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
 <div class="wrap bar">
  <a class="logo" href="#top"><img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_120,h_120,al_c,q_85/a.jpg" width="44" height="44">Merkuur</a>
  <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
- <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="https://www.merkuur.eu/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
+ <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="https://www.merkuur.eu/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
 </div>
 </header>
 
@@ -462,8 +499,9 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  <div class="hero-panel">
   <div class="kicker">Mobiilsed töötoad · Tehnoloogia · Inseneeria</div>
   <h1>Tule töötuppa!<span>Või töötuba tuleb sinu juurde.</span></h1>
-  <p>Viime tehnoloogia ja inseneeria praktilise kogemuse koolidesse, noortekeskustesse ja ettevõtetesse üle Eesti – 3D-printerid, CNC-seadmed ja päris tööriistad kohapeal.</p>
-  <div class="cta"><a class="btn" href="#teenused">Vaata teenuseid</a><a class="btn ghost" href="#pood">Makerset'id e-poes</a></div>
+  <p>Töötuba tuleb kooli, noortekeskusesse või ettevõttesse üle Eesti. Osalejad töötavad päris tööriistade, CNC-seadmete ja 3D-printeritega. Kirjuta meile – vastame pakkumisega.</p>
+  <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a><a class="btn ghost" href="#teenused">Vaata teenuseid</a></div>
+  <p class="hero-more"><a href="https://mw.yrgel.com" target="_blank" rel="noopener">või telli makerset e-poest →</a></p>
  </div>
  <div class="hero-dock">
   <div class="wrap">
@@ -484,12 +522,12 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  <p class="lead">Töötame välja ja viime ellu mobiilseid töökodasid ja töötubasid, korraldame huvi-, koolitus- ja nõustamistegevusi ning tõstame tehnoloogia-, innovatsiooni- ja ettevõtlusteadlikkust.</p>
  <div class="keywords"><span>LOOVUS</span><span>INNOVAATILISUS</span><span>KARJÄÄRITEADLIKKUS</span><span>ETTEVÕTLIKKUS</span></div>
  <div class="grid">
-  <article class="card"><img loading="lazy" alt="Metalli töötuba Neeme Koolis" src="https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg"><div><h3>Töötoad</h3><p>Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele.</p><a href="https://www.merkuur.eu/tootoad">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Noor metalli huviline" src="https://static.wixstatic.com/media/a7f28e_d96711c8a73f4287a56272f4e6fe22a1~mv2.jpg/v1/fill/w_980,h_732,al_c,q_85/a.jpg"><div><h3>Tehnoloogiatunnid</h3><p>Mobiilsed huviringid, koolitused ja gümnaasiumi inseneeria valikkursused – seadmed otse klassiruumis.</p><a href="https://www.merkuur.eu/huviringid">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Õpilahenduste arendus</h3><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja õppematerjalid, mis aitavad tehnoloogiat koolitundi tuua.</p><a href="https://www.merkuur.eu/õpik-arvjuhitavad-seadmed-cnc">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Noored uudistamas mobiilset töökoda" src="https://static.wixstatic.com/media/a7f28e_c34f073e4336408ca677769001eef86c~mv2_d_4943_3296_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Makerspace ja tehnoloogiaklass</h3><p>Rajame koolidele ja noortekeskustele tehnoloogia õppeklassi – seadmed, sisu ja koolitus ühes paketis.</p><a href="https://www.merkuur.eu/futureclassroomlab">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Mobiilne töökoda Tartus" src="https://static.wixstatic.com/media/a7f28e_a8fffa03b3bd41cd9d7cf3f80f7251c6~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Mobiilsed töökojad</h3><p>Iseehitatud liikuv õppeklass: metalli- ja puidutöökoda ratastel. Tuleme kooliõuele, külla või üritusele – seadmed ja tööriistad kaasas.</p><a href="https://www.merkuur.eu/mobileworkshops">Loe lähemalt →</a></div></article>
-  <article class="card"><img loading="lazy" alt="Karjääriteemad" src="https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Karjääriteemad</h3><p>Karjääriinfo ja -nõustamine (individuaalne ja grupinõustamine) ning karjääriteadlikkust tõstvad tegevused. Neid juhib Liis, kogenud karjäärinõustaja.</p><a href="https://www.merkuur.eu/bettercareer">Loe lähemalt →</a></div></article>
+  <article class="card"><img loading="lazy" alt="Metalli töötuba Neeme Koolis" src="https://static.wixstatic.com/media/a7f28e_49c2a64583b44ef894a64e2770e6c94b~mv2.jpg/v1/fill/w_980,h_655,al_c,q_85/a.jpg"><div><h3>Töötoad</h3><p>Käed-külge töötoad puidu- ja metallitööst, elektroonikast, bioonikast ja inseneeriast noortele (7–18) ja täiskasvanutele – ka sünnipäevadele ja meeskonnaüritustele.</p><div class="actions"><a href="#kontakt" data-teenus="Töötuba">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/tootoad">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Noor metalli huviline" src="https://static.wixstatic.com/media/a7f28e_d96711c8a73f4287a56272f4e6fe22a1~mv2.jpg/v1/fill/w_980,h_732,al_c,q_85/a.jpg"><div><h3>Tehnoloogiatunnid</h3><p>Mobiilsed huviringid, koolitused ja gümnaasiumi inseneeria valikkursused – seadmed otse klassiruumis.</p><div class="actions"><a href="#kontakt" data-teenus="Tehnoloogiatund / huviring">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/huviringid">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Õpilahenduste arendus</h3><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja õppematerjalid, mis aitavad tehnoloogiat koolitundi tuua.</p><div class="actions"><a href="#kontakt" data-teenus="Õppematerjalid / digiõpik">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/õpik-arvjuhitavad-seadmed-cnc">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Noored uudistamas mobiilset töökoda" src="https://static.wixstatic.com/media/a7f28e_c34f073e4336408ca677769001eef86c~mv2_d_4943_3296_s_4_2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Makerspace ja tehnoloogiaklass</h3><p>Rajame koolidele ja noortekeskustele tehnoloogia õppeklassi – seadmed, sisu ja koolitus ühes paketis.</p><div class="actions"><a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/futureclassroomlab">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Mobiilne töökoda Tartus" src="https://static.wixstatic.com/media/a7f28e_a8fffa03b3bd41cd9d7cf3f80f7251c6~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Mobiilsed töökojad</h3><p>Iseehitatud liikuv õppeklass: metalli- ja puidutöökoda ratastel. Tuleme kooliõuele, külla või üritusele – seadmed ja tööriistad kaasas.</p><div class="actions"><a href="#kontakt" data-teenus="Töötuba">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/mobileworkshops">Loe lähemalt →</a></div></div></article>
+  <article class="card"><img loading="lazy" alt="Karjääriteemad" src="https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85/a.jpg"><div><h3>Karjääriteemad</h3><p>Karjääriinfo ja -nõustamine (individuaalne ja grupinõustamine) ning karjääriteadlikkust tõstvad tegevused. Neid juhib Liis, kogenud karjäärinõustaja.</p><div class="actions"><a href="#kontakt" data-teenus="Karjäärinõustamine / karjääritöötuba">Küsi pakkumist</a><a class="quiet" href="https://www.merkuur.eu/bettercareer">Loe lähemalt →</a></div></div></article>
  </div>
 </div></section>
 
@@ -501,12 +539,12 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <h2>Tehnoloogiaklass või inseneerianurk – võtmed kätte</h2>
    <p class="lead">Sisustame kooli tehnoloogiaklassi või inseneerianurga koos kõigi vajalike tööriistade ja koolitusega. Sa saad töökorras õppekeskkonna, mitte hunniku seadmeid.</p>
    <ul class="check"><li><b>Sisustus</b> – töökeskkond, mis sobib õppetööks</li><li><b>Tööriistad ja seadmed</b> – kõik vajalik tegemiseks</li><li><b>Koolitus</b> – õpetajad oskavad ja julgevad kasutada</li></ul>
-   <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a></div>
+   <div class="cta"><a class="btn" href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass">Küsi pakkumist</a></div>
   </div>
  </div>
  <div class="tiles light">
-  <a href="#kontakt"><b>Tehnoloogiaklass</b><span>Terve klassiruum: sisustus, seadmed, tööriistad ja õpetajate koolitus.</span></a>
-  <a href="#kontakt"><b>Inseneerianurk</b><span>Kompaktne lahendus olemasoleva ruumi nurgas: tööriistad ja koolitus.</span></a>
+  <a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass"><b>Tehnoloogiaklass</b><span>Terve klassiruum: sisustus, seadmed, tööriistad ja õpetajate koolitus.</span></a>
+  <a href="#kontakt" data-teenus="Kooli varustamine / tehnoloogiaklass"><b>Inseneerianurk</b><span>Kompaktne lahendus olemasoleva ruumi nurgas: tööriistad ja koolitus.</span></a>
  </div>
 </div></section>
 
@@ -517,10 +555,22 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <h2>Makerset'id kooli, ringi ja koju</h2>
    <p class="lead">Valmis komplektid tehnoloogia ja inseneeria õppimiseks – tellimine meie e-poest.</p>
    <p class="note">Ei tea, milline komplekt sobib? Kirjuta meile – aitame valida.</p>
-   <div class="cta"><a class="btn" href="https://mw.yrgel.com" target="_blank" rel="noopener">Külasta e-poodi →</a><a class="btn ghost" href="#kontakt">Küsi nõu</a></div>
+   <div class="cta"><a class="btn" href="https://mw.yrgel.com" target="_blank" rel="noopener">Külasta e-poodi →</a><a class="btn ghost" href="#kontakt" data-teenus="Makerset / komplekti valik">Küsi nõu</a></div>
   </div>
   <img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_900,h_650,al_c,q_85/a.jpg">
  </div>
+</div></section>
+
+<section id="vaartus"><div class="wrap">
+ <div class="kicker">Mida tellija saab</div>
+ <h2>Päris töö, mitte ainult tutvustus</h2>
+ <p class="lead">Kool, noortekeskus või ettevõte ei pea ise töökoda ehitama. Merkuur toob tööriistad kohale või jätab õppekeskkonna kooli. Hinna saad pakkumisega, enne kui midagi tellid.</p>
+ <div class="gains">
+  <article><b>Töötuba tuleb kohale</b><p>Osalejad teevad ise puidu- ja metallitööd, elektroonikat, bioonikat või CNC- ja 3D-tööd. Seadmed on kaasas: kooliõuele, laagrisse või üritusele.</p></article>
+  <article><b>Klass või nurk jääb kooli</b><p>Tehnoloogiaklass või inseneerianurk koos sisustuse, tööriistade, seadmete ja õpetajate koolitusega. Saad töökorras keskkonna, mitte hunniku kaste.</p></article>
+  <article><b>Järgmine tund on olemas</b><p>Digiõpik «Arvjuhitavad seadmed», tunnikavad ja makerset'id, et tegevus jätkuks pärast külaskäiku. Kui komplekti valik on lahtine, aitame valida.</p></article>
+ </div>
+ <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a><a class="btn ghost-dark" href="#pood">Makerset'id</a></div>
 </div></section>
 
 <section id="kellele"><div class="wrap">
@@ -647,11 +697,29 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  </div>
 </div></section>
 
+<section id="frantsiis"><div class="wrap">
+ <div class="kicker">Frantsiis</div>
+ <h2>Otsime frantsiisipartnereid üle maailma</h2>
+ <p class="lead">Merkuur on alates 2016. aastast viinud mobiilsed tehnoloogia- ja inseneeriatöötoad otse noorte juurde. Otsime inimesi ja organisatsioone, kes tahavad sama lähenemist oma riigis või piirkonnas käivitada.</p>
+ <ul class="check">
+  <li><b>Mudel.</b> Liikuv töökoda, praktilised töötoad ja õppelahendused, mida oleme Eestis arendanud.</li>
+  <li><b>Kellele.</b> Partnerile, kes tahab noortele anda päris tööriistadega tehnoloogia- ja inseneeriakogemuse.</li>
+  <li><b>Järgmine samm.</b> Kirjuta, kes sa oled ja kus tahaksid tegutseda. Räägime läbi, kas koostöö sobib.</li>
+ </ul>
+ <div class="cta"><a class="btn" href="#kontakt" data-teenus="Frantsiis / partnerlus">Kirjuta frantsiisist</a><a class="btn ghost" href="mailto:info@merkuur.eu?subject=Franchise%20partner">info@merkuur.eu</a></div>
+ <div class="en" lang="en">
+  <div class="kicker">Inglise keeles</div>
+  <h3>Franchise partners worldwide</h3>
+  <p>Since 2016, Merkuur has taken mobile technology and engineering workshops to young people in Estonia. We are looking for franchise partners anywhere in the world who want to start the same kind of work in their own country or region.</p>
+  <p>Email <a href="mailto:info@merkuur.eu?subject=Franchise%20partner">info@merkuur.eu</a>. Tell us who you are and where you would operate. We reply personally and agree each partnership directly.</p>
+ </div>
+</div></section>
+
 <div class="hz" aria-hidden="true"></div>
 <section id="kontakt" class="contact"><div class="wrap">
  <div class="kicker">Kontakt</div>
- <h2>Võta meiega ühendust</h2>
- <p class="lead">Telli töötuba, tehnoloogiaklass või demo – kirjuta või helista.</p>
+ <h2>Küsi pakkumist</h2>
+ <p class="lead">Telli töötuba, tehnoloogiaklass või makerset – või kirjuta frantsiisist. Ütle, kellele, mitu inimest, millal ja kus.</p>
  <div class="people">
   <div class="person"><b>Lauri Soosaar</b><span class="role">Kaasasutaja, projektide tehniline arendaja</span><a href="tel:+37251854040">+372 51 85 404</a><a href="mailto:info@merkuur.eu">info@merkuur.eu</a></div>
   <div class="person"><b>Liis Proos</b><span class="role">Kaasasutaja, noorteprojektide eestvedaja, karjäärinõustaja</span><a href="tel:+37253039287">+372 53 039 287</a><a href="mailto:info@merkuur.eu">info@merkuur.eu</a></div>
@@ -660,14 +728,15 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
  <div class="sheet">
   <div class="order">
    <h3>Kuidas tellida</h3>
-   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega.</p>
+   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega. Frantsiisi puhul kirjuta, kus ja kellega tahad tegutseda.</p>
   </div>
   <form id="cform" class="cform" novalidate>
    <div class="row"><label>Nimi<input name="nimi" required autocomplete="name"></label><label>E-post<input name="email" type="email" required autocomplete="email"></label></div>
-   <div class="row"><label>Mis teenus huvitab?<select name="teenus"><option>Kooli varustamine / tehnoloogiaklass</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Töötuba</option><option>Tehnoloogiatund / huviring</option><option>Tehnoloogiaklassi rajamine</option><option>Seadmete koolitus / demo</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
-   <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn / kool"></label></div>
+   <div class="row"><label>Mis huvitab?<select name="teenus" required><option value="">Vali…</option><option>Töötuba</option><option>Kooli varustamine / tehnoloogiaklass</option><option>Tehnoloogiatund / huviring</option><option>Makerset / komplekti valik</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Seadmete koolitus / demo</option><option>Õppematerjalid / digiõpik</option><option>Frantsiis / partnerlus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
+   <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn, kool või riik"></label></div>
    <label>Sõnum<textarea name="sonum" rows="4"></textarea></label>
    <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu andmeid kasutatakse päringule vastamiseks (<a href="#privaatsus" data-open="privaatsus">privaatsuspoliitika</a>).</label>
+   <p class="hint">Nupp avab sinu e-posti programmi. Kiirema vastuse saad helistades: <a href="tel:+37251854040">Lauri +372 51 85 404</a> või <a href="tel:+37253039287">Liis +372 53 039 287</a>.</p>
    <button class="btn" type="submit">Saada päring</button>
    <p class="note" id="fnote" role="status"></p>
   </form>
@@ -700,10 +769,12 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <a href="https://www.facebook.com/mobileworkshops/">Facebook</a>
    <a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a>
    <a href="#kontakt">Küsi pakkumist</a>
+   <a href="#frantsiis">Frantsiis</a>
   </div>
  </div>
  <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="/admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
 </footer>
+<a class="dock-cta" id="dockcta" href="#kontakt" hidden>Küsi pakkumist</a>
 <script>
 (function(){
 var bg=document.getElementById("burger"),nv=document.getElementById("mnav");
@@ -712,13 +783,36 @@ bg.addEventListener("click",function(){var o=nv.classList.toggle("open");bg.setA
 nv.querySelectorAll("a").forEach(function(a){a.addEventListener("click",closeNav);});
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeNav();});
 document.querySelectorAll("[data-open]").forEach(function(a){a.addEventListener("click",function(){var d=document.getElementById(a.getAttribute("data-open"));if(d)d.open=true;});});
+document.querySelectorAll("[data-teenus]").forEach(function(a){
+ a.addEventListener("click",function(){
+  var sel=document.querySelector("#cform select[name=teenus]");
+  if(!sel)return;
+  var want=a.getAttribute("data-teenus");
+  for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===want){sel.value=sel.options[i].value||sel.options[i].text;break;}}
+ });
+});
 document.getElementById("cform").addEventListener("submit",function(e){
  e.preventDefault();var f=e.target,note=document.getElementById("fnote");
  if(!f.nimi.value.trim()||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.ok.checked){note.textContent="Palun täida nimi, e-post ja nõusolek.";return;}
+ if(!f.teenus.value){note.textContent="Palun vali, mis sind huvitab.";return;}
  var body=["Nimi: "+f.nimi.value,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
  note.textContent="Avame sinu e-posti programmi – vaata sõnum üle ja vajuta Saada.";
  location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+f.teenus.value)+"&body="+encodeURIComponent(body);
 });
+var dock=document.getElementById("dockcta");
+if(dock){
+ var hero=document.querySelector(".hero"),kontakt=document.getElementById("kontakt");
+ function syncDock(){
+  var mobile=window.matchMedia("(max-width:1100px)").matches;
+  var show=mobile&&hero.getBoundingClientRect().bottom<72&&kontakt.getBoundingClientRect().top>window.innerHeight-20&&!document.body.classList.contains("nav-open");
+  dock.hidden=!show;
+  document.body.classList.toggle("has-dock",show);
+ }
+ addEventListener("scroll",syncDock,{passive:true});
+ addEventListener("resize",syncDock);
+ new MutationObserver(syncDock).observe(document.body,{attributes:true,attributeFilter:["class"]});
+ syncDock();
+}
 })();
 </script>
 <script>
