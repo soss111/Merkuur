@@ -305,6 +305,41 @@ function api(driver) {
         [item.id, item.title, item.summary, item.href, item.image, item.createdAt]
       );
     },
+    async findItem(kind, id) {
+      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
+      const map = { testimonials: mapFeedback, news: mapPost, gallery: mapPhoto, services: mapService }[kind];
+      if (!table) return null;
+      const row = await driver.get("SELECT * FROM " + table + " WHERE id = ?", [id]);
+      return row ? map(row) : null;
+    },
+    async updateFeedback(item) {
+      const changes = await driver.run(
+        "UPDATE feedback SET quote = ?, name = ?, role = ?, org = ? WHERE id = ?",
+        [item.quote, item.name, item.role, item.org, item.id]
+      );
+      return changes > 0;
+    },
+    async updatePost(item) {
+      const changes = await driver.run(
+        "UPDATE posts SET title = ?, excerpt = ?, body = ?, url = ?, image = ? WHERE id = ?",
+        [item.title, item.excerpt, item.body, item.url, item.image, item.id]
+      );
+      return changes > 0;
+    },
+    async updatePhoto(item) {
+      const changes = await driver.run(
+        "UPDATE photos SET image = ?, caption = ? WHERE id = ?",
+        [item.image, item.caption, item.id]
+      );
+      return changes > 0;
+    },
+    async updateService(item) {
+      const changes = await driver.run(
+        "UPDATE services SET title = ?, summary = ?, href = ?, image = ? WHERE id = ?",
+        [item.title, item.summary, item.href, item.image, item.id]
+      );
+      return changes > 0;
+    },
     async deleteItem(kind, id) {
       const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
       if (!table) return false;

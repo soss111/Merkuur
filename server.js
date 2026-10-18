@@ -118,6 +118,13 @@ function safeUrl(value) {
   }
 }
 
+function pageOrUrl(value) {
+  const v = String(value || "").trim();
+  if (!v) return "";
+  if (v.startsWith("/") && !v.startsWith("//") && !v.includes("..") && !v.includes("\\")) return v;
+  return safeUrl(v);
+}
+
 function serviceHref(value) {
   const v = String(value || "").trim();
   if (!v) return "";
@@ -379,7 +386,7 @@ async function addItem(kind, body) {
   if (kind === "news") {
     const title = clip(body.title, 180);
     if (!title) throw Object.assign(new Error("Lisa pealkiri."), { status: 400 });
-    const url = safeUrl(body.url);
+    const url = pageOrUrl(body.url);
     const image = safeUrl(body.image);
     if (body.url && url == null) throw Object.assign(new Error("Lingi aadress ei sobi."), { status: 400 });
     if (body.image && image == null) throw Object.assign(new Error("Pildi aadress ei sobi."), { status: 400 });
@@ -412,6 +419,67 @@ async function addItem(kind, body) {
   if (body.image && image == null) throw Object.assign(new Error("Pildi aadress ei sobi."), { status: 400 });
   const item = { id: id, title: title, summary: clip(body.summary, 400), href: href || "", image: image || "", createdAt: createdAt };
   await database.insertService(item);
+  return item;
+}
+
+function keptImage(body, existing) {
+  if (!body.image) return existing || "";
+  const image = safeUrl(body.image);
+  if (image == null) throw Object.assign(new Error("Pildi aadress ei sobi."), { status: 400 });
+  return image;
+}
+
+async function updateItem(kind, id, body) {
+  const existing = await database.findItem(kind, id);
+  if (!existing) throw Object.assign(new Error("Kirjet ei leitud."), { status: 404 });
+  if (kind === "testimonials") {
+    const quote = clip(body.quote, 800);
+    const name = clip(body.name, 120);
+    if (!quote || !name) throw Object.assign(new Error("Lisa tagasiside tekst ja nimi."), { status: 400 });
+    const item = { id: id, quote: quote, name: name, role: clip(body.role, 120), org: clip(body.org, 160), createdAt: existing.createdAt };
+    await database.updateFeedback(item);
+    return item;
+  }
+  if (kind === "news") {
+    const title = clip(body.title, 180);
+    if (!title) throw Object.assign(new Error("Lisa pealkiri."), { status: 400 });
+    const url = pageOrUrl(body.url);
+    if (body.url && url == null) throw Object.assign(new Error("Lingi aadress ei sobi."), { status: 400 });
+    const item = {
+      id: id,
+      slug: existing.slug,
+      title: title,
+      excerpt: clip(body.excerpt, 400),
+      body: clip(body.body, 8000),
+      url: url || "",
+      image: keptImage(body, existing.image),
+      createdAt: existing.createdAt
+    };
+    await database.updatePost(item);
+    return Object.assign({}, item, { url: item.url || (item.body ? "/post/" + item.slug : "") });
+  }
+  if (kind === "gallery") {
+    const caption = clip(body.caption, 120);
+    if (!caption) throw Object.assign(new Error("Lisa allkiri."), { status: 400 });
+    const image = keptImage(body, existing.image);
+    if (!image) throw Object.assign(new Error("Lisa pilt ja allkiri."), { status: 400 });
+    const item = { id: id, image: image, caption: caption, createdAt: existing.createdAt };
+    await database.updatePhoto(item);
+    return item;
+  }
+  const title = clip(body.title, 160);
+  if (!title) throw Object.assign(new Error("Lisa teenuse nimi."), { status: 400 });
+  const href = serviceHref(body.href);
+  if (body.href && href == null) throw Object.assign(new Error("Lingi aadress ei sobi."), { status: 400 });
+  const item = {
+    id: id,
+    title: title,
+    summary: clip(body.summary, 400),
+    href: href || "",
+    image: keptImage(body, existing.image),
+    createdAt: existing.createdAt
+  };
+  await database.updateService(item);
   return item;
 }
 
@@ -673,6 +741,12 @@ async function handle(req, res) {
         if (req.method === "POST" && parts.length === 3) {
           const item = await addItem(parts[2], await readBody(req));
           return send(res, 201, item);
+        }
+        if (req.method === "PUT" && parts.length === 4) {
+          const id = parts[3];
+          if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });
+          const item = await updateItem(parts[2], id, await readBody(req));
+          return send(res, 200, item);
         }
         if (req.method === "DELETE" && parts.length === 4) {
           const id = parts[3];
