@@ -321,6 +321,16 @@ section{padding:72px 0}
 }
 .awards a:hover{transform:translateY(-3px)}
 .awards img{height:96px;width:auto;max-width:min(220px,70vw);object-fit:contain;background:transparent}
+.honors{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px;margin-top:28px}
+.honors article{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0}
+.honors a{display:flex;flex-direction:column;height:100%;color:inherit;text-decoration:none}
+.honors img{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--bg)}
+.honors img.letter{object-fit:contain;padding:12px}
+.honors h3{font-size:1.08rem;line-height:1.3;margin:0;padding:14px 16px 6px}
+.honors .more{display:block;margin-top:auto;padding:8px 16px 16px;color:var(--accent);font-weight:650}
+.honors article:not(:has(a)) h3{padding-bottom:16px}
+.honors a:hover h3{color:var(--accent)}
+.honors a:hover img{transform:scale(1.03);transition:transform .35s ease}
 .news .card h3{font-size:1.2rem}
 
 #meeskond .split img{aspect-ratio:3/4;object-position:center 50%;border-radius:24px}
@@ -663,9 +673,26 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   <a href="https://www.merkuur.eu/leader">Leader projektid</a>
   <a href="https://www.merkuur.eu/teaduse-populariseerimine-2023">Teaduse populariseerimine</a>
   <a href="https://www.merkuur.eu/progetiiger">Progetiiger CNC</a>
-  <a href="https://www.merkuur.eu/tunnustused">Tunnustused</a>
+  <a href="#tunnustused">Tunnustused</a>
  </div>
 <p class="partners"><span>Toetajad ja partnerid</span> Haridus- ja Teadusministeerium · Eesti Noorsootöö Keskus · ETAg · HITSA · Startup Estonia · Erasmus+ · Euroopa Sotsiaalfond · FESTO Eesti</p>
+</div></section>
+
+<section id="tunnustused"><div class="wrap">
+ <div class="kicker">Tunnustused</div>
+ <h2>Meie töö märkamine</h2>
+ <div class="honors">
+  <article><a href="https://www.mkm.ee/et/uudised/eesti-ettevotlusprojekt-nimetati-euroopa-parimaks" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti ettevõtlusprojekt nimetati Euroopa parimaks" src="https://static.wixstatic.com/media/a7f28e_dcbc0b49dcd1471bb3e6db8c8643d0f1~mv2.jpeg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Eesti ettevõtlusprojekt nimetati Euroopa parimaks</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://blogs.ec.europa.eu/promotingenterprise/category/investing-in-entrepreneurial-skills/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA 2020 Shortlist – Investing in Entrepreneurial Skills" src="https://static.wixstatic.com/media/a7f28e_bf827391b1544b1c89b8c1391918f59f~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>EEPA 2020 Shortlist – Investing in Entrepreneurial Skills</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Osalesime Eesti parimate ettevõtete tänuüritusel" src="https://static.wixstatic.com/media/a7f28e_1cb72e3b2c054fc4a49359b20dcc7a8a~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Osalesime Eesti parimate ettevõtete tänuüritusel</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Tunnusta ettevõtluse edendajat 2020 võitja, Majandus- ja kommunikatsiooniministeerium" src="https://static.wixstatic.com/media/a7f28e_8a919d3a1a6a4fdeafde98c0a765a989~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>„Tunnusta ettevõtluse edendajat 2020 võitja“ Majandus- ja kommunikatsiooni&shy;ministeerium</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><img class="letter" loading="lazy" alt="Aasta ringijuht 2018/2019 Võsu kool" src="https://static.wixstatic.com/media/b2cbe8_d09b8a606ff748d5af7dbc0f126029df~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Aasta ringijuht 2018/2019 Võsu kool</h3></article>
+  <article><img class="letter" loading="lazy" alt="Kohila Mõisakooli tänukiri" src="https://static.wixstatic.com/media/b2cbe8_cd09524a4a7f4b04bf0037c6aa9f202e~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Kohila Mõisakooli tänukiri</h3></article>
+  <article><a href="http://www.toostusuudised.ee/uudised/2018/04/09/eesti-masinatoostuse-liit-valis-uue-noukogu-ja-tunnustas-parimaid" target="_blank" rel="noopener"><img loading="lazy" alt="Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab" src="https://static.wixstatic.com/media/a7f28e_1f6d06b78151421fbe0424309c019946~mv2_d_4128_2322_s_2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="http://joelahtme.kovtp.ee/documents/381171/18534457/02.2018+Jõelähtme+vallaleht+veebruar.pdf/e1c86097-8799-44d6-ae50-dfb36756f957?version=1.0" target="_blank" rel="noopener"><img loading="lazy" alt="Jõelähtme Haridustegu 2017 laureaat" src="https://static.wixstatic.com/media/a7f28e_7f7e300c5f1545a6a6ab9b077ba03f4d~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Jõelähtme Haridustegu 2017 laureaat</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="http://www.etag.ee/eesti-teaduse-populariseerimise-elutoopreemia-palvis-ene-ergma/" target="_blank" rel="noopener"><img loading="lazy" alt="Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_a3a609b742124ca28428495acc3eca35~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind</h3><span class="more">Loe lähemalt</span></a></article>
+  <article><a href="https://www.kysk.ee/ajujahi-sotsiaalse-ettevotluse-eriauhinna-5000-voitis-mobiilsed-tootoad" target="_blank" rel="noopener"><img loading="lazy" alt="Parim sotsiaalne ettevõte, Ajujahi 10. hooaeg 2016/2017" src="https://static.wixstatic.com/media/a7f28e_ab241300e5c548e7812c89ef53b2bda0~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim sotsiaalne ettevõte (Ajujahi 10. hooaeg 2016/2017)</h3><span class="more">Loe lähemalt</span></a></article>
+ </div>
  <div class="awards">
   <a href="https://blogs.ec.europa.eu/promotingenterprise/tag/merkuur/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA Winner" src="https://static.wixstatic.com/media/a7f28e_ce09094dd0c141a687e6057ea9b80fba~mv2.png/v1/fill/w_270,h_422,al_c,q_85/a.png"></a>
   <a href="https://www.etag.ee/tegevused/konkursid/eesti-teaduse-populariseerimise-auhind/varasemad-konkursid/" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_01bcdaf1c177432fa8fce697a5b217ce~mv2.jpg/v1/fill/w_400,h_176,al_c,q_80/a.jpg"></a>
@@ -762,6 +789,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a>
    <a href="#kontakt">Küsi pakkumist</a>
    <a href="#frantsiis">Frantsiis</a>
+   <a href="#tunnustused">Tunnustused</a>
   </div>
  </div>
  <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="/admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
