@@ -174,6 +174,8 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /select class="section"/);
     assert.match(admin.text, /data-tab="roadmap"/);
     assert.match(admin.text, /id="form-roadmap"/);
+    assert.match(admin.text, /data-tab="home"/);
+    assert.match(admin.text, /Üles/);
     assert.match(admin.text, /id="form-support"/);
     assert.match(admin.text, /\/api\/support/);
     assert.match(admin.text, /\/api\/stats/);
@@ -219,6 +221,8 @@ test("admin auth and published content", async () => {
     assert.equal(denied.status, 401);
     const roadmapDenied = await call("/api/content/roadmap", { method: "POST", body: { title: "Uus etapp", detail: "Kirjeldus" } });
     assert.equal(roadmapDenied.status, 401);
+    const moveDenied = await call("/api/content/services/5eed5e4700000002/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(moveDenied.status, 401);
     const editDenied = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Ei" } });
     assert.equal(editDenied.status, 401);
     const noConsent = await call("/api/feedback", { method: "POST", body: { quote: "Tere", name: "Mari" } });
@@ -251,6 +255,24 @@ test("admin auth and published content", async () => {
     const first = await call("/api/auth/dev", { method: "POST", body: { email: "owner@gmail.com" } });
     assert.equal(first.status, 200);
     assert.equal(first.json.email, "owner@gmail.com");
+    const seeded = await call("/api/content");
+    const secondService = seeded.json.services[1];
+    const moved = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(moved.status, 200);
+    const reordered = await call("/api/content");
+    assert.equal(reordered.json.services[0].title, "Tehnoloogiatunnid");
+    assert.equal(reordered.json.services[1].title, "Töötoad");
+    const stuck = await call("/api/content/services/" + reordered.json.services[0].id + "/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(stuck.status, 200);
+    const stillFirst = await call("/api/content");
+    assert.equal(stillFirst.json.services[0].title, "Tehnoloogiatunnid");
+    const badDir = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "kõrvale" } });
+    assert.equal(badDir.status, 400);
+    const back = await call("/api/content/services/" + stillFirst.json.services[0].id + "/move", { method: "POST", body: { direction: "down" } });
+    assert.equal(back.status, 200);
+    const restored = await call("/api/content");
+    assert.equal(restored.json.services[0].title, "Töötoad");
+    assert.equal(restored.json.services[1].title, "Tehnoloogiatunnid");
 
     const outsider = client();
     const blocked = await outsider("/api/auth/dev", { method: "POST", body: { email: "other@gmail.com" } });
