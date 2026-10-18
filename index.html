@@ -400,6 +400,7 @@ a.mile-more,.mile-fold summary{
 .cform .hint{margin:0;font-size:.98rem;color:var(--muted)}
 .cform .hint a{font-weight:700;color:var(--accent);text-underline-offset:2px}
 .cform .note{margin:0;font-weight:650;min-height:1.4em}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .priv{margin-top:8px;border:1px solid var(--line);border-radius:16px;padding:12px 16px;background:var(--bg)}
 .priv summary{cursor:pointer;font-weight:650;font-size:1.05rem;min-height:44px;display:flex;align-items:center}
 .priv p{color:var(--muted);margin:.7em 0 0}
@@ -839,22 +840,20 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 <section id="tagasiside"><div class="wrap">
  <div class="kicker">Tagasiside</div>
  <h2>Mida kliendid ütlevad</h2>
- <!-- TAGASISIDE LISAMINE: kopeeri üks <figure class="quote">…</figure> plokk, asenda tekst ja nimi ning eemalda class="todo".
-      Valikuline logo või foto: lisa figcaption'i algusse <img src="logo.png" alt="Kooli nimi">. -->
- <div class="quotes">
-  <figure class="quote">
-   <blockquote class="todo">[Lisa siia kliendi tagasiside tekst]</blockquote>
-   <figcaption><b class="todo">[Nimi, roll]</b><span class="todo">[Kool / organisatsioon]</span></figcaption>
-  </figure>
-  <figure class="quote">
-   <blockquote class="todo">[Lisa siia kliendi tagasiside tekst]</blockquote>
-   <figcaption><b class="todo">[Nimi, roll]</b><span class="todo">[Kool / organisatsioon]</span></figcaption>
-  </figure>
-  <figure class="quote">
-   <blockquote class="todo">[Lisa siia kliendi tagasiside tekst]</blockquote>
-   <figcaption><b class="todo">[Nimi, roll]</b><span class="todo">[Kool / organisatsioon]</span></figcaption>
-  </figure>
- </div>
+ <p class="lead">Kui oled töötoas, kursusel või üritusel käinud, jäta siia oma mulje. See ilmub lehele.</p>
+ <div class="quotes"></div>
+ <form id="qform" class="cform">
+  <div class="row">
+   <label><span>Nimi<span class="req" aria-hidden="true">*</span></span><input name="name" required maxlength="120" autocomplete="name"></label>
+   <label>Roll<input name="role" maxlength="120" placeholder="õpetaja, õpilane, lapsevanem"></label>
+  </div>
+  <label>Kool või organisatsioon<input name="org" maxlength="160"></label>
+  <label><span>Tagasiside<span class="req" aria-hidden="true">*</span></span><textarea name="quote" required maxlength="800" rows="4"></textarea></label>
+  <p class="hp"><label>Veebileht<input name="website" tabindex="-1" autocomplete="off"></label></p>
+  <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu nimi ja tagasiside avaldatakse sellel lehel. <a href="#privaatsus" data-open="privaatsus">Privaatsuspoliitika</a></label>
+  <button class="btn" type="submit">Jäta tagasiside</button>
+  <p class="note" id="qnote" role="status"></p>
+ </form>
 </div></section>
 
 <section id="galerii"><div class="wrap">
@@ -933,9 +932,9 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   </form>
   <details id="privaatsus" class="priv"><summary>Privaatsuspoliitika</summary>
    <p><b>Kes me oleme.</b> Andmete vastutav töötleja on Merkuur OÜ (registrikood 11544602), info@merkuur.eu.</p>
-   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, telefoninumbrit, e-posti, valitud töötoa teemasid, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
-   <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
-   <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
+   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, telefoninumbrit, e-posti, valitud töötoa teemasid, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Tagasisidevormis nime, rolli, kooli või organisatsiooni ja tagasiside teksti. Neid andmeid ei kasuta me müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
+   <p><b>Eesmärk ja alus.</b> Päringu andmeid kasutame pakkumise tegemiseks. Tagasiside avaldame lehel sinu nõusolekul.</p>
+   <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist. Avaldatud tagasiside jääb lehele, kuni palud selle eemaldada või me selle kustutame.</p>
    <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
    <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega. Haldusleht /admin saadab sisselogimiskoodi samasse teenusesse, mida kasutab metalHUB haldus, ja seab seansi küpsise; avaliku lehe külastajale seda küpsist ei seata.</p>
   </details>
@@ -1049,6 +1048,41 @@ function safePage(v){
   return safeHref(v);
 }
 function node(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
+function addQuote(t, box, first){
+  box=box||document.querySelector("#tagasiside .quotes");
+  if(!box||!t||!t.quote||!t.name)return;
+  var fig=node("figure","quote");
+  fig.appendChild(node("blockquote",null,t.quote));
+  var cap=node("figcaption");
+  cap.appendChild(node("b",null,[t.name,t.role].filter(Boolean).join(", ")));
+  if(t.org)cap.appendChild(node("span",null,t.org));
+  fig.appendChild(cap);
+  if(first&&box.firstChild)box.insertBefore(fig, box.firstChild);
+  else box.appendChild(fig);
+}
+var qform=document.getElementById("qform");
+if(qform)qform.addEventListener("submit",function(e){
+  e.preventDefault();
+  var note=document.getElementById("qnote");
+  var f=qform;
+  note.textContent="";
+  if(location.hostname.endsWith("github.io")){
+    note.textContent="GitHubi eelvaade ei salvesta tagasisidet. See töötab Merkuuri serveris.";
+    return;
+  }
+  var body={name:f.name.value,role:f.role.value,org:f.org.value,quote:f.quote.value,ok:f.ok.checked,website:f.website.value};
+  fetch("/api/feedback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(res){
+    return res.json().catch(function(){return {};}).then(function(data){
+      if(!res.ok)throw new Error(data.error||"Tagasisidet ei õnnestunud salvestada.");
+      return data;
+    });
+  }).then(function(data){
+    if(data.testimonial)addQuote(data.testimonial, null, true);
+    f.reset();
+    note.textContent="Aitäh. Sinu tagasiside on lehel.";
+  }).catch(function(err){note.textContent=err.message;});
+});
+fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(function(data){
 var contentReq=location.hostname.endsWith("github.io")?Promise.resolve(null):fetch("/api/content").then(function(r){return r.ok?r.json():null;});
 contentReq.then(function(data){
   if(!data)return;
@@ -1056,15 +1090,7 @@ contentReq.then(function(data){
     var box=document.querySelector("#tagasiside .quotes");
     if(box){
       box.replaceChildren();
-      data.testimonials.forEach(function(t){
-        var fig=node("figure","quote");
-        fig.appendChild(node("blockquote",null,t.quote));
-        var cap=node("figcaption");
-        cap.appendChild(node("b",null,[t.name,t.role].filter(Boolean).join(", ")));
-        if(t.org)cap.appendChild(node("span",null,t.org));
-        fig.appendChild(cap);
-        box.appendChild(fig);
-      });
+      data.testimonials.forEach(function(t){addQuote(t, box);});
     }
   }
   if(data.news&&data.news.length){

@@ -527,6 +527,14 @@ async function handle(req, res) {
       }
       if (!sameOrigin(req) && req.method !== "GET") return send(res, 403, { error: "Vale päritolu." });
 
+      if (req.method === "POST" && pathname === "/api/feedback") {
+        if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
+        const body = await readBody(req);
+        if (clip(body.website, 200)) return send(res, 200, { ok: true });
+        if (body.ok !== true) return send(res, 400, { error: "Nõusolek on vajalik." });
+        const item = await addItem("testimonials", body);
+        return send(res, 201, { ok: true, testimonial: { quote: item.quote, name: item.name, role: item.role, org: item.org } });
+      }
       if (req.method === "POST" && pathname === "/api/auth/code") {
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
         const body = await readBody(req);
