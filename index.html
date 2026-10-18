@@ -115,6 +115,8 @@ nav a:not(.btn)::after{
 }
 nav a:not(.btn):hover{color:var(--accent)}
 nav a:not(.btn):hover::after,nav a:not(.btn):focus-visible::after{transform:scaleX(1)}
+#support-link{white-space:normal;text-align:center;line-height:1.3;max-width:min(100%,36rem)}
+#support-link[hidden]{display:none !important}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;min-height:48px;
   background:var(--accent);color:var(--accent-ink);padding:12px 22px;border-radius:999px;
@@ -522,7 +524,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 <div class="wrap bar">
  <a class="logo" href="#top"><img alt="Merkuur" src="files/merkuur-logo.png" width="52" height="52">Merkuur</a>
  <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
- <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="#teemad">Teemad</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a class="nav-mile" href="#verstapostid">Verstapostid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
+ <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="#teemad">Teemad</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a class="nav-mile" href="#verstapostid">Verstapostid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a href="#toeta">Toeta</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
 </div>
 </header>
 
@@ -889,6 +891,13 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
  </div>
 </div></section>
 
+<section id="toeta"><div class="wrap">
+ <div class="kicker">Toetamine</div>
+ <h2>Toeta Merkuuri tegevusi</h2>
+ <p class="lead">Meie investeerime noortesse. Investeeri Sina ka!</p>
+ <div class="cta"><a class="btn" id="support-link" href="" hidden>Soovin toetada teie ägedaid tegevusi</a></div>
+</div></section>
+
 <section id="kontakt" class="contact"><div class="wrap">
  <div class="kicker">Kontakt</div>
  <h2>Küsi pakkumist</h2>
@@ -919,7 +928,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <p><b>Eesmärk ja alus.</b> Päringu andmeid kasutame pakkumise tegemiseks. Tagasiside avaldame lehel sinu nõusolekul.</p>
    <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist. Avaldatud tagasiside jääb lehele, kuni palud selle eemaldada või me selle kustutame.</p>
    <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
-   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega. Haldusleht /admin saadab sisselogimiskoodi samasse teenusesse, mida kasutab metalHUB haldus, ja seab seansi küpsise; avaliku lehe külastajale seda küpsist ei seata.</p>
+   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. Toetamise nupp avab eraldi makselehe. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega. Haldusleht /admin saadab sisselogimiskoodi samasse teenusesse, mida kasutab metalHUB haldus, ja seab seansi küpsise; avaliku lehe külastajale seda küpsist ei seata.</p>
   </details>
  </div>
 </div></section>
@@ -939,6 +948,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <p class="foot-label">Lingid</p>
    <a href="https://www.facebook.com/mobileworkshops/">Facebook</a>
    <a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a>
+   <a href="#toeta">Toeta</a>
    <a href="#kontakt">Küsi pakkumist</a>
    <a href="#teemad">Teemad</a>
    <a href="#frantsiis">Frantsiis</a>
@@ -1105,8 +1115,8 @@ contentReq.then(function(data){
         var body=node("div");
         body.appendChild(node("h3",null,item.title));
         if(item.excerpt)body.appendChild(node("p",null,item.excerpt));
-        var href=safeHref(item.url);
-        if(href){var a=node("a",null,"Loe edasi →");a.href=href;if(/^https?:/.test(href)){a.target="_blank";a.rel="noopener";}body.appendChild(a);}
+        var href=safePage(item.url);
+        if(href){var a=node("a",null,"Loe edasi →");a.href=href;if(/^https?:/.test(href)&&new URL(href).origin!==location.origin){a.target="_blank";a.rel="noopener";}body.appendChild(a);}
         card.appendChild(body);
         grid.appendChild(card);
       });
@@ -1184,6 +1194,13 @@ contentReq.then(function(data){
       var value=data.stats[key];
       if(statKeys[key]&&typeof value==="string"&&value)el.textContent=value;
     });
+  }
+  var support=document.getElementById("support-link");
+  if(support&&typeof data.supportUrl==="string"&&data.supportUrl.indexOf("https://")===0){
+    support.href=data.supportUrl;
+    support.target="_blank";
+    support.rel="noopener";
+    support.hidden=false;
   }
   if(data.address){
     var slot=document.getElementById("address-slot");
