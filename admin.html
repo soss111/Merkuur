@@ -63,23 +63,19 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
  <p class="lead">Logi sisse Gmailiga. Tagasiside, blogipostitused, fotod ja teenused salvestatakse andmebaasi ning ilmuvad avalikule lehele.</p>
  <p class="note" id="status" role="status"></p>
 
- <section id="setup" class="panel" hidden>
-  <h2>Google'i sisselogimine pole veel ühendatud</h2>
-  <p>Server vajab Google Cloud OAuth kliendi ID-d. Salasõna ei ole vaja, ainult avalik kliendi ID.</p>
-  <ol class="steps">
-   <li>Ava <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console → Credentials</a>.</li>
-   <li>Loo OAuth client, tüüp Web application.</li>
-   <li>Lisa lubatud JavaScripti päritolu: <code>https://www.merkuur.eu</code> ja testimiseks <code>http://localhost:8787</code>.</li>
-   <li>Kirjuta kliendi ID faili <code>data/admin.config.json</code> väljale <code>googleClientId</code>.</li>
-   <li>Vaikimisi on lubatud <code>info@merkuur.eu</code>. Esimene õnnestunud Google'i sisselogimine lisatakse samuti halduriks, seejärel uks sulgub.</li>
-   <li>Käivita server uuesti käsuga <code>node server.js</code> ja ava <code>/admin</code>.</li>
-  </ol>
- </section>
-
  <section id="login" class="panel" hidden>
   <h2>Logi sisse Gmailiga</h2>
-  <p>Kasuta Google'i kontot. Sisse pääsevad ainult haldurite nimekirjas olevad aadressid.</p>
-  <div id="google-btn"></div>
+  <p>Sisesta halduri e-post. Saadame ühekordse koodi samamoodi nagu <a href="https://metalhub.ee/admin/" target="_blank" rel="noopener">metalHUB halduses</a>.</p>
+  <form id="form-email">
+   <label>E-post<input name="email" type="email" required autocomplete="username" placeholder="nimi@gmail.com"></label>
+   <button class="btn" type="submit">Saada kood</button>
+  </form>
+  <form id="form-code" hidden>
+   <p id="code-sent" class="lead"></p>
+   <label>Kood<input name="code" inputmode="numeric" autocomplete="one-time-code" required placeholder="6-kohaline kood"></label>
+   <button class="btn" type="submit">Logi sisse</button>
+   <button class="btn ghost" id="other-email" type="button">Kasuta teist aadressi</button>
+  </form>
  </section>
 
  <section id="app" hidden>
@@ -282,7 +278,6 @@ document.getElementById("logout").addEventListener("click",function(){
   api("/api/auth/logout",{method:"POST",body:{}}).then(function(){location.reload();});
 });
 function showApp(me){
-  document.getElementById("setup").hidden=true;
   document.getElementById("login").hidden=true;
   document.getElementById("app").hidden=false;
   document.getElementById("who").textContent=me.email;
@@ -290,34 +285,31 @@ function showApp(me){
   renderAdmins();
   load().catch(function(err){say(err.message,true);});
 }
-function startGoogle(clientId){
-  var s=document.createElement("script");
-  s.src="https://accounts.google.com/gsi/client?hl=et";
-  s.async=true;
-  s.onload=function(){
-    google.accounts.id.initialize({
-      client_id:clientId,
-      callback:function(resp){
-        api("/api/auth/google",{method:"POST",body:{credential:resp.credential}}).then(function(){
-          return api("/api/auth/me");
-        }).then(showApp).catch(function(err){say(err.message,true);});
-      }
-    });
-    google.accounts.id.renderButton(document.getElementById("google-btn"),{
-      type:"standard",theme:"filled_black",size:"large",text:"signin_with",shape:"rectangular",locale:"et",width:320
-    });
-  };
-  s.onerror=function(){say("Google'i sisselogimise nuppu ei saanud laadida.",true);};
-  document.head.appendChild(s);
-}
-Promise.all([api("/api/auth/config"),api("/api/auth/me").catch(function(){return null;})]).then(function(pair){
-  var cfg=pair[0],me=pair[1];
-  if(me&&me.email)return showApp(me);
-  if(!cfg.configured){document.getElementById("setup").hidden=false;return;}
+var loginEmail="";
+document.getElementById("form-email").addEventListener("submit",function(e){
+  e.preventDefault();
+  loginEmail=e.target.email.value.trim();
+  api("/api/auth/code",{method:"POST",body:{email:loginEmail}}).then(function(d){
+    document.getElementById("form-email").hidden=true;
+    document.getElementById("form-code").hidden=false;
+    document.getElementById("code-sent").textContent=d.message||("Kood saadetud aadressile "+loginEmail);
+    say("");
+  }).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-code").addEventListener("submit",function(e){
+  e.preventDefault();
+  api("/api/auth/verify",{method:"POST",body:{email:loginEmail,code:e.target.code.value}}).then(function(){
+    return api("/api/auth/me");
+  }).then(showApp).catch(function(err){say(err.message,true);});
+});
+document.getElementById("other-email").addEventListener("click",function(){
+  document.getElementById("form-code").hidden=true;
+  document.getElementById("form-email").hidden=false;
+  say("");
+});
+api("/api/auth/me").then(showApp).catch(function(){
   document.getElementById("login").hidden=false;
-  if(cfg.allowFirstGoogleLogin)say("Esimene Google'i kontoga sisselogimine saab halduriks. Pärast seda pääsevad sisse ainult nimekirjas olevad aadressid.");
-  startGoogle(cfg.clientId);
-}).catch(function(err){say(err.message,true);});
+});
 })();
 </script>
 </body>

@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import http from "node:http";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -10,15 +11,20 @@ const PORT = 8791;
 const BASE = "http://127.0.0.1:" + PORT;
 const PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
 
-function startServer(dataDir) {
+function startServer(dataDir, opts) {
+  opts = opts || {};
+  const port = opts.port || PORT;
+  const env = Object.assign({}, process.env, {
+    PORT: String(port),
+    DATA_DIR: dataDir,
+    ADMIN_DEV_LOGIN: "1",
+    DATABASE_URL: ""
+  });
+  delete env.LOGIN_API_URL;
+  if (opts.loginApi) env.LOGIN_API_URL = opts.loginApi;
   const child = spawn(process.execPath, ["server.js"], {
     cwd: ROOT,
-    env: Object.assign({}, process.env, {
-      PORT: String(PORT),
-      DATA_DIR: dataDir,
-      ADMIN_DEV_LOGIN: "1",
-      DATABASE_URL: ""
-    }),
+    env: env,
     stdio: ["ignore", "pipe", "pipe"]
   });
   return new Promise((resolve, reject) => {
@@ -37,15 +43,16 @@ function startServer(dataDir) {
   });
 }
 
-function client() {
+function client(base) {
+  base = base || BASE;
   let cookie = "";
   return async function request(pathname, opts) {
     opts = opts || {};
-    const headers = { Origin: BASE, "Content-Type": "application/json" };
+    const headers = { Origin: base, "Content-Type": "application/json" };
     if (opts.origin === null) delete headers.Origin;
     else if (opts.origin) headers.Origin = opts.origin;
     if (cookie) headers.Cookie = cookie;
-    const res = await fetch(BASE + pathname, {
+    const res = await fetch(base + pathname, {
       method: opts.method || "GET",
       headers: headers,
       body: opts.body ? JSON.stringify(opts.body) : undefined
@@ -102,7 +109,8 @@ test("admin auth and published content", async () => {
     const admin = await call("/admin");
     assert.equal(admin.status, 200);
     assert.match(admin.text, /Logi sisse Gmailiga/);
-    assert.match(admin.text, /googleClientId/);
+    assert.match(admin.text, /Saada kood/);
+    assert.match(admin.text, /\/api\/auth\/code/);
 
     const hidden = await call("/data/admin.config.json");
     assert.equal(hidden.status, 404);
@@ -214,5 +222,58 @@ test("admin auth and published content", async () => {
     assert.equal(again.status, 401);
   } finally {
     child.kill("SIGTERM");
+  }
+});
+
+test("gmail code login uses the metalhub login service", async () => {
+  const hits = [];
+  const login = http.createServer((req, res) => {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      const body = JSON.parse(raw);
+      hits.push(body);
+      res.setHeader("Content-Type", "application/json");
+      if (body.action === "request_login_code") {
+        res.end(JSON.stringify({ ok: true, email: body.email, message: "Login code sent. Check your email." }));
+        return;
+      }
+      if (body.action === "verify_login_code" && body.code === "123456") {
+        res.end(JSON.stringify({ ok: true, sessionToken: "session-token", loginId: body.email, expiresAt: new Date(Date.now() + 3600000).toISOString() }));
+        return;
+      }
+      res.end(JSON.stringify({ ok: false, error: "Vale kood." }));
+    });
+  });
+  await new Promise((resolve) => login.listen(0, "127.0.0.1", resolve));
+  const loginApi = "http://127.0.0.1:" + login.address().port + "/api/exec";
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "merkuur-login-"));
+  const port = 8792;
+  const base = "http://127.0.0.1:" + port;
+  const child = await startServer(dataDir, { port: port, loginApi: loginApi });
+  const call = client(base);
+  try {
+    const stranger = await call("/api/auth/code", { method: "POST", body: { email: "other@gmail.com" } });
+    assert.equal(stranger.status, 403);
+    assert.equal(hits.length, 0);
+
+    const sent = await call("/api/auth/code", { method: "POST", body: { email: "LauriSoosaar@gmail.com" } });
+    assert.equal(sent.status, 200);
+    assert.match(sent.json.message, /Login code sent/);
+    assert.equal(hits[0].action, "request_login_code");
+    assert.equal(hits[0].email, "laurisoosaar@gmail.com");
+
+    const bad = await call("/api/auth/verify", { method: "POST", body: { email: "laurisoosaar@gmail.com", code: "000000" } });
+    assert.equal(bad.status, 401);
+
+    const ok = await call("/api/auth/verify", { method: "POST", body: { email: "laurisoosaar@gmail.com", code: "123456" } });
+    assert.equal(ok.status, 200);
+    assert.equal(ok.json.email, "laurisoosaar@gmail.com");
+    const me = await call("/api/auth/me");
+    assert.equal(me.status, 200);
+    assert.equal(me.json.email, "laurisoosaar@gmail.com");
+  } finally {
+    child.kill("SIGTERM");
+    login.close();
   }
 });

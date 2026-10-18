@@ -207,6 +207,8 @@ function readBody(req) {
   });
 }
 
+const STAFF_EMAILS = ["laurisoosaar@gmail.com", "lauri.soosaar@gmail.com", "lauri.soosaar@venten.ee"];
+const LOGIN_API = process.env.LOGIN_API_URL || "https://metalhub.ee/api/exec";
 const authHits = new Map();
 function rateLimit(req) {
   const ip = String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "");
@@ -241,13 +243,47 @@ async function verifyGoogle(idToken, clientId) {
   return String(info.email || "").toLowerCase();
 }
 
-function acceptEmail(email) {
+function withStaff(cfg) {
+  const emails = cfg.allowedEmails.slice();
+  STAFF_EMAILS.forEach((email) => {
+    if (emails.indexOf(email) === -1) emails.push(email);
+  });
+  return Object.assign({}, cfg, { allowedEmails: emails });
+}
+
+async function postLogin(action, fields) {
+  let res;
+  try {
+    res = await fetch(LOGIN_API, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(Object.assign({ action: action }, fields)),
+      redirect: "follow",
+      signal: AbortSignal.timeout(15000)
+    });
+  } catch (err) {
+    throw Object.assign(new Error("Sisselogimisteenus ei vasta."), { status: 502 });
+  }
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch (err) {
+    throw Object.assign(new Error("Sisselogimisteenus ei vastanud."), { status: 502 });
+  }
+  if (!data || data.ok !== true) {
+    const message = String(data && data.error || "Sisselogimine ebaõnnestus.").slice(0, 200);
+    throw Object.assign(new Error(message), { status: 401 });
+  }
+  return data;
+}
+
+function acceptEmail(email, opts) {
+  opts = opts || {};
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw Object.assign(new Error("E-post ei sobi."), { status: 400 });
   }
-  const cfg = loadConfig();
+  const cfg = withStaff(loadConfig());
   if (cfg.allowedEmails.indexOf(email) !== -1) return cfg;
-  if (cfg.allowFirstGoogleLogin) {
+  if (opts.enroll !== false && cfg.allowFirstGoogleLogin) {
     cfg.allowedEmails.push(email);
     cfg.allowFirstGoogleLogin = false;
     saveConfig(cfg);
@@ -456,7 +492,7 @@ async function handle(req, res) {
         const user = sessionUser(req);
         if (!user) return send(res, 401, { error: "Logi sisse." });
         const cfg = loadConfig();
-        return send(res, 200, { email: user.email, allowedEmails: cfg.allowedEmails });
+        return send(res, 200, { email: user.email, allowedEmails: withStaff(cfg).allowedEmails });
       }
       if (req.method === "POST" && pathname === "/api/auth/dev") {
         if (process.env.ADMIN_DEV_LOGIN !== "1" || !isLocal(req)) return send(res, 404, { error: "Ei leitud." });
@@ -470,6 +506,30 @@ async function handle(req, res) {
       }
       if (!sameOrigin(req) && req.method !== "GET") return send(res, 403, { error: "Vale päritolu." });
 
+      if (req.method === "POST" && pathname === "/api/auth/code") {
+        if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
+        const body = await readBody(req);
+        const email = String(body.email || "").trim().toLowerCase();
+        acceptEmail(email, { enroll: false });
+        const data = await postLogin("request_login_code", { email: email });
+        return send(res, 200, { ok: true, email: email, message: String(data.message || "Kood saadetud. Vaata oma e-posti.") });
+      }
+      if (req.method === "POST" && pathname === "/api/auth/verify") {
+        if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
+        const body = await readBody(req);
+        const email = String(body.email || "").trim().toLowerCase();
+        const code = String(body.code || "").replace(/\s+/g, "");
+        if (!/^\d{4,8}$/.test(code)) return send(res, 400, { error: "Sisesta kood e-kirjast." });
+        acceptEmail(email, { enroll: false });
+        const data = await postLogin("verify_login_code", { email: email, code: code, displayName: "Merkuur" });
+        const loginId = String(data.loginId || email).trim().toLowerCase();
+        if (!data.sessionToken || loginId !== email) {
+          return send(res, 401, { error: "Sisselogimine ebaõnnestus." });
+        }
+        const id = createSession(email);
+        setSessionCookie(req, res, id, Math.floor(SESSION_MS / 1000));
+        return send(res, 200, { email: email });
+      }
       if (req.method === "POST" && pathname === "/api/auth/google") {
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
         const cfg = loadConfig();
@@ -518,7 +578,7 @@ async function handle(req, res) {
         if (cfg.allowedEmails.indexOf(email) === -1) cfg.allowedEmails.push(email);
         cfg.allowFirstGoogleLogin = false;
         saveConfig(cfg);
-        return send(res, 200, { allowedEmails: cfg.allowedEmails });
+        return send(res, 200, { allowedEmails: withStaff(cfg).allowedEmails });
       }
       if (req.method === "DELETE" && pathname === "/api/admins") {
         const body = await readBody(req);
@@ -528,7 +588,7 @@ async function handle(req, res) {
         cfg.allowedEmails = cfg.allowedEmails.filter((item) => item !== email);
         cfg.allowFirstGoogleLogin = false;
         saveConfig(cfg);
-        return send(res, 200, { allowedEmails: cfg.allowedEmails });
+        return send(res, 200, { allowedEmails: withStaff(cfg).allowedEmails });
       }
 
       const parts = pathname.split("/").filter(Boolean);
