@@ -31,13 +31,14 @@ const DEFAULT_CONFIG = {
 
 async function ensureData() {
   fs.mkdirSync(UPLOADS, { recursive: true });
-  if (!fs.existsSync(CONFIG_FILE)) writeJson(CONFIG_FILE, DEFAULT_CONFIG);
+  const hadConfig = fs.existsSync(CONFIG_FILE);
+  if (!hadConfig) writeJson(CONFIG_FILE, DEFAULT_CONFIG);
   if (!fs.existsSync(CONTENT_FILE)) writeJson(CONTENT_FILE, EMPTY_CONTENT);
   if (!fs.existsSync(SESSION_FILE)) writeJson(SESSION_FILE, {});
   database = await db.openDatabase(DATA);
   await database.importJsonOnce(CONTENT_FILE);
   await database.seedCatalogOnce();
-  dropRemovedAdmins();
+  await adoptAdmins(hadConfig);
 }
 
 function readJson(file, fallback) {
@@ -54,34 +55,55 @@ function writeJson(file, data) {
   fs.renameSync(tmp, file);
 }
 
-function dropRemovedAdmins() {
-  const raw = readJson(CONFIG_FILE, {});
-  const emails = Array.isArray(raw.allowedEmails) ? raw.allowedEmails : [];
-  const kept = emails.map((s) => String(s).trim().toLowerCase()).filter((email) => email && REMOVED_ADMINS.indexOf(email) === -1);
-  if (kept.length === emails.length) return;
-  const cfg = loadConfig();
-  cfg.allowedEmails = kept.length ? kept : ["info@merkuur.eu"];
-  saveConfig(cfg);
+function cleanEmails(list) {
+  return (Array.isArray(list) ? list : []).map((s) => String(s).trim().toLowerCase()).filter((email) => email && REMOVED_ADMINS.indexOf(email) === -1);
 }
 
-function loadConfig() {
-  const cfg = Object.assign({}, DEFAULT_CONFIG, readJson(CONFIG_FILE, {}));
+async function adoptAdmins(hadConfig) {
+  const existing = await database.adminConfig();
+  if (!existing) {
+    const file = hadConfig ? readJson(CONFIG_FILE, DEFAULT_CONFIG) : DEFAULT_CONFIG;
+    await saveConfig(Object.assign({}, DEFAULT_CONFIG, file));
+  }
+  await dropRemovedAdmins();
+}
+
+async function dropRemovedAdmins() {
+  const stored = await database.adminConfig();
+  const raw = stored && Array.isArray(stored.allowedEmails) ? stored.allowedEmails : [];
+  const kept = cleanEmails(raw);
+  const unchanged = kept.length === raw.length && raw.every((email, index) => email === kept[index]);
+  if (unchanged) return;
+  const cfg = await loadConfig();
+  cfg.allowedEmails = kept.length ? kept : ["info@merkuur.eu"];
+  await saveConfig(cfg);
+}
+
+async function loadConfig() {
+  const file = readJson(CONFIG_FILE, {});
+  const stored = await database.adminConfig();
+  const cfg = Object.assign({}, DEFAULT_CONFIG, file, stored || {});
+  if (stored && Array.isArray(stored.allowedEmails)) cfg.allowedEmails = stored.allowedEmails;
+  if (file.googleClientId) cfg.googleClientId = file.googleClientId;
   if (process.env.GOOGLE_CLIENT_ID) cfg.googleClientId = process.env.GOOGLE_CLIENT_ID;
   if (process.env.GOOGLE_ALLOWED_EMAILS) {
     cfg.allowedEmails = process.env.GOOGLE_ALLOWED_EMAILS.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
   }
-  cfg.allowedEmails = (cfg.allowedEmails || []).map((s) => String(s).trim().toLowerCase()).filter((email) => email && REMOVED_ADMINS.indexOf(email) === -1);
+  cfg.allowedEmails = cleanEmails(cfg.allowedEmails);
+  if (!cfg.allowedEmails.length) cfg.allowedEmails = ["info@merkuur.eu"];
   cfg.allowFirstGoogleLogin = cfg.allowFirstGoogleLogin !== false;
   return cfg;
 }
 
-function saveConfig(cfg) {
+async function saveConfig(cfg) {
   const stored = {
     googleClientId: cfg.googleClientId || "",
-    allowedEmails: cfg.allowedEmails,
+    allowedEmails: cleanEmails(cfg.allowedEmails),
     allowFirstGoogleLogin: cfg.allowFirstGoogleLogin !== false
   };
-  writeJson(CONFIG_FILE, stored);
+  if (!stored.allowedEmails.length) stored.allowedEmails = ["info@merkuur.eu"];
+  await database.saveAdminConfig(stored);
+  try { writeJson(CONFIG_FILE, stored); } catch (err) { /* the database copy is the one HSL keeps */ }
 }
 
 function loadContent() {
@@ -313,23 +335,23 @@ function passwordMatches(given) {
   return crypto.timingSafeEqual(actual, wanted);
 }
 
-function passwordSessionEmail() {
-  const emails = withStaff(loadConfig()).allowedEmails;
+async function passwordSessionEmail() {
+  const emails = withStaff(await loadConfig()).allowedEmails;
   if (emails.indexOf("info@merkuur.eu") !== -1) return "info@merkuur.eu";
   return emails[0];
 }
 
-function acceptEmail(email, opts) {
+async function acceptEmail(email, opts) {
   opts = opts || {};
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw Object.assign(new Error("E-post ei sobi."), { status: 400 });
   }
-  const cfg = withStaff(loadConfig());
+  const cfg = withStaff(await loadConfig());
   if (cfg.allowedEmails.indexOf(email) !== -1) return cfg;
   if (opts.enroll !== false && cfg.allowFirstGoogleLogin) {
     cfg.allowedEmails.push(email);
     cfg.allowFirstGoogleLogin = false;
-    saveConfig(cfg);
+    await saveConfig(cfg);
     return cfg;
   }
   throw Object.assign(new Error("See Google'i konto ei ole haldurite nimekirjas."), { status: 403 });
@@ -766,7 +788,7 @@ async function handle(req, res) {
         return send(res, 200, publicContent(await loadContent()));
       }
       if (req.method === "GET" && pathname === "/api/auth/config") {
-        const cfg = loadConfig();
+        const cfg = await loadConfig();
         return send(res, 200, {
           configured: Boolean(cfg.googleClientId),
           clientId: cfg.googleClientId || "",
@@ -777,7 +799,7 @@ async function handle(req, res) {
       if (req.method === "GET" && pathname === "/api/auth/me") {
         const user = sessionUser(req);
         if (!user) return send(res, 401, { error: "Logi sisse." });
-        const cfg = loadConfig();
+        const cfg = await loadConfig();
         const where = database.driver === "postgres" ? "HSL " + database.label : "sqlite — HSL-i tabeleid ei uuendata";
         return send(res, 200, { email: user.email, allowedEmails: withStaff(cfg).allowedEmails, database: where });
       }
@@ -786,7 +808,7 @@ async function handle(req, res) {
         if (!sameOrigin(req) && req.headers.origin) return send(res, 403, { error: "Vale päritolu." });
         const body = await readBody(req);
         const email = String(body.email || "").trim().toLowerCase();
-        acceptEmail(email);
+        await acceptEmail(email);
         const id = createSession(email);
         setSessionCookie(req, res, id, Math.floor(SESSION_MS / 1000));
         return send(res, 200, { email: email });
@@ -806,7 +828,7 @@ async function handle(req, res) {
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
         const body = await readBody(req);
         if (!passwordMatches(body.password)) return send(res, 401, { error: "Vale parool." });
-        const email = passwordSessionEmail();
+        const email = await passwordSessionEmail();
         const id = createSession(email);
         setSessionCookie(req, res, id, Math.floor(SESSION_MS / 1000));
         return send(res, 200, { email: email });
@@ -815,7 +837,7 @@ async function handle(req, res) {
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
         const body = await readBody(req);
         const email = String(body.email || "").trim().toLowerCase();
-        acceptEmail(email, { enroll: false });
+        await acceptEmail(email, { enroll: false });
         const data = await postLogin("request_login_code", { email: email });
         return send(res, 200, { ok: true, email: email, message: String(data.message || "Kood saadetud. Vaata oma e-posti.") });
       }
@@ -825,7 +847,7 @@ async function handle(req, res) {
         const email = String(body.email || "").trim().toLowerCase();
         const code = String(body.code || "").replace(/\s+/g, "");
         if (!/^\d{4,8}$/.test(code)) return send(res, 400, { error: "Sisesta kood e-kirjast." });
-        acceptEmail(email, { enroll: false });
+        await acceptEmail(email, { enroll: false });
         const data = await postLogin("verify_login_code", { email: email, code: code, displayName: "Merkuur" });
         const loginId = String(data.loginId || email).trim().toLowerCase();
         if (!data.sessionToken || loginId !== email) {
@@ -837,7 +859,7 @@ async function handle(req, res) {
       }
       if (req.method === "POST" && pathname === "/api/auth/google") {
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
-        const cfg = loadConfig();
+        const cfg = await loadConfig();
         if (!cfg.googleClientId) return send(res, 503, { error: "Google'i kliendi ID puudub." });
         const body = await readBody(req);
         const credential = String(body.credential || "");
@@ -845,7 +867,7 @@ async function handle(req, res) {
           return send(res, 401, { error: "Google'i sisselogimine ebaõnnestus." });
         }
         const email = await verifyGoogle(credential, cfg.googleClientId);
-        acceptEmail(email);
+        await acceptEmail(email);
         const id = createSession(email);
         setSessionCookie(req, res, id, Math.floor(SESSION_MS / 1000));
         return send(res, 200, { email: email });
@@ -893,20 +915,20 @@ async function handle(req, res) {
         const body = await readBody(req);
         const email = String(body.email || "").trim().toLowerCase();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return send(res, 400, { error: "E-post ei sobi." });
-        const cfg = loadConfig();
+        const cfg = await loadConfig();
         if (cfg.allowedEmails.indexOf(email) === -1) cfg.allowedEmails.push(email);
         cfg.allowFirstGoogleLogin = false;
-        saveConfig(cfg);
+        await saveConfig(cfg);
         return send(res, 200, { allowedEmails: withStaff(cfg).allowedEmails });
       }
       if (req.method === "DELETE" && pathname === "/api/admins") {
         const body = await readBody(req);
         const email = String(body.email || "").trim().toLowerCase();
-        const cfg = loadConfig();
+        const cfg = await loadConfig();
         if (cfg.allowedEmails.length < 2) return send(res, 400, { error: "Viimast haldurit ei saa eemaldada." });
         cfg.allowedEmails = cfg.allowedEmails.filter((item) => item !== email);
         cfg.allowFirstGoogleLogin = false;
-        saveConfig(cfg);
+        await saveConfig(cfg);
         return send(res, 200, { allowedEmails: withStaff(cfg).allowedEmails });
       }
 
