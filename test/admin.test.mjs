@@ -169,6 +169,8 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /data-tab="roadmap"/);
     assert.match(admin.text, /id="form-roadmap"/);
     assert.match(admin.text, /\/api\/stats/);
+    assert.match(admin.text, /Muuda/);
+    assert.match(admin.text, /Katkesta/);
 
     const hidden = await call("/data/admin.config.json");
     assert.equal(hidden.status, 404);
@@ -206,6 +208,8 @@ test("admin auth and published content", async () => {
     assert.equal(denied.status, 401);
     const roadmapDenied = await call("/api/content/roadmap", { method: "POST", body: { title: "Uus etapp", detail: "Kirjeldus" } });
     assert.equal(roadmapDenied.status, 401);
+    const editDenied = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Ei" } });
+    assert.equal(editDenied.status, 401);
     const noConsent = await call("/api/feedback", { method: "POST", body: { quote: "Tere", name: "Mari" } });
     assert.equal(noConsent.status, 400);
     const guest = await call("/api/feedback", { method: "POST", body: { quote: "Väga hea töötuba", name: "Kati Kask", role: "õpetaja", org: "Neeme Kool", ok: true } });
@@ -338,6 +342,24 @@ test("admin auth and published content", async () => {
       method: "PUT",
       body: { title: "Puudub", detail: "Ei ole." }
     });
+    const edited = await call("/api/content/news/" + news.json.id, {
+      method: "PUT",
+      body: { title: "Muudetud töötuba", excerpt: "Uus tekst", body: "Esimene lõik", url: "/tootoad" }
+    });
+    assert.equal(edited.status, 200);
+    assert.equal(edited.json.id, news.json.id);
+    assert.equal(edited.json.title, "Muudetud töötuba");
+    assert.equal(edited.json.slug, news.json.slug);
+    assert.equal(edited.json.url, "/tootoad");
+    assert.equal(edited.json.image, uploaded.json.url);
+    const photoEdit = await call("/api/content/gallery/" + photo.json.id, {
+      method: "PUT",
+      body: { caption: "Töökojas täna" }
+    });
+    assert.equal(photoEdit.status, 200);
+    assert.equal(photoEdit.json.caption, "Töökojas täna");
+    assert.equal(photoEdit.json.image, uploaded.json.url);
+    const missing = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Puudub" } });
     assert.equal(missing.status, 404);
 
     const stored = await call("/api/content");
@@ -351,6 +373,8 @@ test("admin auth and published content", async () => {
     assert.equal(dropped.status, 200);
     const afterStep = await call("/api/content");
     assert.equal(afterStep.json.roadmap.length, 5);
+    assert.ok(stored.json.news.some((item) => item.id === news.json.id && item.title === "Muudetud töötuba" && item.image === uploaded.json.url));
+    assert.ok(stored.json.gallery.some((item) => item.id === photo.json.id && item.caption === "Töökojas täna"));
     assert.ok(stored.json.services.some((item) => item.title === "Koolitund ratastel" && item.href === "/tootoad"));
     assert.equal(stored.json.services[0].title, "Töötoad");
 
