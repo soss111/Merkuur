@@ -5,226 +5,478 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid</title>
 <meta name="description" content="Tehnoloogia ja inseneeria töötoad, tehnoloogiatunnid, õpilahenduste arendus, makerspace'i ja tehnoloogiaklasside rajamine ning mobiilsed töökojad.">
+<meta name="theme-color" content="#171b20">
+<meta property="og:title" content="Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.merkuur.eu">
 <meta property="og:image" content="https://static.wixstatic.com/media/a7f28e_213e5225ab8e411cbaf145b82b54c3d9~mv2_d_4032_3024_s_4_2.jpg/v1/fit/w_1600,h_900,al_c/a.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23171b20'/%3E%3Cpath d='M22 74V28l28 30 28-30v46' fill='none' stroke='%23ff6a13' stroke-width='10' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Merkuur","url":"https://www.merkuur.eu","email":"info@merkuur.eu","telephone":"+372 51 85 404","sameAs":["https://www.facebook.com/mobileworkshops/"]}</script>
 <style>
-:root{--bg:#fbfaf7;--surface:#fff;--ink:#14181f;--muted:#5b6472;--line:#e4e1d8;--accent:#ff5a1f;--accent-ink:#fff;--deep:#10233a}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1218;--surface:#171d26;--ink:#f1efe9;--muted:#a3adbb;--line:#273040;--accent:#ff7a45;--accent-ink:#14181f;--deep:#0a1727}}
+:root{
+  --bg:#ece9e1;
+  --surface:#f7f5ef;
+  --ink:#16191d;
+  --muted:#555c66;
+  --line:#16191d;
+  --accent:#ff6a13;
+  --accent-ink:#16191d;
+  --deep:#171b20;
+  --hazard:#ffc400;
+  --shadow:#16191d;
+  --steel:#171b20;
+  --hz:repeating-linear-gradient(-45deg,var(--hazard) 0 12px,var(--steel) 12px 24px);
+  --dots:radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.5px) 0 0/22px 22px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111418;
+    --surface:#1a1f25;
+    --ink:#eeebe3;
+    --muted:#a2abb7;
+    --line:#c9c3b6;
+    --accent:#ff7a2b;
+    --accent-ink:#16191d;
+    --deep:#0b0e11;
+    --shadow:#000;
+    --steel:#171b20;
+    color-scheme:dark;
+  }
+}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:72px}
-body{margin:0;font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  margin:0;
+  font-family:"Barlow",system-ui,sans-serif;
+  font-size:1.0625rem;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;background:#d9d3c6}
 a{color:inherit}
+::selection{background:var(--hazard);color:#16191d}
+:focus-visible{outline:3px solid var(--hazard);outline-offset:3px}
+.skip{
+  position:absolute;left:12px;top:0;transform:translateY(-140%);
+  z-index:80;background:var(--hazard);color:#16191d;text-decoration:none;
+  padding:10px 14px;font:700 .95rem/1 "Barlow Condensed","Arial Narrow",sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;border:2px solid #16191d;
+}
+.skip:focus{transform:none;top:10px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
-header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.04em;text-decoration:none}
-.logo img{width:36px;height:36px;border-radius:8px;object-fit:cover}
-nav{display:flex;gap:22px;align-items:center;font-size:.95rem}
-nav a{text-decoration:none;color:var(--muted)}
-nav a:hover{color:var(--ink)}
-.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);padding:12px 22px;border-radius:999px;font-weight:700;text-decoration:none;border:0}
-.btn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.7)}
-nav .btn{padding:8px 16px;color:var(--accent-ink)}
-.hero{position:relative;color:#fff;min-height:78vh;display:flex;align-items:flex-end;background:var(--deep) url("https://static.wixstatic.com/media/a7f28e_213e5225ab8e411cbaf145b82b54c3d9~mv2_d_4032_3024_s_4_2.jpg/v1/fill/w_1600,h_1000,al_c,q_85/a.jpg") center/cover}
-.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,23,39,.25),rgba(10,23,39,.88))}
-.hero .wrap{position:relative;padding-bottom:64px;padding-top:120px}
-.kicker{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--accent)}
-.hero .kicker{color:#ffb08f}
-h1{font-size:clamp(2.3rem,6vw,4.4rem);line-height:1.05;margin:.3em 0;max-width:15ch;letter-spacing:-.02em}
-.hero p{max-width:56ch;font-size:1.15rem;opacity:.92}
-.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
-section{padding:84px 0}
-h2{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1;margin:.2em 0 .5em;letter-spacing:-.02em}
-.lead{color:var(--muted);max-width:62ch;font-size:1.1rem}
-.keywords{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.keywords span{border:1px solid var(--line);background:var(--surface);padding:6px 14px;border-radius:999px;font-weight:600;font-size:.85rem;letter-spacing:.06em}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr));gap:22px;margin-top:40px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.12)}
-.card img{aspect-ratio:3/2;object-fit:cover;width:100%}
-.card div{padding:22px}
-.card h3{margin:0 0 6px;font-size:1.25rem}
-.card p{margin:0 0 14px;color:var(--muted);font-size:.97rem}
-.card a{font-weight:700;color:var(--accent);text-decoration:none}
-.stats{background:var(--deep);color:#fff}
-.stats .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;text-align:center}
-.stats b{display:block;font-size:3rem;color:#ff9a6c;line-height:1}
-.stats span{opacity:.85}
-.stats section{padding:56px 0}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.split img{border-radius:20px;width:100%;aspect-ratio:4/3;object-fit:cover}
-.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:36px}
-.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px}
-.gallery figure{margin:0;position:relative}
-.gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 10px;font-size:.8rem;color:#fff;border-radius:0 0 14px 14px;background:linear-gradient(transparent,rgba(0,0,0,.75))}
-.proj{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
-.proj a{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:12px;text-decoration:none;font-size:.92rem}
-.proj a:hover{border-color:var(--accent)}
-.contact{background:var(--surface);border-top:1px solid var(--line)}
-.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px;margin-top:30px}
-.person{border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--bg)}
-.person b{display:block;font-size:1.15rem}
-.person a{display:block;color:var(--muted);text-decoration:none}
-.person a:hover{color:var(--accent)}
-footer{padding:28px 0;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
-@media(max-width:820px){nav a:not(.btn){display:none}.split{grid-template-columns:1fr}.gallery{grid-template-columns:repeat(2,1fr)}section{padding:60px 0}}
-.road{list-style:none;margin:44px 0 0;padding:0;position:relative;display:grid;gap:0}
-.road::before{content:"";position:absolute;left:23px;top:8px;bottom:8px;width:2px;background:var(--line)}
-.road li{position:relative;padding:0 0 34px 72px}
-.road li:last-child{padding-bottom:0}
-.road .n{position:absolute;left:0;top:0;width:48px;height:48px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:800;display:grid;place-items:center;font-size:1.1rem;box-shadow:0 0 0 6px var(--bg)}
-.road h3{margin:2px 0 4px;font-size:1.2rem}
-.road p{margin:0;color:var(--muted);max-width:60ch}
-.road .tag{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-@media(min-width:900px){.road{grid-template-columns:repeat(5,1fr);gap:20px}.road::before{left:24px;right:24px;top:23px;bottom:auto;width:auto;height:2px}.road li{padding:68px 0 0}.road li:last-child{padding-bottom:0}}
-nav a{text-transform:uppercase;letter-spacing:.07em;font-size:.8rem;font-weight:600}
-h2{text-transform:uppercase;letter-spacing:.01em}
-.news .card h3{font-size:1.1rem}
-.awards{display:flex;flex-wrap:wrap;gap:28px;align-items:center;margin-top:40px}
-.awards a{background:#fff;border-radius:14px;padding:14px;display:block}
-.awards img{height:120px;width:auto;object-fit:contain}
-@media(max-width:820px){nav{gap:10px}}
+h1,h2,h3,.logo,nav a,.btn,.stats b,.hero-facts b,.foot-brand strong{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif;
+}
+h1,h2,h3{overflow-wrap:break-word;text-wrap:balance;margin:0}
+h1{font-weight:800;text-transform:uppercase;letter-spacing:0;line-height:.92}
+h2{font-weight:800;font-size:clamp(2rem,4.4vw,3.15rem);line-height:.96;text-transform:uppercase;letter-spacing:.01em;margin:0 0 16px}
+h2::after{content:"";display:block;width:92px;height:8px;margin-top:14px;background:linear-gradient(90deg,var(--accent) 0 60px,var(--hazard) 60px)}
+h3{text-transform:uppercase;letter-spacing:.02em;font-weight:700}
+.kicker,.road .tag,.keywords span,.gallery figcaption,.hero-facts span,.hero-asof,.asof,.role,.partners span,.cform label,.quote figcaption span{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+}
+.kicker{
+  display:inline-block;margin:0 0 12px;font-size:.74rem;font-weight:600;
+  background:var(--hazard);color:#16191d;padding:5px 10px;letter-spacing:.14em;
+  text-transform:uppercase;border-radius:2px;
+}
 
-/* ===== Mobile workshop theme ===== */
-:root{--bg:#ecE9e1;--surface:#f7f5ef;--ink:#16191d;--muted:#555c66;--line:#16191d;--accent:#ff6a13;--accent-ink:#16191d;--deep:#171b20;--hazard:#ffc400;
---hz:repeating-linear-gradient(-45deg,var(--hazard) 0 16px,#16191d 16px 32px);
---dots:radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.5px) 0 0/22px 22px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--surface:#1a1f25;--ink:#eeebe3;--muted:#a2abb7;--line:#3a424d;--accent:#ff7a2b;--accent-ink:#16191d;--deep:#0b0e11}}
-body{font-family:"Barlow",system-ui,sans-serif}
-h1,h2,h3,.logo,nav a,.btn,.stats b{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
-h1{font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.95;font-size:clamp(2.8rem,8vw,5.6rem);max-width:13ch}
-h2{font-weight:800;font-size:clamp(2rem,4.6vw,3.2rem);line-height:1}
-h3{text-transform:uppercase;letter-spacing:.02em}
-.kicker,.road .tag,.keywords span,.gallery figcaption{font-family:"IBM Plex Mono",ui-monospace,monospace}
-.kicker{display:inline-block;font-size:.74rem;background:var(--hazard);color:#16191d;padding:4px 10px;letter-spacing:.14em;border-radius:2px}
-.hero .kicker{background:var(--hazard);color:#16191d}
-header{background:#171b20;border-bottom:4px solid var(--accent);backdrop-filter:none}
-header .logo,header nav a{color:#f1efe9}
-header nav a:hover{color:var(--hazard)}
-header nav .btn{color:#16191d}
-.btn{border-radius:3px;text-transform:uppercase;letter-spacing:.06em;font-size:1.05rem;border:2px solid #16191d;box-shadow:4px 4px 0 #16191d;transition:transform .12s,box-shadow .12s}
-.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 #16191d}
-.btn.ghost{border-color:#fff;box-shadow:4px 4px 0 rgba(255,255,255,.35)}
-header .btn{box-shadow:3px 3px 0 var(--hazard);border-color:var(--accent)}
-.hero{min-height:84vh}
-.hero::before{background:linear-gradient(180deg,rgba(23,27,32,.35),rgba(23,27,32,.92)),linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px) 0 0/48px 48px}
-.hz{height:18px;background:var(--hz)}
-.keywords span{border:2px solid var(--ink);border-radius:2px;background:var(--surface);font-size:.78rem}
-.card{border:2px solid var(--ink);border-radius:4px;box-shadow:6px 6px 0 var(--ink);position:relative;counter-increment:svc}
-.card:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--accent)}
-.card::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--accent);z-index:1}
-#teenused .card::after{content:"0" counter(svc);position:absolute;top:16px;right:14px;font:600 .8rem "IBM Plex Mono",monospace;background:#16191d;color:var(--hazard);padding:3px 8px;border-radius:2px}
-#teenused .grid{counter-reset:svc}
-.card a{color:var(--ink);text-transform:uppercase;font-family:"Barlow Condensed",sans-serif;letter-spacing:.06em;font-size:1.05rem;border-bottom:3px solid var(--accent)}
-.split img,.gallery img{border-radius:4px;border:2px solid var(--ink)}
-.gallery figcaption{border-radius:0;text-transform:uppercase;letter-spacing:.08em;font-size:.7rem}
-.stats{background:var(--dots),var(--deep);border-top:0}
-.stats b{font-size:4.2rem;color:var(--hazard);font-weight:800;text-transform:uppercase}
-.stats .wrap>div{border:2px solid rgba(255,255,255,.25);padding:22px 12px;border-radius:4px}
-.road::before{background:repeating-linear-gradient(90deg,var(--ink) 0 10px,transparent 10px 18px);height:3px;background-color:transparent}
-@media(max-width:899px){.road::before{background:repeating-linear-gradient(180deg,var(--ink) 0 10px,transparent 10px 18px);width:3px;height:auto}}
-.road .n{border-radius:4px;border:2px solid var(--ink);font-family:"IBM Plex Mono",monospace;box-shadow:4px 4px 0 var(--ink)}
-.road .tag{color:var(--ink);background:var(--hazard);padding:2px 8px;border-radius:2px;font-size:.7rem}
-.proj a{border:2px solid var(--ink);border-radius:3px;font-family:"IBM Plex Mono",monospace;font-size:.82rem;font-weight:500}
-.proj a:hover{background:var(--hazard);color:#16191d;border-color:var(--ink)}
-#pood{background:var(--dots),var(--deep)!important}
-#pood h2{color:#fff}
-#projektid,#uudised,.contact{border-color:var(--ink)!important;border-width:2px!important}
-.person{border:2px solid var(--ink);border-radius:4px;box-shadow:5px 5px 0 var(--ink)}
-.person b{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;font-size:1.4rem}
-.awards a{border:2px solid var(--ink);border-radius:4px;background:#fff}
-footer{background:#171b20;color:#a2abb7;border-top:0}
-footer a{color:var(--hazard)}
-
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;margin-top:34px}
-.tiles a{display:block;text-decoration:none;border:2px solid rgba(255,255,255,.3);border-radius:4px;padding:20px;transition:.15s}
-.tiles a:hover{border-color:var(--hazard);transform:translateY(-3px)}
-.tiles b{display:block;font:800 1.35rem "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:var(--hazard)}
-.tiles span{opacity:.8;font-size:.95rem}
-.tiles.light a{border-color:var(--ink);background:var(--surface);box-shadow:5px 5px 0 var(--ink);color:var(--ink)}
-.tiles.light a:hover{border-color:var(--ink);box-shadow:8px 8px 0 var(--accent)}
-.tiles.light b{color:var(--ink)}
-.order{margin-top:46px;border-left:6px solid var(--accent);padding:4px 0 4px 18px;max-width:64ch}
-.order h3{margin:0 0 4px;font-size:1.3rem}.order p{margin:0;color:var(--muted)}
-.cform{margin-top:26px;display:grid;gap:14px;max-width:760px}
-.cform .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cform label{display:grid;gap:5px;font:600 .78rem "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
-.cform input,.cform select,.cform textarea{font:500 1rem "Barlow",sans-serif;text-transform:none;letter-spacing:0;padding:12px;border:2px solid var(--ink);border-radius:3px;background:var(--bg);color:var(--ink);width:100%}
-.cform input:focus,.cform select:focus,.cform textarea:focus{outline:3px solid var(--hazard);outline-offset:1px}
-.cform .chk{display:flex;gap:10px;align-items:flex-start;font:500 .9rem "Barlow",sans-serif;text-transform:none;letter-spacing:0}
-.cform .chk input{width:auto;margin-top:4px}
-.cform .btn{justify-self:start;cursor:pointer}
-.cform .note{margin:0;font-weight:600}
-.priv{margin-top:34px;border:2px solid var(--ink);border-radius:4px;padding:14px 18px;max-width:760px}
-.priv summary{cursor:pointer;font:800 1.2rem "Barlow Condensed",sans-serif;text-transform:uppercase}
-.priv p{color:var(--muted);margin:.7em 0 0}
-.todo{background:var(--hazard);color:#16191d;padding:1px 6px;border-radius:2px}
-footer a{color:var(--hazard)}
-@media(max-width:620px){.cform .row{grid-template-columns:1fr}}
-
-.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:22px;margin-top:36px}
-.quote{margin:0;position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:4px;box-shadow:6px 6px 0 var(--ink);padding:44px 24px 22px;display:flex;flex-direction:column;justify-content:space-between;gap:20px}
-.quote::before{content:"\201C";position:absolute;top:-6px;left:18px;font:800 5rem/1 "Barlow Condensed",sans-serif;color:var(--accent)}
-.quote blockquote{margin:0;font-size:1.12rem;line-height:1.5}
-.quote figcaption{display:flex;flex-direction:column;gap:2px;border-top:2px dashed var(--ink);padding-top:14px}
-.quote figcaption img{height:40px;width:auto;object-fit:contain;margin-bottom:8px;align-self:flex-start}
-.quote figcaption b{font:800 1.15rem "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.03em}
-.quote figcaption span{font:500 .8rem "IBM Plex Mono",monospace;color:var(--muted)}
-
-.check{list-style:none;padding:0;margin:20px 0 4px;display:grid;gap:10px}
-.check li{padding-left:34px;position:relative}
-.check li::before{content:"";position:absolute;left:0;top:.35em;width:18px;height:18px;background:var(--accent);border:2px solid var(--ink);border-radius:2px}
-.check li::after{content:"";position:absolute;left:6px;top:.45em;width:5px;height:10px;border:solid var(--ink);border-width:0 3px 3px 0;transform:rotate(45deg)}
+header{
+  position:sticky;top:0;z-index:40;background:var(--steel);
+  border-bottom:0;
+}
+header::after{content:"";display:block;height:10px;background:var(--hz)}
+.bar{display:flex;align-items:center;height:72px;gap:16px}
+.logo{
+  display:flex;align-items:center;gap:10px;text-decoration:none;color:#f4f1ea;
+  font-weight:800;letter-spacing:.12em;font-size:1.7rem;text-transform:uppercase;line-height:1;
+}
+.logo img{width:44px;height:44px;object-fit:cover;border-radius:2px;border:2px solid var(--hazard);background:#fff}
+nav{display:flex;gap:18px;align-items:center;margin-left:auto}
+nav a{
+  text-decoration:none;color:#f4f1ea;text-transform:uppercase;letter-spacing:.06em;
+  font-size:.78rem;font-weight:600;position:relative;padding:8px 0;
+}
+nav a:not(.btn)::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hazard);
+  transform:scaleX(0);transform-origin:left;transition:transform .16s ease;
+}
+nav a:not(.btn):hover{color:var(--hazard)}
+nav a:not(.btn):hover::after,nav a:not(.btn):focus-visible::after{transform:scaleX(1)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:48px;
+  background:var(--accent);color:var(--accent-ink);padding:12px 18px;border-radius:3px;
+  font-weight:700;text-decoration:none;border:2px solid var(--ink);text-transform:uppercase;
+  letter-spacing:.06em;font-size:1.08rem;box-shadow:4px 4px 0 var(--shadow);cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease,color .12s ease;
+}
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--shadow)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--shadow)}
+.btn.ghost{background:transparent;color:#fff;border-color:#fff;box-shadow:4px 4px 0 rgba(255,255,255,.28)}
+.btn.ghost:hover{background:#fff;color:#16191d;box-shadow:3px 3px 0 var(--hazard)}
 .btn.ghost-dark{background:transparent;color:var(--ink);border-color:var(--ink)}
-#varustus .tiles{margin-top:44px}
-.person .role{display:block;font:500 .8rem "IBM Plex Mono",monospace;color:var(--muted);margin:-2px 0 8px;text-transform:uppercase;letter-spacing:.06em}
-
-.split>*{min-width:0}
-h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
-.burger{display:none;background:transparent;border:2px solid #f1efe9;border-radius:3px;width:46px;height:42px;padding:0;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-.burger span{display:block;width:22px;height:3px;background:#f1efe9;transition:.2s}
+header nav .btn{color:#16191d;padding:10px 14px;min-height:44px;box-shadow:3px 3px 0 var(--hazard);border-color:var(--accent)}
+header nav .btn:hover{box-shadow:1px 1px 0 var(--hazard);color:#16191d}
+.burger{
+  display:none;margin-left:auto;background:transparent;border:2px solid #f1efe9;border-radius:3px;
+  width:46px;height:46px;padding:0;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.burger span{display:block;width:22px;height:3px;background:#f1efe9;transition:transform .2s ease,opacity .2s ease}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
 .burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
-@media(max-width:820px){
- .burger{display:flex}
- header nav{display:none;position:absolute;top:100%;left:0;right:0;background:#171b20;flex-direction:column;align-items:stretch;gap:0;padding:8px 20px 20px;border-bottom:4px solid var(--accent);max-height:calc(100vh - 70px);overflow:auto}
- header nav.open{display:flex}
- header nav a:not(.btn){display:block;padding:15px 0;border-bottom:1px solid #2b323b;font-size:1rem}
- header nav .btn{margin-top:16px;text-align:center;padding:14px}
- h2{font-size:clamp(1.7rem,7vw,2.4rem)}
- .stats b{font-size:3rem}
- .btn{padding:12px 18px}
+
+.hero{
+  display:flex;flex-direction:column;background:var(--steel);color:#fff;
+}
+.hero-photo{position:relative;min-height:300px;height:62vw;max-height:460px;overflow:hidden;background:#2a241c}
+.hero-photo img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center 42%}
+.hero-photo::after{
+  content:"";position:absolute;inset:12px;border:2px solid rgba(255,255,255,.55);pointer-events:none;
+}
+.hero-panel{
+  position:relative;background:var(--dots),var(--steel);padding:32px 22px 28px 34px;
+}
+.hero-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:12px;background:var(--hz)}
+.hero .kicker{max-width:20em;background:transparent;color:var(--hazard);border:2px solid var(--hazard);box-shadow:none}
+.hero h1{font-size:clamp(2.5rem,11vw,3.5rem);max-width:14ch;color:#fff}
+.hero h1 span{display:block;color:var(--hazard);margin-top:.08em}
+.hero-panel p{max-width:42ch;font-size:1.08rem;color:rgba(255,255,255,.9);margin:16px 0 0}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.hero-dock{background:#101317;color:#fff}
+.hero-dock::before{content:"";display:block;height:8px;background:var(--hz)}
+.hero-facts{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0;padding:8px 0 0}
+.hero-facts li{padding:14px 12px 12px 0}
+.hero-facts b{
+  display:block;font-size:clamp(2rem,6vw,2.8rem);font-weight:800;line-height:.9;color:var(--hazard);letter-spacing:.01em;
+}
+.hero-facts span{
+  display:block;margin-top:6px;font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.78);
+}
+.hero-asof{
+  margin:0;padding:0 0 16px;font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.72);
 }
 
-.stats .asof{text-align:center;margin:26px 0 0;font:500 .75rem "IBM Plex Mono",monospace;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase}
-.stats b{font-size:3.4rem}
-.slogan{font:800 clamp(1.5rem,3.4vw,2.1rem)/1.1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:var(--ink);border-left:6px solid var(--accent);padding:2px 0 2px 16px;margin:22px 0 4px}
-.partners{margin:26px 0 0;color:var(--muted);font-size:.95rem;max-width:80ch}
-.partners span{display:inline-block;background:var(--hazard);color:#16191d;font:600 .72rem "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:2px;margin-right:8px}
-@media(max-width:820px){.stats b{font-size:2.6rem}}
+.hz{height:14px;background:var(--hz)}
+section{padding:76px 0}
+.lead{color:var(--muted);max-width:62ch;font-size:1.08rem;margin:0}
+.lead+.lead{margin-top:14px}
+.keywords{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.keywords span{
+  border:2px solid var(--ink);background:var(--surface);color:var(--ink);
+  padding:7px 12px;border-radius:2px;font-weight:600;font-size:.74rem;letter-spacing:.08em;
+  box-shadow:3px 3px 0 var(--shadow);
+}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:26px;margin-top:36px}
+.card{
+  background:var(--surface);border:2px solid var(--ink);border-radius:4px;overflow:hidden;
+  display:flex;flex-direction:column;position:relative;box-shadow:6px 6px 0 var(--shadow);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.card:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--accent)}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--accent);z-index:1}
+.card img{aspect-ratio:3/2;object-fit:cover;width:100%;transition:transform .45s ease}
+.card:hover img{transform:scale(1.045)}
+.card div{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;gap:0}
+.card h3{margin:0 0 8px;font-size:1.45rem}
+.card p{margin:0 0 16px;color:var(--muted);font-size:1rem;flex:1}
+.card a{
+  align-self:flex-start;margin-top:auto;font-weight:700;color:var(--ink);text-decoration:none;
+  text-transform:uppercase;letter-spacing:.06em;font-size:1.08rem;border-bottom:3px solid var(--accent);padding-bottom:1px;
+}
+.card:hover a{border-bottom-color:var(--hazard)}
+#teenused .grid{counter-reset:svc}
+#teenused .card{counter-increment:svc}
+#teenused .card::after{
+  content:counter(svc,decimal-leading-zero);
+  position:absolute;top:16px;left:12px;z-index:2;
+  font:700 .85rem/1 "IBM Plex Mono",ui-monospace,monospace;
+  background:var(--hazard);color:#16191d;border:2px solid #16191d;
+  padding:6px 8px;box-shadow:3px 3px 0 #16191d;
+}
+
+#varustus,#meist,#projektid,#meeskond{background:var(--surface)}
+.split{display:grid;grid-template-columns:1fr;gap:26px;align-items:center}
+.split>*{min-width:0}
+.split img{
+  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:2px solid var(--ink);
+  box-shadow:10px 10px 0 var(--shadow);
+}
+.check{list-style:none;padding:0;margin:18px 0 4px;display:grid;gap:10px}
+.check li{padding-left:34px;position:relative}
+.check li::before{content:"";position:absolute;left:0;top:.28em;width:18px;height:18px;background:var(--accent);border:2px solid var(--ink);border-radius:2px}
+.check li::after{content:"";position:absolute;left:6px;top:.42em;width:5px;height:9px;border:solid var(--ink);border-width:0 3px 3px 0;transform:rotate(45deg)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;margin-top:28px}
+.tiles a{
+  display:block;text-decoration:none;border:2px solid var(--ink);border-radius:4px;padding:18px 18px 16px;
+  min-height:44px;transition:transform .15s ease,box-shadow .15s ease,background .15s ease,color .15s ease;
+}
+.tiles b{display:block;font:800 1.4rem/1.05 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px}
+.tiles span{display:block;font-size:.98rem;line-height:1.45}
+.tiles.light a{background:var(--surface);color:var(--ink);box-shadow:5px 5px 0 var(--shadow)}
+.tiles.light b{color:var(--ink)}
+.tiles.light a:hover{background:var(--hazard);color:#16191d;transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--shadow)}
+.tiles.light a:hover b,.tiles.light a:hover span{color:#16191d}
+#varustus .tiles{margin-top:36px}
+
+#pood{background:var(--dots),var(--deep);color:#fff}
+#pood h2,#pood .lead{color:#fff}
+#pood .lead{color:rgba(255,255,255,.9)}
+#pood .note{color:rgba(255,255,255,.78);max-width:52ch;margin:12px 0 0}
+#pood .split img{border-color:#fff;box-shadow:12px 12px 0 var(--hazard)}
+
+.stats{background:var(--dots),var(--deep);color:#fff}
+.stats section{padding:54px 0 42px}
+.stats .wrap{display:grid;grid-template-columns:1fr;gap:22px}
+.stats .wrap>div{text-align:left;border-left:5px solid var(--hazard);padding:4px 8px 4px 14px}
+.stats b{display:block;font-size:clamp(2.8rem,8vw,4rem);font-weight:800;line-height:.9;color:var(--hazard);text-transform:uppercase}
+.stats span{display:block;margin-top:6px;color:rgba(255,255,255,.88)}
+.stats .asof{text-align:center;margin:26px 20px 0;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.slogan{
+  display:inline-block;margin:22px 0 8px;padding:12px 16px 10px;max-width:16em;
+  background:var(--hazard);color:#16191d;border:2px solid #16191d;box-shadow:6px 6px 0 #16191d;
+  font:800 clamp(1.55rem,3vw,2.05rem)/1.05 "Barlow Condensed","Arial Narrow",sans-serif;
+  text-transform:uppercase;
+}
+.partners{margin:28px 0 0;color:var(--muted);font-size:.98rem;max-width:78ch}
+.partners span{
+  display:inline-block;background:var(--hazard);color:#16191d;font-weight:600;font-size:.72rem;
+  letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin:0 8px 6px 0;
+}
+
+.road{list-style:none;margin:40px 0 0;padding:0;position:relative;display:grid;gap:16px}
+.road::before{
+  content:"";position:absolute;left:21px;top:18px;bottom:18px;width:3px;
+  background:repeating-linear-gradient(180deg,var(--ink) 0 8px,transparent 8px 14px);
+}
+.road li{
+  position:relative;margin-left:64px;background:var(--surface);border:2px solid var(--ink);border-radius:4px;
+  box-shadow:5px 5px 0 var(--shadow);padding:16px 16px 16px;display:flex;flex-direction:column;min-width:0;
+}
+.road .n{
+  position:absolute;left:-64px;top:14px;width:46px;height:46px;border-radius:4px;background:var(--accent);color:#16191d;
+  border:2px solid #16191d;font:700 1.15rem/1 "IBM Plex Mono",ui-monospace,monospace;
+  display:grid;place-items:center;box-shadow:3px 3px 0 #16191d;z-index:1;
+}
+.road h3{margin:0 0 6px;font-size:1.35rem}
+.road p{margin:0;color:var(--muted)}
+.road .tag{
+  align-self:flex-start;margin-top:12px;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:#16191d;background:var(--hazard);padding:3px 8px;border-radius:2px;
+}
+
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:20px;margin-top:32px}
+.quote{
+  margin:0;position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:4px;
+  box-shadow:6px 6px 0 var(--shadow);padding:48px 20px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;
+}
+.quote::before{
+  content:"\201C";position:absolute;top:0;left:14px;font:800 4.2rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--accent);
+}
+.quote blockquote{margin:0;font-size:1.08rem;line-height:1.5}
+.quote figcaption{display:flex;flex-direction:column;gap:2px;border-top:2px dashed var(--ink);padding-top:12px}
+.quote figcaption b{font:800 1.15rem "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.03em}
+.quote figcaption span{font-size:.78rem;font-weight:500;color:var(--muted)}
+.todo{background:var(--hazard);color:#16191d;padding:0 .25em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
+.gallery figure{margin:0;position:relative;overflow:hidden;border:2px solid var(--ink);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);background:#d9d3c6}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border:0;border-radius:0;transition:transform .45s ease}
+.gallery figure:hover img{transform:scale(1.05)}
+.gallery figcaption{
+  position:absolute;left:0;right:0;bottom:0;margin:0;padding:32px 10px 8px;
+  font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;
+  background:linear-gradient(transparent,rgba(0,0,0,.82));
+}
+
+.proj{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.proj a{
+  border:2px solid var(--ink);background:var(--bg);color:var(--ink);padding:10px 14px;border-radius:3px;
+  text-decoration:none;font:500 .8rem/1.2 "IBM Plex Mono",ui-monospace,monospace;min-height:44px;
+  display:inline-flex;align-items:center;box-shadow:3px 3px 0 var(--shadow);
+  transition:transform .12s ease,background .12s ease,box-shadow .12s ease;
+}
+.proj a:hover{background:var(--hazard);color:#16191d;transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--shadow)}
+.awards{display:flex;flex-wrap:wrap;gap:18px;align-items:stretch;margin-top:28px}
+.awards a{
+  background:#fff;border:2px solid var(--ink);border-radius:4px;padding:12px 16px;display:grid;place-items:center;
+  box-shadow:5px 5px 0 var(--shadow);transition:transform .15s ease,box-shadow .15s ease;
+}
+.awards a:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--hazard)}
+.awards img{height:112px;width:auto;max-width:min(240px,70vw);object-fit:contain;background:transparent}
+.news .card h3{font-size:1.28rem}
+
+#meeskond .split img{aspect-ratio:3/4;object-position:center 50%;box-shadow:14px 14px 0 var(--hazard)}
+.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin-top:28px}
+.person{
+  border:2px solid var(--ink);border-radius:4px;padding:18px 18px 12px;background:var(--surface);
+  box-shadow:5px 5px 0 var(--shadow);position:relative;
+}
+.person::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--accent)}
+.person b{display:block;font-size:1.5rem;text-transform:uppercase;margin-top:4px}
+.role{display:block;font-size:.75rem;font-weight:500;color:var(--muted);margin:2px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.person a{display:flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none;font-weight:600}
+.person a:hover{color:var(--accent)}
+.sheet{
+  margin-top:36px;background:var(--surface);border:2px solid var(--ink);border-radius:4px;
+  box-shadow:8px 8px 0 var(--shadow);padding:26px 20px 22px;max-width:820px;
+}
+.order{border-left:6px solid var(--accent);padding:2px 0 2px 14px;max-width:64ch}
+.order h3{margin:0 0 6px;font-size:1.45rem}
+.order p{margin:0;color:var(--muted)}
+.cform{margin-top:20px;display:grid;gap:14px}
+.cform .row{display:grid;grid-template-columns:1fr;gap:14px}
+.cform .row>*{min-width:0}
+.cform label{display:grid;gap:6px;font-size:.74rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.cform input,.cform select,.cform textarea{
+  font:500 1rem "Barlow",system-ui,sans-serif;text-transform:none;letter-spacing:0;
+  padding:12px;border:2px solid var(--ink);border-radius:3px;background:var(--bg);color:var(--ink);width:100%;min-height:48px;
+}
+.cform textarea{min-height:120px;resize:vertical}
+.cform ::placeholder{color:var(--muted);opacity:1}
+.cform input:focus,.cform select:focus,.cform textarea:focus{outline:3px solid var(--hazard);outline-offset:1px}
+.cform .chk{display:flex;gap:10px;align-items:flex-start;font:500 .95rem/1.45 "Barlow",system-ui,sans-serif;text-transform:none;letter-spacing:0}
+.cform .chk input{width:22px;height:22px;min-height:22px;margin-top:2px;accent-color:var(--accent)}
+.cform .chk a{text-decoration:underline;text-underline-offset:2px}
+.cform .btn{justify-self:start}
+.cform .note{margin:0;font-weight:600;min-height:1.4em}
+.priv{margin-top:8px;border:2px solid var(--ink);border-radius:4px;padding:12px 14px}
+.priv summary{cursor:pointer;font:800 1.25rem "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;min-height:44px;display:flex;align-items:center}
+.priv p{color:var(--muted);margin:.7em 0 0}
+.priv a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+.contact{background:var(--bg)}
+
+footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
+.foot{display:grid;grid-template-columns:1fr;gap:22px;padding-top:36px;padding-bottom:8px}
+.foot-brand img{width:72px;height:72px;object-fit:cover;border:2px solid var(--hazard);background:#fff;border-radius:2px}
+.foot-brand p{margin:12px 0 0;max-width:28ch;color:#f4f1ea;font:800 1.35rem/1.05 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase}
+.foot-label{margin:0 0 8px;color:#f4f1ea;font:800 1.15rem/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.foot-label::after{content:"";display:block;width:42px;height:5px;margin-top:8px;background:linear-gradient(90deg,var(--accent) 0 26px,var(--hazard) 26px)}
+.foot a{display:flex;align-items:center;min-height:44px;color:var(--hazard);text-decoration:none;font-weight:600}
+.foot a:hover{color:#fff}
+.legal{
+  display:flex;flex-direction:column;gap:8px;margin-top:8px;padding-top:16px;padding-bottom:18px;
+  border-top:1px solid rgba(255,255,255,.16);color:#aeb6c2;font-size:.92rem;
+}
+.legal a{color:var(--hazard)}
+
+@media(min-width:640px){
+  .cform .row{grid-template-columns:1fr 1fr}
+  .stats .wrap{grid-template-columns:1fr 1fr}
+  .hero-facts{grid-template-columns:repeat(4,1fr)}
+  .hero-facts li{padding:18px 16px 14px 0}
+  .foot{grid-template-columns:1.3fr 1fr 1fr;gap:28px}
+}
+@media(min-width:800px){
+  .gallery{grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:250px 250px}
+  .gallery figure:nth-child(1){grid-column:1;grid-row:1/span 2}
+  .gallery figure:nth-child(2){grid-column:2/span 2;grid-row:1}
+  .gallery figure:nth-child(3){grid-column:2;grid-row:2}
+  .gallery figure:nth-child(4){grid-column:3;grid-row:2}
+  .gallery img{height:100%;aspect-ratio:auto}
+}
+@media(min-width:900px){
+  .hero{
+    display:grid;
+    grid-template-columns:minmax(0,1.4fr) minmax(320px,480px);
+    grid-template-rows:minmax(520px,1fr) auto;
+    min-height:calc(100svh - 82px);
+  }
+  .hero-photo{grid-column:1;grid-row:1;height:auto;max-height:none;min-height:0}
+  .hero-panel{grid-column:2;grid-row:1;display:flex;flex-direction:column;justify-content:center;padding:36px 36px 36px 48px}
+  .hero h1{font-size:clamp(2.85rem,3.5vw,4.15rem)}
+  .hero-dock{grid-column:1/-1;grid-row:2}
+  .split{grid-template-columns:1.05fr .95fr;gap:48px}
+  .road{grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px}
+  .road::before{display:none}
+  .road li{margin-left:0;padding:22px 14px 16px}
+  .road .n{position:static;width:42px;height:42px;margin-bottom:12px;box-shadow:3px 3px 0 #16191d}
+  .road .tag{margin-top:auto}
+  section{padding:92px 0}
+}
+@media(min-width:1000px){
+  .stats .wrap{grid-template-columns:repeat(4,1fr);gap:18px}
+}
+@media(max-width:1100px){
+  .burger{display:flex}
+  header nav{
+    display:none;position:fixed;top:82px;left:0;right:0;bottom:0;margin:0;z-index:50;
+    background:#171b20;flex-direction:column;align-items:stretch;gap:0;
+    padding:6px 20px 28px;border-bottom:0;
+    overflow:auto;
+  }
+  header nav.open{display:flex}
+  header nav a:not(.btn){display:flex;align-items:center;min-height:48px;padding:12px 0;border-bottom:1px solid #2c343d;font-size:1.15rem}
+  header nav a:not(.btn)::after{display:none}
+  header nav .btn{margin-top:14px;text-align:center}
+  body.nav-open{overflow:hidden}
+}
+@media(max-width:560px){
+  .cta .btn{flex:1 1 100%}
+  .wrap{padding:0 16px}
+  section{padding:58px 0}
+  .sheet{padding:20px 14px 16px}
+}
+@media(max-height:760px) and (min-width:900px){
+  .hero{min-height:0}
+  .hero-panel{padding:24px 28px 24px 40px}
+  .hero h1{font-size:3rem}
+  .hero-panel p{font-size:1rem}
+}
+@keyframes rise{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
+.hero-panel .kicker,.hero-panel h1,.hero-panel p,.hero-panel .cta{animation:rise .5s ease both}
+.hero-panel h1{animation-delay:.05s}
+.hero-panel p{animation-delay:.12s}
+.hero-panel .cta{animation-delay:.18s}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23171b20'/%3E%3Cpath d='M22 74V28l28 30 28-30v46' fill='none' stroke='%23ff6a13' stroke-width='10' stroke-linejoin='round'/%3E%3C/svg%3E">
-<meta property="og:title" content="Merkuur – Mobiilsed töötoad ja tehnoloogiatunnid"><meta property="og:type" content="website"><meta property="og:url" content="https://www.merkuur.eu">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Merkuur","url":"https://www.merkuur.eu","email":"info@merkuur.eu","telephone":"+372 51 85 404","sameAs":["https://www.facebook.com/mobileworkshops/"]}</script>
 </head>
 <body>
-<header><div class="wrap bar">
- <a class="logo" href="#top"><img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_108,h_108,al_c,q_80/a.jpg">MERKUUR</a>
- <nav id="mnav"><a href="#top">Pealeht</a><a href="https://www.merkuur.eu/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav><button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
-</div></header>
+<a class="skip" href="#top">Sisu juurde</a>
+<header>
+<div class="wrap bar">
+ <a class="logo" href="#top"><img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_120,h_120,al_c,q_85/a.jpg" width="44" height="44">Merkuur</a>
+ <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
+ <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="https://www.merkuur.eu/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
+</div>
+</header>
 
 <main id="top">
-<div class="hero"><div class="wrap">
- <div class="kicker">Mobiilsed töötoad · Tehnoloogia · Inseneeria</div>
- <h1>Tule töötuppa! Või töötuba tuleb sinu juurde.</h1>
- <p>Viime tehnoloogia ja inseneeria praktilise kogemuse koolidesse, noortekeskustesse ja ettevõtetesse üle Eesti – 3D-printerid, CNC-seadmed ja päris tööriistad kohapeal.</p>
- <div class="cta"><a class="btn" href="#teenused">Vaata teenuseid</a><a class="btn ghost" href="#pood">Makerset'id e-poes</a></div>
-</div></div>
+<div class="hero">
+ <div class="hero-photo">
+  <img alt="Merkuuri mobiilne töökoda üritusel: töökoda haagises, noored ja auto" src="https://static.wixstatic.com/media/a7f28e_213e5225ab8e411cbaf145b82b54c3d9~mv2_d_4032_3024_s_4_2.jpg/v1/fill/w_1600,h_1100,al_c,q_80/a.jpg" width="1600" height="1100">
+ </div>
+ <div class="hero-panel">
+  <div class="kicker">Mobiilsed töötoad · Tehnoloogia · Inseneeria</div>
+  <h1>Tule töötuppa!<span>Või töötuba tuleb sinu juurde.</span></h1>
+  <p>Viime tehnoloogia ja inseneeria praktilise kogemuse koolidesse, noortekeskustesse ja ettevõtetesse üle Eesti – 3D-printerid, CNC-seadmed ja päris tööriistad kohapeal.</p>
+  <div class="cta"><a class="btn" href="#teenused">Vaata teenuseid</a><a class="btn ghost" href="#pood">Makerset'id e-poes</a></div>
+ </div>
+ <div class="hero-dock">
+  <div class="wrap">
+   <ul class="hero-facts">
+    <li><b>2016</b><span>alates</span></li>
+    <li><b>3500+</b><span>töötuba</span></li>
+    <li><b>30 000</b><span>noort</span></li>
+    <li><b>4</b><span>mobiilset töökoda</span></li>
+   </ul>
+   <p class="hero-asof">Töötubade, osalejate ja töökodade arv seisuga detsember 2023</p>
+  </div>
+ </div>
+</div>
 
-<div class="hz"></div>
 <section id="teenused"><div class="wrap">
  <div class="kicker">Meie teenused</div>
  <h2>Kuus viisi õppida tehes</h2>
@@ -257,16 +509,16 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
  </div>
 </div></section>
 
-<section id="pood" style="background:var(--dots),var(--deep);color:#fff"><div class="wrap">
+<section id="pood"><div class="wrap">
  <div class="split">
   <div>
    <div class="kicker">Makerset'id</div>
-   <h2 style="color:#fff">Makerset'id kooli, ringi ja koju</h2>
-   <p class="lead" style="color:rgba(255,255,255,.88)">Valmis komplektid tehnoloogia ja inseneeria õppimiseks – tellimine meie e-poest.</p>
-   <p style="color:rgba(255,255,255,.7);max-width:56ch">Ei tea, milline komplekt sobib? Kirjuta meile – aitame valida.</p>
+   <h2>Makerset'id kooli, ringi ja koju</h2>
+   <p class="lead">Valmis komplektid tehnoloogia ja inseneeria õppimiseks – tellimine meie e-poest.</p>
+   <p class="note">Ei tea, milline komplekt sobib? Kirjuta meile – aitame valida.</p>
    <div class="cta"><a class="btn" href="https://mw.yrgel.com" target="_blank" rel="noopener">Külasta e-poodi →</a><a class="btn ghost" href="#kontakt">Küsi nõu</a></div>
   </div>
-  <img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_900,h_650,al_c,q_85/a.jpg" style="border-color:#fff">
+  <img loading="lazy" alt="Töökoja tööriistad" src="https://static.wixstatic.com/media/a7f28e_7df29537faf14ca3bf3bca541e40da4b~mv2_d_6000_4000_s_4_2.jpg/v1/fill/w_900,h_650,al_c,q_85/a.jpg">
  </div>
 </div></section>
 
@@ -284,7 +536,7 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
  </div>
 </div></section>
 
-<div class="hz"></div>
+<div class="hz" aria-hidden="true"></div>
 <div class="stats"><section><div class="wrap">
  <div><b>3500+</b><span>töötuba teaduse, tehnoloogia ja inseneeria vallas</span></div>
  <div><b>30 000</b><span>noort on töötubades osalenud</span></div>
@@ -299,7 +551,7 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
    <div class="kicker">Meist</div>
    <h2>Töökoda ratastel – otse noorte juurde</h2>
    <p class="lead">Mobiilsed töötoad sündisid Haridus- ja Teadusministeeriumi ning Eesti Noorsootöö Keskuse algatusel, et aidata leevendada tööjõupuudust puidu- ja metallitööstuses. Merkuur ehitas lahenduseks ratastel metalli- ja puidutöökoja ning töötas välja töötoad, millega minnakse otse noorte juurde.</p>
-   <p style="color:var(--muted);max-width:62ch">Oleme välja arendanud neli mobiilset töökoda ja üle 100 õppelahenduse puidu- ja metallitööst, inseneeriast, elektroonikast ja bioonikast. Töötoad toimuvad üle Eesti ning igal koolil on võimalus kutsuda liikuv õppeklass oma kooliõuele.</p>
+   <p class="lead">Oleme välja arendanud neli mobiilset töökoda ja üle 100 õppelahenduse puidu- ja metallitööst, inseneeriast, elektroonikast ja bioonikast. Töötoad toimuvad üle Eesti ning igal koolil on võimalus kutsuda liikuv õppeklass oma kooliõuele.</p>
    <p class="slogan">Meie investeerime noortesse. Investeeri Sina ka!</p>
    <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a></div>
   </div>
@@ -353,7 +605,7 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
  </div>
 </div></section>
 
-<section id="projektid" style="background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
+<section id="projektid"><div class="wrap">
  <div class="kicker">Projektid ja koostöö</div>
  <h2>Töö, mis on jätnud jälje</h2>
  <p class="lead">Alates 2016. aastast oleme töötanud koos ministeeriumide, omavalitsuste, koolide ja ettevõtetega ning viinud töötoad kümnetele tuhandetele noortele.</p>
@@ -375,7 +627,7 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
  </div>
 </div></section>
 
-<section id="uudised" class="news" style="background:var(--surface);border-top:1px solid var(--line)"><div class="wrap">
+<section id="uudised" class="news"><div class="wrap">
  <div class="kicker">Blogi</div>
  <h2>Mobiilsed töötoad</h2>
  <div class="grid">
@@ -389,12 +641,12 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
 
 <section id="meeskond"><div class="wrap">
  <div class="split">
-  <img loading="lazy" alt="Lauri Soosaar" style="aspect-ratio:3/4" src="https://static.wixstatic.com/media/a7f28e_f7e3f445307f430f9781c4695dd28d42~mv2_d_4000_6000_s_4_2.jpg/v1/fill/w_900,h_1200,al_c,q_85/a.jpg">
+  <img loading="lazy" alt="Lauri Soosaar" src="https://static.wixstatic.com/media/a7f28e_f7e3f445307f430f9781c4695dd28d42~mv2_d_4000_6000_s_4_2.jpg/v1/fill/w_900,h_1200,al_c,q_85/a.jpg">
   <div><div class="kicker">Meeskond</div><h2>Inimesed Merkuuri taga</h2><p class="lead">Meie meeskond ühendab hariduse, inseneeria ja noorsootöö – ja usub, et parim viis tehnoloogiat õppida on see ise ära proovida.</p><p class="lead">Karjääriteemasid juhib Liis, kogenud karjäärinõustaja.</p><div class="cta"><a class="btn" href="https://www.merkuur.eu/meeskond">Tutvu meeskonnaga</a></div></div>
  </div>
 </div></section>
 
-<div class="hz"></div>
+<div class="hz" aria-hidden="true"></div>
 <section id="kontakt" class="contact"><div class="wrap">
  <div class="kicker">Kontakt</div>
  <h2>Võta meiega ühendust</h2>
@@ -404,36 +656,60 @@ h1,h2,h3{overflow-wrap:anywhere;hyphens:auto}
   <div class="person"><b>Liis Proos</b><span class="role">Kaasasutaja, noorteprojektide eestvedaja, karjäärinõustaja</span><a href="tel:+37253039287">+372 53 039 287</a><a href="mailto:info@merkuur.eu">info@merkuur.eu</a></div>
   <div class="person"><b>Jälgi meid</b><a href="https://www.facebook.com/mobileworkshops/">Facebook</a><a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a></div>
  </div>
- <div class="order">
-  <h3>Kuidas tellida</h3>
-  <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega.</p>
+ <div class="sheet">
+  <div class="order">
+   <h3>Kuidas tellida</h3>
+   <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega.</p>
+  </div>
+  <form id="cform" class="cform" novalidate>
+   <div class="row"><label>Nimi<input name="nimi" required autocomplete="name"></label><label>E-post<input name="email" type="email" required autocomplete="email"></label></div>
+   <div class="row"><label>Mis teenus huvitab?<select name="teenus"><option>Kooli varustamine / tehnoloogiaklass</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Töötuba</option><option>Tehnoloogiatund / huviring</option><option>Tehnoloogiaklassi rajamine</option><option>Seadmete koolitus / demo</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
+   <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn / kool"></label></div>
+   <label>Sõnum<textarea name="sonum" rows="4"></textarea></label>
+   <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu andmeid kasutatakse päringule vastamiseks (<a href="#privaatsus" data-open="privaatsus">privaatsuspoliitika</a>).</label>
+   <button class="btn" type="submit">Saada päring</button>
+   <p class="note" id="fnote" role="status"></p>
+  </form>
+  <details id="privaatsus" class="priv"><summary>Privaatsuspoliitika</summary>
+   <p><b>Kes me oleme.</b> Andmete vastutav töötleja on Merkuur OÜ (registrikood 11544602), info@merkuur.eu.</p>
+   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, e-posti, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
+   <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
+   <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
+   <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
+   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega.</p>
+  </details>
  </div>
- <form id="cform" class="cform" novalidate>
-  <div class="row"><label>Nimi<input name="nimi" required autocomplete="name"></label><label>E-post<input name="email" type="email" required autocomplete="email"></label></div>
-  <div class="row"><label>Mis teenus huvitab?<select name="teenus"><option>Kooli varustamine / tehnoloogiaklass</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Töötuba</option><option>Tehnoloogiatund / huviring</option><option>Tehnoloogiaklassi rajamine</option><option>Seadmete koolitus / demo</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
-  <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn / kool"></label></div>
-  <label>Sõnum<textarea name="sonum" rows="4"></textarea></label>
-  <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu andmeid kasutatakse päringule vastamiseks (<a href="#privaatsus" data-open="privaatsus">privaatsuspoliitika</a>).</label>
-  <button class="btn" type="submit">Saada päring</button>
-  <p class="note" id="fnote" role="status"></p>
- </form>
- <details id="privaatsus" class="priv"><summary>Privaatsuspoliitika</summary>
-  <p><b>Kes me oleme.</b> Andmete vastutav töötleja on Merkuur OÜ (registrikood 11544602), info@merkuur.eu.</p>
-  <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, e-posti, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
-  <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
-  <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
-  <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
-  <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega.</p>
- </details>
 </div></section>
 </main>
-<div class="hz"></div>
-<footer><div class="wrap"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a><br><span class="todo">Aadress: [täida]</span></span></div></footer>
+<div class="hz" aria-hidden="true"></div>
+<footer>
+ <div class="wrap foot">
+  <div class="foot-brand">
+   <img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_160,h_160,al_c,q_85/a.jpg" width="72" height="72">
+   <p>Meie investeerime noortesse. Investeeri Sina ka!</p>
+  </div>
+  <div>
+   <p class="foot-label">Kontakt</p>
+   <a href="mailto:info@merkuur.eu">info@merkuur.eu</a>
+   <a href="tel:+37251854040">Lauri · +372 51 85 404</a>
+   <a href="tel:+37253039287">Liis · +372 53 039 287</a>
+  </div>
+  <div>
+   <p class="foot-label">Lingid</p>
+   <a href="https://www.facebook.com/mobileworkshops/">Facebook</a>
+   <a href="https://mw.yrgel.com" target="_blank" rel="noopener">Makerset'ide e-pood</a>
+   <a href="#kontakt">Küsi pakkumist</a>
+  </div>
+ </div>
+ <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a></span><span class="todo">Aadress: [täida]</span></div>
+</footer>
 <script>
 (function(){
 var bg=document.getElementById("burger"),nv=document.getElementById("mnav");
-bg.addEventListener("click",function(){var o=nv.classList.toggle("open");bg.setAttribute("aria-expanded",o);});
-nv.querySelectorAll("a").forEach(function(a){a.addEventListener("click",function(){nv.classList.remove("open");bg.setAttribute("aria-expanded","false");});});
+function closeNav(){nv.classList.remove("open");bg.setAttribute("aria-expanded","false");document.body.classList.remove("nav-open");}
+bg.addEventListener("click",function(){var o=nv.classList.toggle("open");bg.setAttribute("aria-expanded",o?"true":"false");document.body.classList.toggle("nav-open",o);});
+nv.querySelectorAll("a").forEach(function(a){a.addEventListener("click",closeNav);});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeNav();});
 document.querySelectorAll("[data-open]").forEach(function(a){a.addEventListener("click",function(){var d=document.getElementById(a.getAttribute("data-open"));if(d)d.open=true;});});
 document.getElementById("cform").addEventListener("submit",function(e){
  e.preventDefault();var f=e.target,note=document.getElementById("fnote");
