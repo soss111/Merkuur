@@ -313,9 +313,10 @@ section{padding:72px 0}
 .milestones h3{margin:0 0 6px;font-size:1.25rem}
 .milestones p{margin:0 0 8px;color:var(--muted)}
 .milestones p:last-child{margin:0}
-.milestones a{color:var(--accent);font-weight:700;text-underline-offset:3px}
+.milestones li>p a{color:var(--accent);font-weight:700;text-underline-offset:3px}
+.milestones .honors,.milestones .awards{margin-top:12px}
 @media(min-width:800px){
-  .milestones{max-width:820px}
+  .milestones .honors{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:28px}
@@ -671,10 +672,10 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
  </div>
 </div></section>
 
-<section id="verstapostid"><div class="wrap">
+<section id="projektid"><div class="wrap">
  <div class="kicker">Ajalugu</div>
- <h2>Olulised verstapostid</h2>
- <p class="lead">Ettevõtte teekond alates 2016. aastast. Koondarvud on seisuga detsember 2023.</p>
+ <h2 id="verstapostid">Töö, mis on jätnud jälje</h2>
+ <p class="lead">Alates 2016. aastast oleme töötanud koos ministeeriumide, omavalitsuste, koolide ja ettevõtetega ning viinud töötoad kümnetele tuhandetele noortele. Koondarvud on seisuga detsember 2023.</p>
  <ol class="milestones">
   <li>
    <p class="when"><time datetime="2016">2016</time></p>
@@ -685,19 +686,27 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <p class="when"><time datetime="2016/2017">2016–2017</time></p>
    <h3>Parim sotsiaalne ettevõte</h3>
    <p>Ajujahi 10. hooajal tunnistati Merkuur parimaks sotsiaalseks ettevõtteks.</p>
-   <p><a href="#tunnustused">Tunnustused</a></p>
+   <div class="honors" id="tunnustused">
+    <article><a href="https://www.kysk.ee/ajujahi-sotsiaalse-ettevotluse-eriauhinna-5000-voitis-mobiilsed-tootoad" target="_blank" rel="noopener"><img loading="lazy" alt="Parim sotsiaalne ettevõte, Ajujahi 10. hooaeg 2016/2017" src="https://static.wixstatic.com/media/a7f28e_ab241300e5c548e7812c89ef53b2bda0~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim sotsiaalne ettevõte (Ajujahi 10. hooaeg 2016/2017)</h3><span class="more">Loe lähemalt</span></a></article>
+   </div>
   </li>
   <li>
    <p class="when"><time datetime="2017">2017</time></p>
    <h3>Aasta tegu ja haridustegu</h3>
    <p>Eesti Masinatööstuse Liit tunnustas Merkuuri aasta teona. Jõelähtme vald nimetas Merkuuri 2017. aasta haridusteo laureaadiks.</p>
-   <p><a href="#tunnustused">Tunnustused</a></p>
+   <div class="honors">
+    <article><a href="http://www.toostusuudised.ee/uudised/2018/04/09/eesti-masinatoostuse-liit-valis-uue-noukogu-ja-tunnustas-parimaid" target="_blank" rel="noopener"><img loading="lazy" alt="Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab" src="https://static.wixstatic.com/media/a7f28e_1f6d06b78151421fbe0424309c019946~mv2_d_4128_2322_s_2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab</h3><span class="more">Loe lähemalt</span></a></article>
+    <article><a href="http://joelahtme.kovtp.ee/documents/381171/18534457/02.2018+Jõelähtme+vallaleht+veebruar.pdf/e1c86097-8799-44d6-ae50-dfb36756f957?version=1.0" target="_blank" rel="noopener"><img loading="lazy" alt="Jõelähtme Haridustegu 2017 laureaat" src="https://static.wixstatic.com/media/a7f28e_7f7e300c5f1545a6a6ab9b077ba03f4d~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Jõelähtme Haridustegu 2017 laureaat</h3><span class="more">Loe lähemalt</span></a></article>
+   </div>
   </li>
   <li>
    <p class="when"><time datetime="2018/2019">2018–2019</time></p>
    <h3>Töötoad üle Eesti</h3>
    <p>Võsu kool tunnustas aasta ringijuhti 2018/2019. Tegevuskaart koondab mobiilsete töötubade korralduse aastatel 2017–2019.</p>
    <p><a href="/merkuuri-toeoetubade-kaart">Tegevuskaart</a></p>
+   <div class="honors">
+    <article><img class="letter" loading="lazy" alt="Aasta ringijuht 2018/2019 Võsu kool" src="https://static.wixstatic.com/media/b2cbe8_d09b8a606ff748d5af7dbc0f126029df~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Aasta ringijuht 2018/2019 Võsu kool</h3></article>
+   </div>
   </li>
   <li>
    <p class="when"><time datetime="2019">2019</time></p>
@@ -709,34 +718,56 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <p class="when"><time datetime="2020">2020</time></p>
    <h3>Euroopa tunnustus</h3>
    <p>Majandus- ja kommunikatsiooniministeerium valis Merkuuri „Tunnusta ettevõtluse edendajat 2020“ võitjaks. Projekt jõudis Euroopa ettevõtluse edendamise auhinna (EEPA) 2020 lühinimekirja. Erasmus+ Lab4Stem algas 1. oktoobril 2020.</p>
-   <p><a href="#tunnustused">Tunnustused</a> · <a href="/lab4stem">Lab4Stem</a></p>
+   <p><a href="/lab4stem">Erasmus+ Lab4Stem</a></p>
+   <div class="honors">
+    <article><a href="https://www.mkm.ee/et/uudised/eesti-ettevotlusprojekt-nimetati-euroopa-parimaks" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti ettevõtlusprojekt nimetati Euroopa parimaks" src="https://static.wixstatic.com/media/a7f28e_dcbc0b49dcd1471bb3e6db8c8643d0f1~mv2.jpeg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Eesti ettevõtlusprojekt nimetati Euroopa parimaks</h3><span class="more">Loe lähemalt</span></a></article>
+    <article><a href="https://blogs.ec.europa.eu/promotingenterprise/category/investing-in-entrepreneurial-skills/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA 2020 Shortlist – Investing in Entrepreneurial Skills" src="https://static.wixstatic.com/media/a7f28e_bf827391b1544b1c89b8c1391918f59f~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>EEPA 2020 Shortlist – Investing in Entrepreneurial Skills</h3><span class="more">Loe lähemalt</span></a></article>
+    <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Osalesime Eesti parimate ettevõtete tänuüritusel" src="https://static.wixstatic.com/media/a7f28e_1cb72e3b2c054fc4a49359b20dcc7a8a~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Osalesime Eesti parimate ettevõtete tänuüritusel</h3><span class="more">Loe lähemalt</span></a></article>
+    <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Tunnusta ettevõtluse edendajat 2020 võitja, Majandus- ja kommunikatsiooniministeerium" src="https://static.wixstatic.com/media/a7f28e_8a919d3a1a6a4fdeafde98c0a765a989~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>„Tunnusta ettevõtluse edendajat 2020 võitja“ Majandus- ja kommunikatsiooni&shy;ministeerium</h3><span class="more">Loe lähemalt</span></a></article>
+   </div>
+   <div class="awards">
+    <a href="https://blogs.ec.europa.eu/promotingenterprise/tag/merkuur/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA Winner" src="https://static.wixstatic.com/media/a7f28e_ce09094dd0c141a687e6057ea9b80fba~mv2.png/v1/fill/w_270,h_422,al_c,q_85/a.png"></a>
+   </div>
   </li>
   <li>
    <p class="when"><time datetime="2021/2022">2021–2022</time></p>
    <h3>Õpik, karjäär ja Leader</h3>
    <p>Digiõpik «Arvjuhitavad seadmed» valmis 01.10.2021–01.10.2022. Erasmus+ BetterCareer kestis 1.11.2021–31.10.2022. Leader-projekt viidi ellu 2022. Lab4Stem lõppes 31. detsembril 2022.</p>
-   <p><a href="/õpik-arvjuhitavad-seadmed-cnc">Digiõpik</a> · <a href="/bettercareer">BetterCareer</a> · <a href="/leader">Leader</a></p>
+   <p><a href="/õpik-arvjuhitavad-seadmed-cnc">Digiõpik</a> · <a href="/bettercareer">Erasmus+ BetterCareer</a> · <a href="/leader">Leader projektid</a></p>
   </li>
   <li>
    <p class="when"><time datetime="2022/2023">2022–2023</time></p>
    <h3>SmartGrowth ja teaduse populariseerimine</h3>
    <p>Erasmus+ SmartGrowth kestis 1. veebruar 2022 – 30. september 2023. 2023. aasta CNC-projektis osales 326 noort ja toimus 25 õpituba.</p>
-   <p><a href="/smarthgrowth">SmartGrowth</a> · <a href="/teaduse-populariseerimine-2023">Teaduse populariseerimine</a></p>
+   <p><a href="/smarthgrowth">Erasmus+ SmarthGrowth</a> · <a href="/teaduse-populariseerimine-2023">Teaduse populariseerimine</a></p>
   </li>
   <li>
    <p class="when"><time datetime="2023">2023</time></p>
    <h3>Uued töökojad ja Ida-Viru</h3>
    <p>Valmis kaks uut mobiilset tehnoloogiaklassi, neist üks MTÜ Sõmeru Startile. Ida-Viru projekt Startup Estonia toel: 44 õppetegevust ja 831 osalejat (01.05–31.12.2023). Valikkursus „Inseneeria ja tootmine“ on läbi viidud kolm korda Rakvere Riigigümnaasiumis ning Pelgulinna, Narva Eesti ja Jüri gümnaasiumis. 2023. aastal osales valikkursustel 105 noort.</p>
    <p>Seisuga detsember 2023: üle 3500 töötoa, umbes 30&nbsp;000 noort, neli iseehitatud mobiilset töökoda ja üle 100 õppelahenduse.</p>
-   <p><a href="/idaviruprojekt">Ida-Viru 2023</a> · <a href="/post/2023-aastal-osales-inseneeria-ja-tootmise-valikkursustel-105-noort">Valikkursus</a></p>
+   <p><a href="/idaviruprojekt">Ida-Viru projekt 2023</a> · <a href="/post/2023-aastal-osales-inseneeria-ja-tootmise-valikkursustel-105-noort">Valikkursus</a></p>
   </li>
   <li>
    <p class="when"><time datetime="2024">2024</time></p>
    <h3>Ida-Viru projekt jätkus</h3>
    <p>18.03–30.11.2024 toimus Ida-Viru projektis 27 õpituba ja osales 354 noort.</p>
-   <p><a href="/ida-viru-projekt-2024">Ida-Viru 2024</a></p>
+   <p><a href="/ida-viru-projekt-2024">Ida-Viru projekt 2024</a></p>
+  </li>
+  <li>
+   <p class="when">Tunnustus</p>
+   <h3>Tänukiri ja teaduse populariseerimise auhind</h3>
+   <p>Nendel kahel tunnustusel ei ole sellel lehel aastanumbrit.</p>
+   <div class="honors">
+    <article><img class="letter" loading="lazy" alt="Kohila Mõisakooli tänukiri" src="https://static.wixstatic.com/media/b2cbe8_cd09524a4a7f4b04bf0037c6aa9f202e~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Kohila Mõisakooli tänukiri</h3></article>
+    <article><a href="http://www.etag.ee/eesti-teaduse-populariseerimise-elutoopreemia-palvis-ene-ergma/" target="_blank" rel="noopener"><img loading="lazy" alt="Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_a3a609b742124ca28428495acc3eca35~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind</h3><span class="more">Loe lähemalt</span></a></article>
+   </div>
+   <div class="awards">
+    <a href="https://www.etag.ee/tegevused/konkursid/eesti-teaduse-populariseerimise-auhind/varasemad-konkursid/" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_01bcdaf1c177432fa8fce697a5b217ce~mv2.jpg/v1/fill/w_400,h_176,al_c,q_80/a.jpg"></a>
+   </div>
   </li>
  </ol>
+ <p class="partners"><span>Toetajad ja partnerid</span> Haridus- ja Teadusministeerium · Eesti Noorsootöö Keskus · ETAg · HITSA · Startup Estonia · Erasmus+ · Euroopa Sotsiaalfond · FESTO Eesti</p>
 </div></section>
 
 <section id="teekond"><div class="wrap">
@@ -783,45 +814,6 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   <figure><img loading="lazy" alt="Metalli töötuba Tartus" src="https://static.wixstatic.com/media/a7f28e_a2de679276f844059b3e5e041ec508c1~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg"><figcaption>Metalli töötuba, Tartu</figcaption></figure>
   <figure><img loading="lazy" alt="Mart Müllerbeck" src="https://static.wixstatic.com/media/a7f28e_67ca9d735af24001a6ba630a22aa21d7~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg"><figcaption>Mart Müllerbeck</figcaption></figure>
   <figure><img loading="lazy" alt="Ida-Viru projekt" src="https://static.wixstatic.com/media/a7f28e_ffc213a6c24c4383912ea94d55ce198d~mv2.jpg/v1/fill/w_700,h_700,al_c,q_85/a.jpg"><figcaption>Ida-Viru projekt</figcaption></figure>
- </div>
-</div></section>
-
-<section id="projektid"><div class="wrap">
- <div class="kicker">Projektid ja koostöö</div>
- <h2>Töö, mis on jätnud jälje</h2>
- <p class="lead">Alates 2016. aastast oleme töötanud koos ministeeriumide, omavalitsuste, koolide ja ettevõtetega ning viinud töötoad kümnetele tuhandetele noortele.</p>
- <div class="proj">
-  <a href="/ida-viru-projekt-2024">Ida-Viru projekt 2024</a>
-  <a href="/idaviruprojekt">Ida-Viru projekt 2023</a>
-  <a href="/lab4stem">Erasmus+ Lab4Stem</a>
-  <a href="/bettercareer">Erasmus+ BetterCareer</a>
-  <a href="/smarthgrowth">Erasmus+ SmarthGrowth</a>
-  <a href="/leader">Leader projektid</a>
-  <a href="/teaduse-populariseerimine-2023">Teaduse populariseerimine</a>
-  <a href="/progetiiger">Progetiiger CNC</a>
-  <a href="#tunnustused">Tunnustused</a>
- </div>
-<p class="partners"><span>Toetajad ja partnerid</span> Haridus- ja Teadusministeerium · Eesti Noorsootöö Keskus · ETAg · HITSA · Startup Estonia · Erasmus+ · Euroopa Sotsiaalfond · FESTO Eesti</p>
-</div></section>
-
-<section id="tunnustused"><div class="wrap">
- <div class="kicker">Tunnustused</div>
- <h2>Meie töö märkamine</h2>
- <div class="honors">
-  <article><a href="https://www.mkm.ee/et/uudised/eesti-ettevotlusprojekt-nimetati-euroopa-parimaks" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti ettevõtlusprojekt nimetati Euroopa parimaks" src="https://static.wixstatic.com/media/a7f28e_dcbc0b49dcd1471bb3e6db8c8643d0f1~mv2.jpeg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Eesti ettevõtlusprojekt nimetati Euroopa parimaks</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><a href="https://blogs.ec.europa.eu/promotingenterprise/category/investing-in-entrepreneurial-skills/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA 2020 Shortlist – Investing in Entrepreneurial Skills" src="https://static.wixstatic.com/media/a7f28e_bf827391b1544b1c89b8c1391918f59f~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>EEPA 2020 Shortlist – Investing in Entrepreneurial Skills</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Osalesime Eesti parimate ettevõtete tänuüritusel" src="https://static.wixstatic.com/media/a7f28e_1cb72e3b2c054fc4a49359b20dcc7a8a~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Osalesime Eesti parimate ettevõtete tänuüritusel</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><a href="https://www.mkm.ee/et/uudised/selgusid-parimad-ettevotluse-edendajad" target="_blank" rel="noopener"><img loading="lazy" alt="Tunnusta ettevõtluse edendajat 2020 võitja, Majandus- ja kommunikatsiooniministeerium" src="https://static.wixstatic.com/media/a7f28e_8a919d3a1a6a4fdeafde98c0a765a989~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>„Tunnusta ettevõtluse edendajat 2020 võitja“ Majandus- ja kommunikatsiooni&shy;ministeerium</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><img class="letter" loading="lazy" alt="Aasta ringijuht 2018/2019 Võsu kool" src="https://static.wixstatic.com/media/b2cbe8_d09b8a606ff748d5af7dbc0f126029df~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Aasta ringijuht 2018/2019 Võsu kool</h3></article>
-  <article><img class="letter" loading="lazy" alt="Kohila Mõisakooli tänukiri" src="https://static.wixstatic.com/media/b2cbe8_cd09524a4a7f4b04bf0037c6aa9f202e~mv2_d_1240_1753_s_2.jpg/v1/fill/w_800,h_1100,al_c,q_80/a.jpg"><h3>Kohila Mõisakooli tänukiri</h3></article>
-  <article><a href="http://www.toostusuudised.ee/uudised/2018/04/09/eesti-masinatoostuse-liit-valis-uue-noukogu-ja-tunnustas-parimaid" target="_blank" rel="noopener"><img loading="lazy" alt="Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab" src="https://static.wixstatic.com/media/a7f28e_1f6d06b78151421fbe0424309c019946~mv2_d_4128_2322_s_2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Aasta tegu 2017, Eesti Masinatööstuse Liit tunnustab</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><a href="http://joelahtme.kovtp.ee/documents/381171/18534457/02.2018+Jõelähtme+vallaleht+veebruar.pdf/e1c86097-8799-44d6-ae50-dfb36756f957?version=1.0" target="_blank" rel="noopener"><img loading="lazy" alt="Jõelähtme Haridustegu 2017 laureaat" src="https://static.wixstatic.com/media/a7f28e_7f7e300c5f1545a6a6ab9b077ba03f4d~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Jõelähtme Haridustegu 2017 laureaat</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><a href="http://www.etag.ee/eesti-teaduse-populariseerimise-elutoopreemia-palvis-ene-ergma/" target="_blank" rel="noopener"><img loading="lazy" alt="Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_a3a609b742124ca28428495acc3eca35~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim uus algatus, II preemia. Eesti teaduse populariseerimise auhind</h3><span class="more">Loe lähemalt</span></a></article>
-  <article><a href="https://www.kysk.ee/ajujahi-sotsiaalse-ettevotluse-eriauhinna-5000-voitis-mobiilsed-tootoad" target="_blank" rel="noopener"><img loading="lazy" alt="Parim sotsiaalne ettevõte, Ajujahi 10. hooaeg 2016/2017" src="https://static.wixstatic.com/media/a7f28e_ab241300e5c548e7812c89ef53b2bda0~mv2.jpg/v1/fill/w_960,h_600,al_c,q_80/a.jpg"><h3>Parim sotsiaalne ettevõte (Ajujahi 10. hooaeg 2016/2017)</h3><span class="more">Loe lähemalt</span></a></article>
- </div>
- <div class="awards">
-  <a href="https://blogs.ec.europa.eu/promotingenterprise/tag/merkuur/" target="_blank" rel="noopener"><img loading="lazy" alt="EEPA Winner" src="https://static.wixstatic.com/media/a7f28e_ce09094dd0c141a687e6057ea9b80fba~mv2.png/v1/fill/w_270,h_422,al_c,q_85/a.png"></a>
-  <a href="https://www.etag.ee/tegevused/konkursid/eesti-teaduse-populariseerimise-auhind/varasemad-konkursid/" target="_blank" rel="noopener"><img loading="lazy" alt="Eesti teaduse populariseerimise auhind" src="https://static.wixstatic.com/media/a7f28e_01bcdaf1c177432fa8fce697a5b217ce~mv2.jpg/v1/fill/w_400,h_176,al_c,q_80/a.jpg"></a>
  </div>
 </div></section>
 
