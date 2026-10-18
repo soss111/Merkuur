@@ -84,6 +84,8 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /\/api\/content/);
     assert.match(home.text, /id="qform"/);
     assert.match(home.text, /Jäta tagasiside/);
+    assert.match(home.text, /<select name="role"><option value="">Vali…<\/option><option>õpetaja<\/option><option>õpilane<\/option><option>lapsevanem<\/option><option value="uus">Lisa uus<\/option><\/select>/);
+    assert.match(home.text, /id="role-new"/);
     assert.doesNotMatch(home.text, /Lisa siia kliendi tagasiside tekst/);
     assert.equal((home.text.match(/fetch\("\/api\/content"\)/g) || []).length, 1);
     const scripts = [...home.text.matchAll(/<script>([\s\S]*?)<\/script>/g)];
