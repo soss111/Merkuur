@@ -80,6 +80,8 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /Franchise partners worldwide/);
     assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
     assert.match(home.text, /Ajujahi 10\. hooaeg/);
+    assert.match(home.text, /name="tel"/);
+    assert.match(home.text, /Palun täida nimi, telefon, e-post ja nõusolek/);
     assert.match(home.text, /Töö, mis on jätnud jälje/);
     assert.doesNotMatch(home.text, /Meie töö märkamine/);
     assert.equal((home.text.match(/id="projektid"/g) || []).length, 1);
