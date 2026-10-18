@@ -72,6 +72,14 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /Franchise partners worldwide/);
     assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
     assert.match(home.text, /Ajujahi 10\. hooaeg/);
+    assert.match(home.text, /Olulised verstapostid/);
+    assert.match(home.text, /xEdu/);
+    assert.match(home.text, /831 osalejat/);
+    assert.match(home.text, /354 noort/);
+    assert.match(home.text, /Eesti Masinatööstuse Liidu/);
+    assert.match(home.text, /Eesti Teadushuvihariduse Liidu/);
+    assert.match(home.text, /https:\/\/emliit\.ee\/et\/liige\/merkuur-ou\//);
+    assert.match(home.text, /https:\/\/teadushuvi\.ee\/liikmed\//);
     assert.doesNotMatch(home.text, /https:\/\/www\.merkuur\.eu\/tootoad/);
     assert.match(home.text, /href="\/tootoad"/);
     assert.match(home.text, /href="\/post\/ida-viru-projektis-osales-kokku-354-osalejat"/);
