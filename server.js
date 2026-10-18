@@ -7,8 +7,11 @@ const crypto = require("crypto");
 const db = require("./db");
 
 const ROOT = __dirname;
+db.loadEnv(path.join(ROOT, ".env"));
+db.loadEnv(path.join(process.cwd(), ".env"));
 const PORT = Number(process.env.PORT || 8787);
 const DATA = process.env.DATA_DIR || path.join(ROOT, "data");
+db.loadEnv(path.join(DATA, ".env"));
 const UPLOADS = path.join(DATA, "uploads");
 const CONTENT_FILE = path.join(DATA, "content.json");
 const CONFIG_FILE = path.join(DATA, "admin.config.json");
@@ -775,7 +778,8 @@ async function handle(req, res) {
         const user = sessionUser(req);
         if (!user) return send(res, 401, { error: "Logi sisse." });
         const cfg = loadConfig();
-        return send(res, 200, { email: user.email, allowedEmails: withStaff(cfg).allowedEmails });
+        const where = database.driver === "postgres" ? "HSL " + database.label : "sqlite — HSL-i tabeleid ei uuendata";
+        return send(res, 200, { email: user.email, allowedEmails: withStaff(cfg).allowedEmails, database: where });
       }
       if (req.method === "POST" && pathname === "/api/auth/dev") {
         if (process.env.ADMIN_DEV_LOGIN !== "1" || !isLocal(req)) return send(res, 404, { error: "Ei leitud." });
@@ -992,6 +996,11 @@ async function start() {
   });
   server.listen(PORT, "0.0.0.0", () => {
     console.log("Merkuur kuulab pordil " + PORT + " — avalik leht / ja haldus /admin — " + database.label);
+    if (database.driver !== "postgres") {
+      console.warn("HSL-i Postgresi tabeleid ei uuendata, sest DATABASE_URL puudub. Uued read lähevad faili " + database.label.replace(/^sqlite /, "") + ".");
+    } else if (database.importedRows) {
+      console.log("Tõin kohalikust sqlite failist HSL-i andmebaasi " + database.importedRows + " uut rida.");
+    }
   });
   return server;
 }

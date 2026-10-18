@@ -63,6 +63,37 @@ function isPostgres(url) {
   return /^postgres(ql)?:\/\//i.test(String(url || "").trim());
 }
 
+function loadEnv(file) {
+  let text = "";
+  try { text = fs.readFileSync(file, "utf8"); } catch (err) { return; }
+  text.split(/\n/).forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) return;
+    const body = trimmed.startsWith("export ") ? trimmed.slice(7).trim() : trimmed;
+    const eq = body.indexOf("=");
+    if (eq < 1) return;
+    const key = body.slice(0, eq).trim();
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) return;
+    if (process.env[key]) return;
+    let value = body.slice(eq + 1).trim();
+    if (value.length >= 2 && ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'")))) {
+      value = value.slice(1, -1);
+    }
+    process.env[key] = value;
+  });
+}
+
+function resolveDatabaseUrl() {
+  if (process.env.DATABASE_URL !== undefined) return String(process.env.DATABASE_URL).trim();
+  const aliases = ["POSTGRES_URL", "POSTGRESQL_URL", "DATABASE_PRIVATE_URL"];
+  for (const key of aliases) {
+    const value = String(process.env[key] || "").trim();
+    if (value) return value;
+  }
+  if (process.env.PGHOST || process.env.PGDATABASE) return "pg-env";
+  return "";
+}
+
 function sqliteFile(dataDir, databaseUrl) {
   const url = String(databaseUrl || "").trim();
   if (!url) return path.join(dataDir, "content.sqlite");
@@ -293,9 +324,56 @@ const SEED_PHOTOS = [
   }
 ];
 
+const COPY_TABLES = [
+  { table: "feedback", cols: ["id", "quote", "name", "role", "org", "created_at"] },
+  { table: "posts", cols: ["id", "slug", "title", "excerpt", "body", "url", "image", "created_at"] },
+  { table: "photos", cols: ["id", "image", "caption", "created_at"] },
+  { table: "services", cols: ["id", "title", "summary", "href", "image", "created_at"] },
+  { table: "steps", cols: ["id", "title", "detail", "tag", "created_at"] }
+];
+
+async function copyMissing(source, target) {
+  let copied = 0;
+  for (const spec of COPY_TABLES) {
+    const rows = await source.all("SELECT " + spec.cols.join(", ") + " FROM " + spec.table);
+    for (const row of rows) {
+      const values = spec.cols.map((col) => row[col] == null ? "" : row[col]);
+      const changes = await target.run(
+        "INSERT INTO " + spec.table + " (" + spec.cols.join(", ") + ") VALUES (" + spec.cols.map(() => "?").join(", ") + ") ON CONFLICT(id) DO NOTHING",
+        values
+      );
+      copied += Number(changes) || 0;
+    }
+  }
+  const settings = await source.all("SELECT key, value FROM settings");
+  for (const row of settings) {
+    if (!row || !row.key) continue;
+    if (await target.setting(row.key, "")) continue;
+    await target.setSetting(row.key, row.value == null ? "" : String(row.value));
+    copied += 1;
+  }
+  const media = await source.all("SELECT name, mime, bytes FROM media");
+  for (const row of media) {
+    if (!row || !row.name || row.bytes == null) continue;
+    const bytes = Buffer.isBuffer(row.bytes) ? row.bytes : Buffer.from(row.bytes);
+    const changes = await target.run(
+      "INSERT INTO media (name, mime, bytes) VALUES (?, ?, ?) ON CONFLICT(name) DO NOTHING",
+      [row.name, row.mime || "application/octet-stream", bytes]
+    );
+    copied += Number(changes) || 0;
+  }
+  return copied;
+}
+
 function api(driver) {
   return {
     label: driver.label,
+    driver: driver.kind || "sqlite",
+    importedRows: 0,
+    async pullMissingFrom(file) {
+      if (!file || !fs.existsSync(file)) return 0;
+      return copyMissing(openSqlite(file), driver);
+    },
     async importJsonOnce(contentFile) {
       if (await driver.setting("imported_json", "") === "1") return;
       let raw = { address: "", testimonials: [], news: [], gallery: [] };
@@ -510,14 +588,15 @@ function api(driver) {
   };
 }
 
-function sqliteDriver(file) {
+function openSqlite(file) {
   const { DatabaseSync } = require("node:sqlite");
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
   db.exec("PRAGMA journal_mode = WAL");
   TABLES.forEach((sql) => db.exec(sql));
   db.exec("CREATE TABLE IF NOT EXISTS media (name TEXT PRIMARY KEY, mime TEXT NOT NULL, bytes BLOB NOT NULL)");
-  return api({
+  return {
+    kind: "sqlite",
     label: "sqlite " + file,
     all(sql, params) { return db.prepare(sql).all(...(params || [])); },
     get(sql, params) { return db.prepare(sql).get(...(params || [])) || null; },
@@ -529,12 +608,16 @@ function sqliteDriver(file) {
     setSetting(key, value) {
       db.prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").run(key, value);
     }
-  });
+  };
+}
+
+function sqliteDriver(file) {
+  return api(openSqlite(file));
 }
 
 async function postgresDriver(url) {
   const { Pool } = require("pg");
-  const pool = new Pool({ connectionString: url, max: 5 });
+  const pool = url ? new Pool({ connectionString: url, max: 5 }) : new Pool({ max: 5 });
   const query = async (sql, params) => {
     let i = 0;
     const text = sql.replace(/\?/g, () => "$" + (++i));
@@ -542,8 +625,9 @@ async function postgresDriver(url) {
   };
   for (const sql of TABLES) await query(sql);
   await query("CREATE TABLE IF NOT EXISTS media (name TEXT PRIMARY KEY, mime TEXT NOT NULL, bytes BYTEA NOT NULL)");
-  const info = driverFor(url, ".");
+  const info = url ? driverFor(url, ".") : { driver: "postgres", label: "postgres " + (process.env.PGDATABASE || "database") };
   return api({
+    kind: "postgres",
     label: info.label,
     async all(sql, params) { return (await query(sql, params)).rows; },
     async get(sql, params) { return (await query(sql, params)).rows[0] || null; },
@@ -559,9 +643,15 @@ async function postgresDriver(url) {
 }
 
 async function openDatabase(dataDir, databaseUrl) {
-  const url = databaseUrl == null ? process.env.DATABASE_URL : databaseUrl;
-  if (isPostgres(url)) return postgresDriver(String(url).trim());
-  return sqliteDriver(sqliteFile(dataDir, url));
+  const explicit = arguments.length >= 2;
+  if (!explicit) loadEnv(path.join(dataDir || ".", ".env"));
+  const url = explicit ? String(databaseUrl || "").trim() : resolveDatabaseUrl();
+  const database = url === "pg-env" ? await postgresDriver(null) : (isPostgres(url) ? await postgresDriver(url) : sqliteDriver(sqliteFile(dataDir, url)));
+  if (database.driver === "postgres") {
+    const file = path.join(dataDir || ".", "content.sqlite");
+    if (fs.existsSync(file)) database.importedRows = await database.pullMissingFrom(file);
+  }
+  return database;
 }
 
-module.exports = { openDatabase, driverFor, isPostgres, sqliteFile, DEFAULT_STATS };
+module.exports = { openDatabase, driverFor, isPostgres, sqliteFile, loadEnv, resolveDatabaseUrl, DEFAULT_STATS };

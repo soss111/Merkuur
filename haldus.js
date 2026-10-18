@@ -347,6 +347,7 @@ function mountHaldus(data, me){
   }
   select.addEventListener("change",function(){location.href=select.value;});
   bar.appendChild(select);
+  if(me&&me.database)bar.appendChild(el("span","note",me.database));
   var status=el("span","note","");
   say=function(text){status.textContent=text||"";};
   var view=el("a","ebtn","Avalik vaade");

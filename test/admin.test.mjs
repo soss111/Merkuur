@@ -536,6 +536,7 @@ test("gmail code login uses the metalhub login service", async () => {
     assert.equal(me.json.email, "laurisoosaar@gmail.com");
     assert.equal(me.json.allowedEmails.includes("lauri.soosaar@venten.ee"), false);
     assert.equal(me.json.allowedEmails.includes("laurisoosaar@gmail.com"), true);
+    assert.match(me.json.database, /sqlite/);
   } finally {
     child.kill("SIGTERM");
     login.close();
