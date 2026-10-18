@@ -328,8 +328,39 @@ const MIME = {
   ".webp": "image/webp",
   ".gif": "image/gif",
   ".svg": "image/svg+xml",
-  ".ico": "image/x-icon"
+  ".ico": "image/x-icon",
+  ".pdf": "application/pdf"
 };
+
+function resolvePublic(pathname) {
+  const fixed = {
+    "/": path.join(ROOT, "index.html"),
+    "/index.html": path.join(ROOT, "index.html"),
+    "/admin": path.join(ROOT, "admin.html"),
+    "/admin/": path.join(ROOT, "admin.html"),
+    "/admin.html": path.join(ROOT, "admin.html"),
+    "/site.css": path.join(ROOT, "site.css"),
+    "/site.js": path.join(ROOT, "site.js")
+  };
+  if (fixed[pathname]) return fixed[pathname];
+  let clean = pathname;
+  if (clean.length > 1 && clean.endsWith("/")) clean = clean.slice(0, -1);
+  if (clean.startsWith("/files/")) {
+    const name = clean.slice("/files/".length);
+    if (!/^[a-zA-Z0-9._-]+$/.test(name)) return null;
+    const file = path.resolve(ROOT, "files", name);
+    const root = path.resolve(ROOT, "files") + path.sep;
+    if (!file.startsWith(root) || !fs.existsSync(file)) return null;
+    return file;
+  }
+  const rel = clean.replace(/^\/+/, "");
+  if (!rel || rel.split("/").some((part) => part === "." || part === "..")) return null;
+  if (!/^[\p{L}\p{N}._-]+(?:\/[\p{L}\p{N}._-]+)*$/u.test(rel)) return null;
+  const file = path.resolve(ROOT, "pages", rel + ".html");
+  const root = path.resolve(ROOT, "pages") + path.sep;
+  if (!file.startsWith(root) || !fs.existsSync(file)) return null;
+  return file;
+}
 
 function serveFile(res, file) {
   const ext = path.extname(file).toLowerCase();
@@ -469,15 +500,8 @@ async function handle(req, res) {
     return serveFile(res, file);
   }
 
-  const pages = {
-    "/": path.join(ROOT, "index.html"),
-    "/index.html": path.join(ROOT, "index.html"),
-    "/admin": path.join(ROOT, "admin.html"),
-    "/admin/": path.join(ROOT, "admin.html"),
-    "/admin.html": path.join(ROOT, "admin.html")
-  };
-  const file = pages[pathname];
-  if (file && fs.existsSync(file)) return serveFile(res, file);
+  const file = resolvePublic(pathname);
+  if (file) return serveFile(res, file);
   send(res, 404, "Ei leitud.", "text/plain; charset=utf-8");
 }
 

@@ -72,6 +72,23 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /Franchise partners worldwide/);
     assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
     assert.match(home.text, /Ajujahi 10\. hooaeg/);
+    assert.doesNotMatch(home.text, /https:\/\/www\.merkuur\.eu\/tootoad/);
+    assert.match(home.text, /href="\/tootoad"/);
+    assert.match(home.text, /href="\/post\/ida-viru-projektis-osales-kokku-354-osalejat"/);
+
+    const workshop = await call("/tootoad");
+    assert.equal(workshop.status, 200);
+    assert.match(workshop.text, /käed-külge/);
+    const post = await call("/post/" + encodeURIComponent("ida-viru-projektis-osales-kokku-354-osalejat"));
+    assert.equal(post.status, 200);
+    assert.match(post.text, /354le noorele|354/);
+    const textbook = await call("/" + encodeURIComponent("õpik-arvjuhitavad-seadmed-cnc"));
+    assert.equal(textbook.status, 200);
+    assert.match(textbook.text, /e-koolikott\.ee/);
+    const hiddenPage = await call("/tootoad/../../server.js");
+    assert.equal(hiddenPage.status, 404);
+    const css = await call("/site.css");
+    assert.equal(css.status, 200);
 
     const admin = await call("/admin");
     assert.equal(admin.status, 200);
