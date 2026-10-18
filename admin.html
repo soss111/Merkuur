@@ -46,14 +46,22 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 .note.bad{color:#9d1c12}
 .list{display:grid;gap:10px;margin-top:14px}
 .item{border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--bg);display:grid;gap:4px}
+.item.has-thumb{grid-template-columns:72px 1fr;column-gap:12px}
+.item .thumb{width:72px;height:72px;object-fit:cover;border-radius:12px;grid-row:1 / span 3}
 .item b{font-family:"Outfit",system-ui,sans-serif;font-weight:650;font-size:1.1rem}
-.item button{justify-self:start;margin-top:6px}
+.item .meta{color:var(--muted)}
 .item .tools{display:flex;flex-wrap:wrap;gap:8px}
+.item.has-thumb .tools{grid-column:2}
 .item .tools .btn{margin-top:6px}
 .form-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.item .tools{display:flex;flex-wrap:wrap;gap:8px}
-.item .tools .btn{margin-top:6px}
-.form-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px}
+.toolbar .btn{margin-top:0}
+.overview{display:grid;gap:10px}
+.overview .btn{margin-top:0;width:100%;justify-content:space-between;min-height:64px;border-radius:16px}
+.overview .btn b{font-size:1.15rem}
+.empty{color:var(--muted);margin:8px 0 0}
+.btn:disabled{opacity:.4;cursor:default}
+@media(min-width:720px){.overview{grid-template-columns:1fr 1fr}}
 .form-actions .btn{margin-top:14px}
 .keep{color:var(--muted);margin:8px 0 0}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
@@ -70,8 +78,8 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 <header><div class="bar"><a class="logo" href="index.html"><img alt="Merkuur" src="files/merkuur-logo.png" width="52" height="52">Merkuur</a><a class="back" href="index.html">← Avalik leht</a></div></header>
 <main>
  <div class="kicker">Haldus</div>
- <h1>Lisa lehele uut</h1>
- <p class="lead">Logi sisse Gmailiga. Tagasiside, blogipostitused, fotod, teenused ja teekond salvestatakse andmebaasi ning ilmuvad avalikule lehele.</p>
+ <h1>Haldus</h1>
+ <p class="lead">Siin saad lehe sisu lisada, muuta ja järjekorda seada. Muudatused ilmuvad avalikule lehele.</p>
  <p class="note" id="status" role="status"></p>
 
  <section id="login" class="panel" hidden>
@@ -101,7 +109,8 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <button class="btn ghost" id="logout" type="button">Logi välja</button>
   </div>
   <div class="tabs" role="tablist">
-   <button class="btn" type="button" data-tab="feedback" aria-selected="true">Tagasiside</button>
+   <button class="btn" type="button" data-tab="home" aria-selected="true">Ülevaade</button>
+   <button class="btn ghost" type="button" data-tab="feedback" aria-selected="false">Tagasiside</button>
    <button class="btn ghost" type="button" data-tab="news" aria-selected="false">Blogi</button>
    <button class="btn ghost" type="button" data-tab="gallery" aria-selected="false">Fotod</button>
    <button class="btn ghost" type="button" data-tab="services" aria-selected="false">Teenused</button>
@@ -111,10 +120,17 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <button class="btn ghost" type="button" data-tab="admins" aria-selected="false">Haldurid</button>
   </div>
 
-  <section class="view on panel" id="view-feedback">
-   <h2>Uus tagasiside</h2>
+  <section class="view on panel" id="view-home">
+   <h2>Ülevaade</h2>
+   <p class="lead">Numbrid näitavad, mitu kirjet lehel on. Vajuta kaardile, et seda osa muuta.</p>
+   <div class="overview" id="overview"></div>
+  </section>
+
+  <section class="view panel" id="view-feedback">
+   <h2>Tagasiside</h2>
    <p class="lead">Kliendid saavad tagasisidet jätta avalikul lehel. Siin saad selle ise lisada, muuta või kustutada.</p>
-   <form id="form-feedback">
+   <div class="toolbar"><button class="btn" type="button" data-add="testimonials">Lisa uus</button><a class="btn ghost" href="index.html#tagasiside">Vaata lehel</a></div>
+   <form id="form-feedback" hidden>
     <label>Tekst<textarea name="quote" required maxlength="800"></textarea></label>
     <div class="row two">
      <label>Nimi<input name="name" required maxlength="120"></label>
@@ -127,8 +143,9 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
   </section>
 
   <section class="view panel" id="view-news">
-   <h2>Uus blogipostitus</h2>
-   <form id="form-news">
+   <h2>Blogi</h2>
+   <div class="toolbar"><button class="btn" type="button" data-add="news">Lisa uus</button><a class="btn ghost" href="index.html#uudised">Vaata lehel</a></div>
+   <form id="form-news" hidden>
     <label>Pealkiri<input name="title" required maxlength="180"></label>
     <label>Lühikirjeldus<textarea name="excerpt" maxlength="400"></textarea></label>
     <label>Tekst<textarea name="body" maxlength="8000" placeholder="Postituse sisu. Tühi väli jätab selle lühikeseks uudiseks."></textarea></label>
@@ -143,8 +160,9 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
   </section>
 
   <section class="view panel" id="view-services">
-   <h2>Uus teenus</h2>
-   <form id="form-service">
+   <h2>Teenused</h2>
+   <div class="toolbar"><button class="btn" type="button" data-add="services">Lisa uus</button><a class="btn ghost" href="index.html#teenused">Vaata lehel</a></div>
+   <form id="form-service" hidden>
     <label>Nimi<input name="title" required maxlength="160"></label>
     <label>Kirjeldus<textarea name="summary" maxlength="400"></textarea></label>
     <div class="row two">
@@ -158,9 +176,10 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
   </section>
 
   <section class="view panel" id="view-roadmap">
-   <h2 id="roadmap-heading">Uus etapp</h2>
-   <p class="lead">Need sammud on avaliku lehe teekond. Järjekord on lisamise järjekord ja muutmine jätab etapi oma kohale.</p>
-   <form id="form-roadmap">
+   <h2 id="roadmap-heading">Teekond</h2>
+   <p class="lead">Need sammud on avaliku lehe teekond. Üles ja Alla muudavad järjekorda, muutmine jätab etapi oma kohale.</p>
+   <div class="toolbar"><button class="btn" type="button" data-add="roadmap">Lisa uus</button><a class="btn ghost" href="index.html#teekond">Vaata lehel</a></div>
+   <form id="form-roadmap" hidden>
     <label>Nimi<input name="title" required maxlength="80"></label>
     <label>Kirjeldus<textarea name="detail" required maxlength="400"></textarea></label>
     <label>Märksõna<input name="tag" maxlength="40" placeholder="Tasuta vestlus"></label>
@@ -173,8 +192,9 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
   </section>
 
   <section class="view panel" id="view-gallery">
-   <h2>Uus foto</h2>
-   <form id="form-gallery">
+   <h2>Fotod</h2>
+   <div class="toolbar"><button class="btn" type="button" data-add="gallery">Lisa uus</button><a class="btn ghost" href="index.html#galerii">Vaata lehel</a></div>
+   <form id="form-gallery" hidden>
     <label>Allkiri<input name="caption" required maxlength="120"></label>
     <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required></label>
     <p class="keep" id="gallery-keep" hidden>Praegune pilt jääb alles, kui uut ei vali.</p>
@@ -225,7 +245,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 <script>
 (function(){
 var statusEl=document.getElementById("status");
-function say(text,bad){statusEl.textContent=text||"";statusEl.className=bad?"note bad":"note";}
+function say(text,bad){statusEl.textContent=text||"";statusEl.className=bad?"note bad":"note";if(text)statusEl.scrollIntoView({block:"nearest"});}
 function api(path,opts){
   opts=opts||{};
   if(location.hostname.endsWith("github.io")){
@@ -253,27 +273,64 @@ var content={testimonials:[],news:[],gallery:[],address:""};
 var admins=[];
 var editing=null;
 var formMeta={
-  testimonials:{form:"form-feedback",heading:"Uus tagasiside",editHeading:"Muuda tagasisidet"},
-  news:{form:"form-news",heading:"Uus blogipostitus",editHeading:"Muuda postitust",note:"news-keep"},
-  services:{form:"form-service",heading:"Uus teenus",editHeading:"Muuda teenust",note:"service-keep"},
-  gallery:{form:"form-gallery",heading:"Uus foto",editHeading:"Muuda fotot",note:"gallery-keep",requiredFile:true}
+  testimonials:{form:"form-feedback",section:"Tagasiside",heading:"Uus tagasiside",editHeading:"Muuda tagasisidet"},
+  news:{form:"form-news",section:"Blogi",heading:"Uus blogipostitus",editHeading:"Muuda postitust",note:"news-keep"},
+  services:{form:"form-service",section:"Teenused",heading:"Uus teenus",editHeading:"Muuda teenust",note:"service-keep"},
+  gallery:{form:"form-gallery",section:"Fotod",heading:"Uus foto",editHeading:"Muuda fotot",note:"gallery-keep",requiredFile:true}
 };
 function formOf(kind){return document.getElementById(formMeta[kind].form);}
-function stopEdit(){
-  if(!editing)return;
-  var meta=formMeta[editing.kind];
-  var f=formOf(editing.kind);
+function headingOf(kind){
+  if(kind==="roadmap")return document.getElementById("roadmap-heading");
+  return formOf(kind).parentElement.querySelector("h2");
+}
+function closeComposer(kind){
+  if(kind==="roadmap"){
+    roadmapEdit=null;
+    var road=document.getElementById("form-roadmap");
+    road.reset();
+    road.hidden=true;
+    document.getElementById("roadmap-heading").textContent="Teekond";
+    document.getElementById("roadmap-submit").textContent="Lisa lehele";
+    document.getElementById("roadmap-cancel").hidden=true;
+    return;
+  }
+  var meta=formMeta[kind];
+  var f=formOf(kind);
+  if(editing&&editing.kind===kind)editing=null;
   f.reset();
+  f.hidden=true;
   if(f.file)f.file.required=!!meta.requiredFile;
   f.querySelector("button[type=submit]").textContent="Lisa lehele";
-  f.querySelector("[data-cancel]").hidden=true;
-  var heading=f.parentElement.querySelector("h2");
-  if(heading)heading.textContent=meta.heading;
+  var cancel=f.querySelector("[data-cancel]");
+  if(cancel)cancel.hidden=true;
+  var heading=headingOf(kind);
+  if(heading)heading.textContent=meta.section;
   if(meta.note)document.getElementById(meta.note).hidden=true;
-  editing=null;
+}
+function openComposer(kind){
+  ["testimonials","news","services","gallery","roadmap"].forEach(closeComposer);
+  if(kind==="roadmap"){
+    var road=document.getElementById("form-roadmap");
+    road.hidden=false;
+    document.getElementById("roadmap-heading").textContent="Uus etapp";
+    document.getElementById("roadmap-cancel").hidden=false;
+    road.title.focus();
+    road.scrollIntoView({block:"nearest"});
+    return;
+  }
+  var meta=formMeta[kind];
+  var f=formOf(kind);
+  f.hidden=false;
+  var heading=headingOf(kind);
+  if(heading)heading.textContent=meta.heading;
+  var cancel=f.querySelector("[data-cancel]");
+  if(cancel)cancel.hidden=false;
+  var field=f.querySelector("input,textarea");
+  if(field)field.focus();
+  f.scrollIntoView({block:"nearest"});
 }
 function startEdit(kind,item){
-  stopEdit();
+  openComposer(kind);
   editing={kind:kind,id:item.id};
   var meta=formMeta[kind];
   var f=formOf(kind);
@@ -283,7 +340,7 @@ function startEdit(kind,item){
   if(kind==="gallery"){f.caption.value=item.caption||"";f.file.required=false;f.file.value="";}
   f.querySelector("button[type=submit]").textContent="Salvesta muudatused";
   f.querySelector("[data-cancel]").hidden=false;
-  var heading=f.parentElement.querySelector("h2");
+  var heading=headingOf(kind);
   if(heading)heading.textContent=meta.editHeading;
   if(meta.note)document.getElementById(meta.note).hidden=false;
   f.scrollIntoView({block:"nearest"});
@@ -293,33 +350,77 @@ function saveContent(kind,body){
   var method="POST";
   if(editing&&editing.kind===kind){path+="/"+editing.id;method="PUT";}
   return api(path,{method:method,body:body}).then(function(){
-    var f=formOf(kind);
-    if(editing&&editing.kind===kind)stopEdit();
-    else f.reset();
+    closeComposer(kind);
     return load();
   });
 }
-function renderList(kind,box,label){
+function thumbSrc(value){
+  if(!value)return "";
+  if(/^\/uploads\/[a-zA-Z0-9._-]+$/.test(value))return value;
+  if(/^https?:\/\//.test(value))return value;
+  return "";
+}
+function pageHref(value){
+  if(!value)return "";
+  if(value.charAt(0)==="#"&&/^#[A-Za-z0-9-]+$/.test(value))return "index.html"+value;
+  if(value.charAt(0)==="/"&&value.charAt(1)!=="/"&&value.indexOf("..")===-1)return value;
+  if(/^https?:\/\//.test(value))return value;
+  return "";
+}
+function toolButton(text,className,onClick,disabled){
+  var btn=document.createElement("button");
+  btn.className=className;btn.type="button";btn.textContent=text;btn.disabled=!!disabled;
+  if(!disabled)btn.addEventListener("click",onClick);
+  return btn;
+}
+function move(kind,id,direction){
+  api("/api/content/"+kind+"/"+id+"/move",{method:"POST",body:{direction:direction}}).then(function(){say("Järjekord on muudetud.");return load();}).catch(function(err){say(err.message,true);});
+}
+function renderRows(kind,box,items,describe){
   box.replaceChildren();
-  (content[kind]||[]).forEach(function(item){
+  if(!items.length){
+    var empty=document.createElement("p");
+    empty.className="empty";
+    empty.textContent="Siin pole veel midagi. Vajuta Lisa uus.";
+    box.appendChild(empty);
+    return;
+  }
+  items.forEach(function(item,i){
+    var info=describe(item,i);
     var row=document.createElement("article");
     row.className="item";
+    var src=thumbSrc(info.image);
+    if(src){
+      row.classList.add("has-thumb");
+      var img=document.createElement("img");
+      img.className="thumb";img.alt="";img.src=src;
+      row.appendChild(img);
+    }
     var title=document.createElement("b");
-    title.textContent=label(item);
+    title.textContent=info.title;
     var extra=document.createElement("span");
-    extra.textContent=item.excerpt||item.quote||item.org||"";
+    extra.className="meta";
+    extra.textContent=info.meta||"";
     var tools=document.createElement("div");
     tools.className="tools";
-    var edit=document.createElement("button");
-    edit.className="btn ghost";edit.type="button";edit.textContent="Muuda";
-    edit.addEventListener("click",function(){startEdit(kind,item);});
-    var btn=document.createElement("button");
-    btn.className="btn danger";btn.type="button";btn.textContent="Kustuta";
-    btn.addEventListener("click",function(){
+    tools.appendChild(toolButton("Üles","btn ghost",function(){move(kind,item.id,"up");},i===0));
+    tools.appendChild(toolButton("Alla","btn ghost",function(){move(kind,item.id,"down");},i===items.length-1));
+    tools.appendChild(toolButton("Muuda","btn ghost",function(){info.edit();}));
+    var href=pageHref(info.href);
+    if(href){
+      var view=document.createElement("a");
+      view.className="btn ghost";view.textContent="Vaata";view.href=href;
+      if(/^https?:/.test(href)){view.target="_blank";view.rel="noopener";}
+      tools.appendChild(view);
+    }
+    tools.appendChild(toolButton("Kustuta","btn danger",function(){
       if(!confirm("Kustutan selle?"))return;
-      api("/api/content/"+kind+"/"+item.id,{method:"DELETE"}).then(function(){if(editing&&editing.id===item.id)stopEdit();return load();}).catch(function(err){say(err.message,true);});
-    });
-    tools.append(edit,btn);
+      api("/api/content/"+kind+"/"+item.id,{method:"DELETE"}).then(function(){
+        if(kind==="roadmap"){if(roadmapEdit===item.id)closeComposer("roadmap");}
+        else if(editing&&editing.id===item.id)closeComposer(kind);
+        return load();
+      }).catch(function(err){say(err.message,true);});
+    }));
     row.append(title,extra,tools);
     box.appendChild(row);
   });
@@ -342,61 +443,62 @@ function renderAdmins(){
   });
 }
 var roadmapEdit=null;
-function resetRoadmap(){
-  roadmapEdit=null;
+function editRoadmap(item){
+  openComposer("roadmap");
+  roadmapEdit=item.id;
   var f=document.getElementById("form-roadmap");
-  f.reset();
-  document.getElementById("roadmap-heading").textContent="Uus etapp";
-  document.getElementById("roadmap-submit").textContent="Lisa lehele";
-  document.getElementById("roadmap-cancel").hidden=true;
+  f.title.value=item.title||"";
+  f.detail.value=item.detail||"";
+  f.tag.value=item.tag||"";
+  document.getElementById("roadmap-heading").textContent="Muuda etappi";
+  document.getElementById("roadmap-submit").textContent="Salvesta muudatused";
+  document.getElementById("roadmap-cancel").hidden=false;
+  f.scrollIntoView({block:"nearest"});
 }
-function renderRoadmap(){
-  var box=document.getElementById("list-roadmap");
+function renderOverview(){
+  var box=document.getElementById("overview");
+  var rows=[
+    ["feedback","Tagasiside",String((content.testimonials||[]).length)],
+    ["news","Blogi",String((content.news||[]).length)],
+    ["gallery","Fotod",String((content.gallery||[]).length)],
+    ["services","Teenused",String((content.services||[]).length)],
+    ["roadmap","Teekond",String((content.roadmap||[]).length)],
+    ["stats","Arvud",(content.stats&&content.stats.asOf)||""],
+    ["address","Aadress",content.address||"täitmata"],
+    ["admins","Haldurid",String(admins.length)]
+  ];
   box.replaceChildren();
-  (content.roadmap||[]).forEach(function(item,i){
-    var row=document.createElement("article");
-    row.className="item";
-    var title=document.createElement("b");
-    title.textContent=(i+1)+". "+(item.title||"");
-    var extra=document.createElement("span");
-    extra.textContent=item.tag||item.detail||"";
-    var tools=document.createElement("div");
-    tools.className="tools";
-    var edit=document.createElement("button");
-    edit.className="btn ghost";edit.type="button";edit.textContent="Muuda";
-    edit.addEventListener("click",function(){
-      roadmapEdit=item.id;
-      var f=document.getElementById("form-roadmap");
-      f.title.value=item.title||"";
-      f.detail.value=item.detail||"";
-      f.tag.value=item.tag||"";
-      document.getElementById("roadmap-heading").textContent="Muuda etappi";
-      document.getElementById("roadmap-submit").textContent="Salvesta muudatused";
-      document.getElementById("roadmap-cancel").hidden=false;
-      f.scrollIntoView({block:"nearest"});
-    });
-    var del=document.createElement("button");
-    del.className="btn danger";del.type="button";del.textContent="Kustuta";
-    del.addEventListener("click",function(){
-      if(!confirm("Kustutan selle?"))return;
-      api("/api/content/roadmap/"+item.id,{method:"DELETE"}).then(function(){
-        if(roadmapEdit===item.id)resetRoadmap();
-        return load();
-      }).catch(function(err){say(err.message,true);});
-    });
-    tools.append(edit,del);
-    row.append(title,extra,tools);
-    box.appendChild(row);
+  rows.forEach(function(row){
+    var btn=document.createElement("button");
+    btn.type="button";btn.className="btn ghost";
+    var name=document.createElement("b");
+    name.textContent=row[1];
+    var count=document.createElement("span");
+    count.textContent=row[2];
+    btn.append(name,count);
+    btn.addEventListener("click",function(){selectTab(row[0]);});
+    box.appendChild(btn);
   });
 }
 function load(){
   return api("/api/content").then(function(data){
     content=data;
-    renderList("testimonials",document.getElementById("list-feedback"),function(item){return item.name+(item.org?" · "+item.org:"");});
-    renderList("news",document.getElementById("list-news"),function(item){return item.title;});
-    renderList("gallery",document.getElementById("list-gallery"),function(item){return item.caption;});
-    renderList("services",document.getElementById("list-services"),function(item){return item.title;});
-    renderRoadmap();
+    renderRows("testimonials",document.getElementById("list-feedback"),content.testimonials||[],function(item){
+      return {title:item.name+(item.org?" · "+item.org:""),meta:item.quote||"",href:"#tagasiside",edit:function(){startEdit("testimonials",item);}};
+    });
+    renderRows("news",document.getElementById("list-news"),content.news||[],function(item){
+      return {title:item.title,meta:item.url||item.excerpt||"",image:item.image,href:item.url||"#uudised",edit:function(){startEdit("news",item);}};
+    });
+    renderRows("gallery",document.getElementById("list-gallery"),content.gallery||[],function(item){
+      return {title:item.caption,image:item.image,href:"#galerii",edit:function(){startEdit("gallery",item);}};
+    });
+    renderRows("services",document.getElementById("list-services"),content.services||[],function(item){
+      return {title:item.title,meta:item.href||"",image:item.image,href:item.href||"#teenused",edit:function(){startEdit("services",item);}};
+    });
+    renderRows("roadmap",document.getElementById("list-roadmap"),content.roadmap||[],function(item,i){
+      return {title:(i+1)+". "+(item.title||""),meta:item.tag||item.detail||"",href:"#teekond",edit:function(){editRoadmap(item);}};
+    });
+    renderOverview();
     document.querySelector("#form-address [name=address]").value=data.address||"";
     var stats=data.stats||{};
     ["since","workshops","youth","mobiles","solutions","asOf"].forEach(function(key){
@@ -405,16 +507,29 @@ function load(){
     });
   });
 }
-document.querySelectorAll(".tabs button").forEach(function(btn){
-  btn.addEventListener("click",function(){
-    document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected","false");b.classList.add("ghost");});
-    btn.setAttribute("aria-selected","true");btn.classList.remove("ghost");
-    document.querySelectorAll(".view").forEach(function(v){v.classList.remove("on");});
-    document.getElementById("view-"+btn.getAttribute("data-tab")).classList.add("on");
+function selectTab(name){
+  document.querySelectorAll(".tabs button").forEach(function(b){
+    var on=b.getAttribute("data-tab")===name;
+    b.setAttribute("aria-selected",on?"true":"false");
+    b.classList.toggle("ghost",!on);
   });
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("on");});
+  var view=document.getElementById("view-"+name);
+  if(view)view.classList.add("on");
+}
+document.querySelectorAll(".tabs button").forEach(function(btn){
+  btn.addEventListener("click",function(){selectTab(btn.getAttribute("data-tab"));});
+});
+document.querySelectorAll("[data-add]").forEach(function(btn){
+  btn.addEventListener("click",function(){openComposer(btn.getAttribute("data-add"));say("");});
 });
 document.querySelectorAll("[data-cancel]").forEach(function(btn){
-  btn.addEventListener("click",function(){stopEdit();say("");});
+  btn.addEventListener("click",function(){
+    var form=btn.closest("form");
+    var kind={ "form-feedback":"testimonials","form-news":"news","form-service":"services","form-gallery":"gallery" }[form.id];
+    if(kind)closeComposer(kind);
+    say("");
+  });
 });
 document.getElementById("form-feedback").addEventListener("submit",function(e){
   e.preventDefault();var f=e.target;
@@ -445,14 +560,14 @@ document.getElementById("form-gallery").addEventListener("submit",function(e){
     return saveContent("gallery",body);
   }).then(function(){say("Pilt on galeriis.");}).catch(function(err){say(err.message,true);});
 });
-document.getElementById("roadmap-cancel").addEventListener("click",resetRoadmap);
+document.getElementById("roadmap-cancel").addEventListener("click",function(){closeComposer("roadmap");say("");});
 document.getElementById("form-roadmap").addEventListener("submit",function(e){
   e.preventDefault();
   var f=e.target;
   var editing=Boolean(roadmapEdit);
   var path=editing?"/api/content/roadmap/"+roadmapEdit:"/api/content/roadmap";
   api(path,{method:editing?"PUT":"POST",body:{title:f.title.value,detail:f.detail.value,tag:f.tag.value}}).then(function(){
-    resetRoadmap();
+    closeComposer("roadmap");
     return load();
   }).then(function(){say(editing?"Etapp on muudetud.":"Etapp on lehel.");}).catch(function(err){say(err.message,true);});
 });

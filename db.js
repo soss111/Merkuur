@@ -373,6 +373,12 @@ function api(driver) {
         "UPDATE steps SET title = ?, detail = ?, tag = ? WHERE id = ?",
         [item.title, item.detail, item.tag, item.id]
       );
+    },
+    async setCreatedAt(table, id, createdAt) {
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
+      if (!allowed[table]) throw new Error("Tundmatu tabel.");
+      await driver.run("UPDATE " + table + " SET created_at = ? WHERE id = ?", [createdAt, id]);
+    },
     async findItem(kind, id) {
       const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
       const map = { testimonials: mapFeedback, news: mapPost, gallery: mapPhoto, services: mapService }[kind];
