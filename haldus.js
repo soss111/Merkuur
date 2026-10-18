@@ -52,8 +52,33 @@ var kinds={
     {name:"title",label:"Pealkiri",required:true,max:120},
     {name:"detail",label:"Kirjeldus",tag:"textarea",max:400},
     {name:"tag",label:"Märksõna",max:80}
+  ]},
+  people:{add:"Lisa inimene",edit:"Muuda inimest",fresh:"Uus inimene",box:".people",fields:[
+    {name:"name",label:"Nimi",required:true,max:120},
+    {name:"role",label:"Roll",max:160},
+    {name:"phone",label:"Telefon",max:40,placeholder:"+372 …"},
+    {name:"email",label:"E-post",max:160,placeholder:"nimi@merkuur.eu"},
+    {name:"file",label:"Foto",type:"file"}
   ]}
 };
+var pages=[
+  ["/", "Avaleht"],
+  ["/meeskond", "Meeskond"],
+  ["/tootoad", "Töötoad"],
+  ["/huviringid", "Huviringid"],
+  ["/gümnaasiumi-valikkursus-cnc", "CNC kursus"],
+  ["/õpik-arvjuhitavad-seadmed-cnc", "Digiõpik"],
+  ["/futureclassroomlab", "Tehnoloogiaklass"],
+  ["/mobileworkshops", "Mobiilsed töökojad"],
+  ["/bettercareer", "Karjäär"],
+  ["/synnipaevad", "Sünnipäevad"],
+  ["/teambuilding", "Meeskonnaüritus"],
+  ["/blog", "Blogi"],
+  ["/meediakajastus", "Meediakajastus"],
+  ["/videod", "Videod"],
+  ["/toeoetubade-galerii", "Galerii"],
+  ["/merkuuri-toeoetubade-kaart", "Tegevuskaart"]
+];
 var say=function(){};
 var dialog, sheet, titleEl, formEl, noteEl;
 
@@ -123,7 +148,7 @@ function openItem(data, kind, item){
     var existingFile=formEl.querySelector("input[type=file]");
     if(existingFile)existingFile.required=false;
   }
-  if(item&&(kind==="news"||kind==="gallery"||kind==="services")){
+  if(item&&(kind==="news"||kind==="gallery"||kind==="services"||kind==="people")){
     formEl.appendChild(el("p","ekeep","Praegune pilt jääb alles, kui uut ei vali."));
   }
   actions(function(){
@@ -225,7 +250,7 @@ function toolbar(group){
     leads[leads.length-1].insertAdjacentElement("afterend",box);
     return box;
   }
-  var grid=home.querySelector(":scope > .grid, :scope > .gallery, :scope > .road, :scope > .quotes");
+  var grid=home.querySelector(":scope > .people, :scope > .grid, :scope > .gallery, :scope > .road, :scope > .quotes, :scope > .prose");
   if(grid){home.insertBefore(box,grid);return box;}
   home.appendChild(box);
   return box;
@@ -236,7 +261,7 @@ function mountTools(data){
     var box=document.querySelector(meta.box);
     if(!box)return;
     var items=[].filter.call(box.children,function(child){return child.getAttribute&&child.getAttribute("data-kind")===kind;});
-    var group=box.closest("section")||box;
+    var group=box.closest("section")||box.closest("main")||box;
     toolbar(group).appendChild(button(meta.add,"btn",function(){openItem(data,kind,null);}));
     items.forEach(function(node,index){
       var item=itemById(data,kind,node.getAttribute("data-item"));
@@ -256,10 +281,13 @@ function mountTools(data){
   });
   var seen=[];
   document.querySelectorAll("[data-copy]").forEach(function(node){
-    var group=node.closest("section")||node.closest(".hero")||node.closest("footer");
+    var group=node.closest("section")||node.closest(".hero")||node.closest("footer")||node.closest("main");
     if(!group||seen.indexOf(group)!==-1)return;
     seen.push(group);
-    var nodes=[].filter.call(group.querySelectorAll("[data-copy]"),function(item){return item.closest("section")===group||(!item.closest("section")&&(group.classList.contains("hero")||group.tagName==="FOOTER"));});
+    var nodes=[].filter.call(group.querySelectorAll("[data-copy]"),function(item){
+      if(item.closest("section")===group||item.closest("main")===group)return true;
+      return !item.closest("section")&&(group.classList.contains("hero")||group.tagName==="FOOTER");
+    });
     if(!nodes.length)return;
     toolbar(group).appendChild(button("Muuda teksti","btn ghost",function(){openCopy(nodes);}));
   });
@@ -274,7 +302,8 @@ function mountHaldus(data, me){
   style.textContent=[
     ".haldus-bar{position:sticky;top:0;z-index:70;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#12343a;color:#fff;padding:8px 16px}",
     ".haldus-bar b{font-family:Outfit,system-ui,sans-serif;font-weight:650}",
-    ".haldus-bar .btn,.haldus-bar .ebtn{margin:0}",
+    ".haldus-bar .btn,.haldus-bar .ebtn,.haldus-bar select{margin:0}",
+    ".haldus-bar select{background:#fff;color:#17211d;border:0;border-radius:999px;min-height:44px;padding:8px 12px;font:650 .92rem Outfit,system-ui,sans-serif}",
     ".haldus-bar .note{color:#d7fff4;font-weight:650}",
     "body.haldus header{top:var(--hbar,64px)}",
     "body.haldus .card:hover{transform:none}",
@@ -300,11 +329,29 @@ function mountHaldus(data, me){
   document.head.appendChild(style);
   var bar=el("div","haldus-bar");
   bar.appendChild(el("b",null,"Muudad lehte"));
+  var here=(location.pathname.replace(/\/$/,"")||"/");
+  var select=el("select");
+  select.setAttribute("aria-label","Alamleht");
+  var known=false;
+  pages.forEach(function(pair){
+    var opt=el("option",null,pair[1]);
+    opt.value=pair[0]+"?haldus=1";
+    if(pair[0]===here){opt.selected=true;known=true;}
+    select.appendChild(opt);
+  });
+  if(!known){
+    var current=el("option",null,"See leht");
+    current.value=here+"?haldus=1";
+    current.selected=true;
+    select.appendChild(current);
+  }
+  select.addEventListener("change",function(){location.href=select.value;});
+  bar.appendChild(select);
   if(me&&me.database)bar.appendChild(el("span","note",me.database));
   var status=el("span","note","");
   say=function(text){status.textContent=text||"";};
   var view=el("a","ebtn","Avalik vaade");
-  view.href="index.html";
+  view.href=here==="/"?"/":here;
   bar.append(view,button("Haldurid","ebtn",function(){openAdmins(me.allowedEmails||[]);}),button("Logi välja","ebtn",function(){
     api("/api/auth/logout",{method:"POST",body:{}}).then(function(){location.href="/admin";}).catch(function(err){say(err.message);});
   }),status);

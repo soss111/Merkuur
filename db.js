@@ -47,6 +47,15 @@ const TABLES = [
     detail TEXT NOT NULL DEFAULT '',
     tag TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS people (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT '',
+    phone TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL DEFAULT '',
+    image TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL
   )`
 ];
 
@@ -131,6 +140,10 @@ function mapService(row) {
 
 function mapStep(row) {
   return { id: row.id, title: row.title, detail: row.detail, tag: row.tag, createdAt: row.created_at };
+}
+
+function mapPerson(row) {
+  return { id: row.id, name: row.name, role: row.role, phone: row.phone, email: row.email, image: row.image, createdAt: row.created_at };
 }
 
 const DEFAULT_STATS = {
@@ -273,6 +286,17 @@ const SEED_STEPS = [
   }
 ];
 
+const SEED_PEOPLE = [
+  { id: "5eed0ea000000001", name: "Liis Proos", role: "Kaasasutaja ja noortele suunatud projektide eestvedaja", phone: "+372 53 039 287", email: "info@merkuur.eu", image: "https://static.wixstatic.com/media/a7f28e_c92416e68df240db83d64af5f4a45858~mv2_d_5379_3587_s_4_2.jpg/v1/crop/x_0,y_0,w_3575,h_3587/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:01.000Z" },
+  { id: "5eed0ea000000002", name: "Mari Toom", role: "", phone: "", email: "", image: "https://static.wixstatic.com/media/a7f28e_38e6fc354cac42f094a7ba26aa664d3c~mv2.jpg/v1/crop/x_0,y_121,w_720,h_717/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:02.000Z" },
+  { id: "5eed0ea000000003", name: "Taavi Källo", role: "Töötubade juhendaja ja Ida-Viru baasi tehniline arendaja", phone: "+372 55668339", email: "idaviru@merkuur.eu", image: "https://static.wixstatic.com/media/a7f28e_6b788ba01fc64407a5180f624cae3e42~mv2.jpg/v1/crop/x_545,y_0,w_910,h_920/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:03.000Z" },
+  { id: "5eed0ea000000004", name: "Töötubade juhendaja ja arendaja", role: "", phone: "+372 56633944", email: "info@merkuur.eu", image: "", createdAt: "2016-02-01T00:00:04.000Z" },
+  { id: "5eed0ea000000005", name: "Marek Soosaar", role: "Meister", phone: "+372 53 409 997", email: "mareksoosaar@hot.ee", image: "https://static.wixstatic.com/media/a7f28e_0cc97e5cdf384eb49fbe58dc79945bdb~mv2_d_3024_4032_s_4_2.jpg/v1/crop/x_0,y_489,w_3024,h_3054/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:05.000Z" },
+  { id: "5eed0ea000000006", name: "Vaili Viirlaid", role: "Töötubade juhendaja ja Ida-Viru projektijuht", phone: "+372 5039141", email: "idaviru@merkuur.eu", image: "https://static.wixstatic.com/media/a7f28e_9792dc3de2404bb69f8caebfb630e963~mv2.jpg/v1/crop/x_1023,y_84,w_218,h_222/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:06.000Z" },
+  { id: "5eed0ea000000007", name: "Kuldar Mänd", role: "Töötubade juhendaja", phone: "+372 56651877", email: "idaviru@merkuur.eu", image: "https://static.wixstatic.com/media/a7f28e_d40fa06f352c42f99b7b1412a28ee1a7~mv2.jpg/v1/crop/x_0,y_96,w_204,h_206/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:07.000Z" },
+  { id: "5eed0ea000000008", name: "Lauri Soosaar", role: "Kaasasutaja", phone: "", email: "", image: "https://static.wixstatic.com/media/a7f28e_f7e3f445307f430f9781c4695dd28d42~mv2_d_4000_6000_s_4_2.jpg/v1/fill/w_640,h_640,al_c,q_80/a.jpg", createdAt: "2016-02-01T00:00:08.000Z" }
+];
+
 const SEED_PHOTOS = [
   {
     id: "5eedf07000000001",
@@ -391,6 +415,9 @@ function api(driver) {
       if ((await this.countOf("steps")) === 0) {
         for (const item of SEED_STEPS) await this.insertStep(item);
       }
+      if ((await this.countOf("people")) === 0) {
+        for (const item of SEED_PEOPLE) await this.insertPerson(item);
+      }
       if (!(await driver.setting("stats", ""))) await this.saveStats(DEFAULT_STATS);
     },
     async readContent() {
@@ -404,6 +431,7 @@ function api(driver) {
         gallery: (await driver.all("SELECT * FROM photos ORDER BY created_at DESC")).map(mapPhoto),
         services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService),
         roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep),
+        people: (await driver.all("SELECT * FROM people ORDER BY created_at ASC")).map(mapPerson),
         copy: await this.readCopy(),
         supportUrl: await driver.setting("support_url", "")
       };
@@ -422,7 +450,7 @@ function api(driver) {
       await driver.setSetting("copy", JSON.stringify(copy));
     },
     async countOf(table) {
-      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1, people: 1 };
       if (!allowed[table]) throw new Error("Tundmatu tabel.");
       const row = await driver.get("SELECT COUNT(*) AS n FROM " + table);
       return Number(row.n);
@@ -457,12 +485,24 @@ function api(driver) {
         [item.id, item.title, item.detail, item.tag, item.createdAt]
       );
     },
+    async insertPerson(item) {
+      await driver.run(
+        "INSERT INTO people (id, name, role, phone, email, image, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [item.id, item.name, item.role || "", item.phone || "", item.email || "", item.image || "", item.createdAt]
+      );
+    },
+    async updatePerson(item) {
+      await driver.run(
+        "UPDATE people SET name = ?, role = ?, phone = ?, email = ?, image = ? WHERE id = ?",
+        [item.name, item.role || "", item.phone || "", item.email || "", item.image || "", item.id]
+      );
+    },
     async findStep(id) {
       const row = await driver.get("SELECT * FROM steps WHERE id = ?", [id]);
       return row ? mapStep(row) : null;
     },
     async setCreatedAt(table, id, createdAt) {
-      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1, people: 1 };
       if (!allowed[table]) throw new Error("Tundmatu tabel.");
       await driver.run("UPDATE " + table + " SET created_at = ? WHERE id = ?", [createdAt, id]);
     },
@@ -473,13 +513,13 @@ function api(driver) {
       );
     },
     async setCreatedAt(table, id, createdAt) {
-      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1, people: 1 };
       if (!allowed[table]) throw new Error("Tundmatu tabel.");
       await driver.run("UPDATE " + table + " SET created_at = ? WHERE id = ?", [createdAt, id]);
     },
     async findItem(kind, id) {
-      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
-      const map = { testimonials: mapFeedback, news: mapPost, gallery: mapPhoto, services: mapService }[kind];
+      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", people: "people" }[kind];
+      const map = { testimonials: mapFeedback, news: mapPost, gallery: mapPhoto, services: mapService, people: mapPerson }[kind];
       if (!table) return null;
       const row = await driver.get("SELECT * FROM " + table + " WHERE id = ?", [id]);
       return row ? map(row) : null;
@@ -513,7 +553,7 @@ function api(driver) {
       return changes > 0;
     },
     async deleteItem(kind, id) {
-      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps" }[kind];
+      const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps", people: "people" }[kind];
       if (!table) return false;
       const changes = await driver.run("DELETE FROM " + table + " WHERE id = ?", [id]);
       return changes > 0;
