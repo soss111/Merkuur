@@ -418,8 +418,10 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 }
 .legal a{color:#b7ebe0}
 
+.cform label .req{color:var(--accent);margin-left:4px}
 @media(min-width:640px){
   .cform .row{grid-template-columns:1fr 1fr}
+  .cform .row.contact{grid-template-columns:1.1fr .9fr 1.2fr}
   .stats .wrap{grid-template-columns:1fr 1fr}
   .hero-facts{grid-template-columns:repeat(4,1fr)}
   .foot{grid-template-columns:1.4fr 1fr 1fr;gap:28px}
@@ -869,7 +871,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <p>Kirjelda oma soovi – kellele, mitu osalejat, millal ja kus. Teemad, mida kokku panna, saad valida ülal. Hind sõltub osalejate arvust, kestusest ja asukohast; vastame pakkumisega. Frantsiisi puhul kirjuta, kus ja kellega tahad tegutseda.</p>
   </div>
   <form id="cform" class="cform" novalidate>
-   <div class="row"><label>Nimi<input name="nimi" required autocomplete="name"></label><label>E-post<input name="email" type="email" required autocomplete="email"></label></div>
+   <div class="row contact"><label><span>Nimi<span class="req" aria-hidden="true">*</span></span><input name="nimi" required autocomplete="name"></label><label><span>Telefon<span class="req" aria-hidden="true">*</span></span><input name="tel" type="tel" required autocomplete="tel" inputmode="tel" placeholder="+372"></label><label><span>E-post<span class="req" aria-hidden="true">*</span></span><input name="email" type="email" required autocomplete="email"></label></div>
    <div class="row"><label>Mis huvitab?<select name="teenus" required><option value="">Vali…</option><option>Töötuba</option><option>Kooli varustamine / tehnoloogiaklass</option><option>Tehnoloogiatund / huviring</option><option>Makerset / komplekti valik</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Seadmete koolitus / demo</option><option>Õppematerjalid / digiõpik</option><option>Frantsiis / partnerlus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
    <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn, kool või riik"></label></div>
    <p class="hint" id="topic-summary">Teemasid pole veel valitud. <a href="#teemad">Vali teemad</a></p>
@@ -881,7 +883,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   </form>
   <details id="privaatsus" class="priv"><summary>Privaatsuspoliitika</summary>
    <p><b>Kes me oleme.</b> Andmete vastutav töötleja on Merkuur OÜ (registrikood 11544602), info@merkuur.eu.</p>
-   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, e-posti, valitud töötoa teemasid, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
+   <p><b>Milliseid andmeid kogume.</b> Päringuvormis sisestatud nime, telefoninumbrit, e-posti, valitud töötoa teemasid, osalejate arvu, soovitud aja ja asukoha ning sõnumi. Neid andmeid ei kogu me muul viisil ega kasuta müügikirjade saatmiseks ilma sinu nõusolekuta.</p>
    <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
    <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
    <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
@@ -959,10 +961,11 @@ document.querySelectorAll("#teemad .topic").forEach(function(b){
 syncTopics();
 document.getElementById("cform").addEventListener("submit",function(e){
  e.preventDefault();var f=e.target,note=document.getElementById("fnote");
- if(!f.nimi.value.trim()||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.ok.checked){note.textContent="Palun täida nimi, e-post ja nõusolek.";return;}
+ var tel=f.tel.value.trim();
+ if(!f.nimi.value.trim()||tel.replace(/\D/g,"").length<5||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.ok.checked){note.textContent="Palun täida nimi, telefon, e-post ja nõusolek.";return;}
  if(!f.teenus.value){note.textContent="Palun vali, mis sind huvitab.";return;}
  var topics=selectedTopics();
- var body=["Nimi: "+f.nimi.value,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Teemad: "+(topics.length?topics.join(", "):"—"),"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
+ var body=["Nimi: "+f.nimi.value,"Telefon: "+tel,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Teemad: "+(topics.length?topics.join(", "):"—"),"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
  note.textContent="Avame sinu e-posti programmi – vaata sõnum üle ja vajuta Saada.";
  location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+f.teenus.value)+"&body="+encodeURIComponent(body);
 });
