@@ -83,6 +83,10 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /id="qform"/);
     assert.match(home.text, /Jäta tagasiside/);
     assert.doesNotMatch(home.text, /Lisa siia kliendi tagasiside tekst/);
+    assert.equal((home.text.match(/fetch\("\/api\/content"\)/g) || []).length, 1);
+    const scripts = [...home.text.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+    assert.ok(scripts.length >= 2);
+    for (const match of scripts) new Function(match[1]);
     assert.match(home.text, /frantsiisipartnereid/);
     assert.match(home.text, /Franchise partners worldwide/);
     assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
