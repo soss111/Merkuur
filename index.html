@@ -845,8 +845,9 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
  <form id="qform" class="cform">
   <div class="row">
    <label><span>Nimi<span class="req" aria-hidden="true">*</span></span><input name="name" required maxlength="120" autocomplete="name"></label>
-   <label>Roll<input name="role" maxlength="120" placeholder="õpetaja, õpilane, lapsevanem"></label>
+   <label>Roll<select name="role"><option value="">Vali…</option><option>õpetaja</option><option>õpilane</option><option>lapsevanem</option><option value="uus">Lisa uus</option></select></label>
   </div>
+  <label id="role-new" hidden>Uus roll<input name="roleNew" maxlength="120"></label>
   <label>Kool või organisatsioon<input name="org" maxlength="160"></label>
   <label><span>Tagasiside<span class="req" aria-hidden="true">*</span></span><textarea name="quote" required maxlength="800" rows="4"></textarea></label>
   <p class="hp"><label>Veebileht<input name="website" tabindex="-1" autocomplete="off"></label></p>
@@ -1061,6 +1062,14 @@ function addQuote(t, box, first){
   else box.appendChild(fig);
 }
 var qform=document.getElementById("qform");
+var roleNew=document.getElementById("role-new");
+function syncRole(){
+  if(!qform||!roleNew)return;
+  var custom=qform.role.value==="uus";
+  roleNew.hidden=!custom;
+  if(!custom)qform.roleNew.value="";
+}
+if(qform&&qform.role)qform.role.addEventListener("change",syncRole);
 if(qform)qform.addEventListener("submit",function(e){
   e.preventDefault();
   var note=document.getElementById("qnote");
@@ -1070,7 +1079,9 @@ if(qform)qform.addEventListener("submit",function(e){
     note.textContent="GitHubi eelvaade ei salvesta tagasisidet. See töötab Merkuuri serveris.";
     return;
   }
-  var body={name:f.name.value,role:f.role.value,org:f.org.value,quote:f.quote.value,ok:f.ok.checked,website:f.website.value};
+  var role=f.role.value==="uus"?f.roleNew.value.trim():f.role.value;
+  if(f.role.value==="uus"&&!role){note.textContent="Kirjuta uus roll.";return;}
+  var body={name:f.name.value,role:role,org:f.org.value,quote:f.quote.value,ok:f.ok.checked,website:f.website.value};
   fetch("/api/feedback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(res){
     return res.json().catch(function(){return {};}).then(function(data){
       if(!res.ok)throw new Error(data.error||"Tagasisidet ei õnnestunud salvestada.");
@@ -1079,6 +1090,7 @@ if(qform)qform.addEventListener("submit",function(e){
   }).then(function(data){
     if(data.testimonial)addQuote(data.testimonial, null, true);
     f.reset();
+    syncRole();
     note.textContent="Aitäh. Sinu tagasiside on lehel.";
   }).catch(function(err){note.textContent=err.message;});
 });
