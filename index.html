@@ -532,7 +532,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 </header>
 
 <main id="top">
-<div class="hero">
+<div class="hero" id="hero">
  <div class="hero-photo">
   <img alt="Merkuuri mobiilne töökoda üritusel: töökoda haagises, noored ja auto" src="https://static.wixstatic.com/media/a7f28e_213e5225ab8e411cbaf145b82b54c3d9~mv2_d_4032_3024_s_4_2.jpg/v1/fill/w_1600,h_1100,al_c,q_80/a.jpg" width="1600" height="1100">
  </div>
@@ -1103,13 +1103,85 @@ function textNodes(){
     if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.textContent.trim());
     node.setAttribute("data-copy",bucket+":"+counts[bucket]);
   });
+  function sidOf(node){
+    var section=node.closest("section")||node.closest(".hero")||node.closest("footer")||document.body;
+    if(section.id)return section.id;
+    if(section.classList.contains("hero"))return "hero";
+    if(section.tagName==="FOOTER")return "footer";
+    return "leht";
+  }
+  function remember(node, kind){
+    if(node.closest("form, nav, header"))return;
+    var bucket=sidOf(node)+":"+kind;
+    counts[bucket]=(counts[bucket]||0)+1;
+    if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.tagName==="IMG"?(node.getAttribute("src")||""):node.textContent.trim());
+    if(node.tagName==="A"&&!node.hasAttribute("data-original-href"))node.setAttribute("data-original-href",node.getAttribute("href")||"");
+    node.setAttribute("data-copy",bucket+":"+counts[bucket]);
+  }
+  document.querySelectorAll("main .cta a.btn").forEach(function(node){remember(node,"a");});
+  document.querySelectorAll("main .note, main .check li, main .topic b, main .topic span, main .hero-more a, main a.mile-more, main .proj a, main .tiles a, footer .foot a").forEach(function(node){
+    if(node.classList.contains("note"))remember(node,"note");
+    else if(node.tagName==="LI")remember(node,"li");
+    else if(node.closest(".topic"))remember(node,node.tagName==="SPAN"?"topicsub":"topic");
+    else remember(node,"link");
+  });
+  document.querySelectorAll("main img").forEach(function(node){
+    if(node.closest(".card, .gallery, .people, .person, header, footer, form, nav, a"))return;
+    if(!node.getAttribute("src"))return;
+    remember(node,"img");
+  });
+}
+function applyHref(node, href){
+  if(!href)return;
+  var safe="";
+  if(href.charAt(0)==="#"&&/^#[A-Za-z0-9-]+$/.test(href))safe=href;
+  else if(/^mailto:[^\s]+$/i.test(href))safe=href;
+  else if(/^tel:\+?[0-9]{5,20}$/.test(href))safe=href;
+  else safe=safePage(href);
+  if(!safe)return;
+  node.setAttribute("href",safe);
+  if(/^https?:/i.test(safe)){
+    try{
+      var url=new URL(safe,location.origin);
+      if(url.origin!==location.origin){node.target="_blank";node.rel="noopener";}
+      else{node.removeAttribute("target");node.removeAttribute("rel");}
+    }catch(e){}
+  }else{
+    node.removeAttribute("target");
+  }
+}
+function applyBlocks(order){
+  if(!order)return;
+  var main=document.getElementById("top");
+  if(!main)return;
+  var blocks=[];
+  for(var i=0;i<main.children.length;i++){
+    var child=main.children[i];
+    if(child.classList.contains("hero")||(child.tagName==="SECTION"&&child.id))blocks.push(child);
+  }
+  var by={};
+  blocks.forEach(function(node){if(node.id)by[node.id]=node;});
+  var placed={};
+  String(order).split(",").forEach(function(id){
+    var node=by[id];
+    if(!node||placed[id])return;
+    main.appendChild(node);
+    placed[id]=1;
+  });
+  blocks.forEach(function(node){if(node.id&&!placed[node.id])main.appendChild(node);});
 }
 function applyCopy(copy){
   textNodes();
   if(!copy)return;
   document.querySelectorAll("[data-copy]").forEach(function(node){
-    var value=copy[node.getAttribute("data-copy")];
-    if(typeof value==="string"&&value)node.textContent=value;
+    var key=node.getAttribute("data-copy");
+    var value=copy[key];
+    if(node.tagName==="IMG"){
+      if(typeof value==="string"&&value){var src=safeHref(value);if(src)node.src=src;}
+      return;
+    }
+    if(typeof value==="string"&&value&&(!node.querySelector("*")||node.tagName==="LI"))node.textContent=value;
+    if(node.tagName==="A")applyHref(node,copy[key+":href"]);
   });
 }
 var haldusWanted=/(?:^|[?&])haldus=1(?:&|$)/.test(location.search);
@@ -1248,6 +1320,7 @@ Promise.all([contentReq,meReq]).then(function(pair){
     var slot=document.getElementById("address-slot");
     if(slot){slot.textContent=data.address;slot.classList.remove("todo");}
   }
+  applyBlocks(data.copy&&data.copy["home:order"]);
   applyCopy(data.copy);
   if(haldusUser){
     var editor=document.createElement("script");
