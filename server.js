@@ -385,11 +385,31 @@ async function addItem(kind, body) {
 function publicContent(content) {
   return {
     address: content.address,
+    stats: content.stats,
     testimonials: content.testimonials,
     news: content.news,
     gallery: content.gallery,
     services: content.services
   };
+}
+
+async function saveStats(body) {
+  const stats = {};
+  const labels = {
+    since: "algusaasta",
+    workshops: "töötubade arv",
+    youth: "noorte arv",
+    mobiles: "mobiilsete töökodade arv",
+    solutions: "õppelahenduste arv",
+    asOf: "seis"
+  };
+  Object.keys(labels).forEach((key) => {
+    const value = clip(body[key], 40);
+    if (!value) throw Object.assign(new Error("Täida " + labels[key] + "."), { status: 400 });
+    stats[key] = value;
+  });
+  await database.saveStats(stats);
+  return stats;
 }
 
 function escapeHtml(value) {
@@ -569,6 +589,10 @@ async function handle(req, res) {
         const address = clip(body.address, 240);
         await database.saveAddress(address);
         return send(res, 200, { address: address });
+      }
+      if (req.method === "PUT" && pathname === "/api/stats") {
+        const stats = await saveStats(await readBody(req));
+        return send(res, 200, { stats: stats });
       }
       if (req.method === "POST" && pathname === "/api/admins") {
         const body = await readBody(req);

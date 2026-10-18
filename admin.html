@@ -88,6 +88,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <button class="btn ghost" type="button" data-tab="news" aria-selected="false">Blogi</button>
    <button class="btn ghost" type="button" data-tab="gallery" aria-selected="false">Fotod</button>
    <button class="btn ghost" type="button" data-tab="services" aria-selected="false">Teenused</button>
+   <button class="btn ghost" type="button" data-tab="stats" aria-selected="false">Arvud</button>
    <button class="btn ghost" type="button" data-tab="address" aria-selected="false">Aadress</button>
    <button class="btn ghost" type="button" data-tab="admins" aria-selected="false">Haldurid</button>
   </div>
@@ -143,6 +144,26 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
     <button class="btn" type="submit">Lisa lehele</button>
    </form>
    <div class="list" id="list-gallery"></div>
+  </section>
+
+  <section class="view panel" id="view-stats">
+   <h2>Lehe arvud</h2>
+   <p class="lead">Üks salvestus uuendab avaosa riba, eraldi arvurida, meist-lõiku ja teekonna lauset „Töö, mis on jätnud jälje“. Sõnad arvude ümber jäävad samaks, nii et kirjuta siia ainult arv või lühike seis, näiteks 3500+ ja detsember 2023.</p>
+   <form id="form-stats">
+    <div class="row two">
+     <label>Algusaasta<input name="since" required maxlength="40" value="2016"></label>
+     <label>Seis<input name="asOf" required maxlength="40" value="detsember 2023"></label>
+    </div>
+    <div class="row two">
+     <label>Töötubade arv<input name="workshops" required maxlength="40" value="3500+"></label>
+     <label>Noorte arv<input name="youth" required maxlength="40" value="30 000"></label>
+    </div>
+    <div class="row two">
+     <label>Mobiilsete töökodade arv<input name="mobiles" required maxlength="40" value="4"></label>
+     <label>Õppelahenduste arv<input name="solutions" required maxlength="40" value="100+"></label>
+    </div>
+    <button class="btn" type="submit">Salvesta arvud</button>
+   </form>
   </section>
 
   <section class="view panel" id="view-address">
@@ -233,6 +254,11 @@ function load(){
     renderList("gallery",document.getElementById("list-gallery"),function(item){return item.caption;});
     renderList("services",document.getElementById("list-services"),function(item){return item.title;});
     document.querySelector("#form-address [name=address]").value=data.address||"";
+    var stats=data.stats||{};
+    ["since","workshops","youth","mobiles","solutions","asOf"].forEach(function(key){
+      var input=document.querySelector("#form-stats [name="+key+"]");
+      if(input&&typeof stats[key]==="string")input.value=stats[key];
+    });
   });
 }
 document.querySelectorAll(".tabs button").forEach(function(btn){
@@ -265,6 +291,11 @@ document.getElementById("form-gallery").addEventListener("submit",function(e){
     if(!url)throw new Error("Lisa pilt.");
     return api("/api/content/gallery",{method:"POST",body:{caption:f.caption.value,image:url}});
   }).then(function(){f.reset();return load();}).then(function(){say("Pilt on galeriis.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-stats").addEventListener("submit",function(e){
+  e.preventDefault();
+  var f=e.target;
+  api("/api/stats",{method:"PUT",body:{since:f.since.value,workshops:f.workshops.value,youth:f.youth.value,mobiles:f.mobiles.value,solutions:f.solutions.value,asOf:f.asOf.value}}).then(function(){say("Arvud on salvestatud.");}).catch(function(err){say(err.message,true);});
 });
 document.getElementById("form-address").addEventListener("submit",function(e){
   e.preventDefault();

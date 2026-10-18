@@ -91,6 +91,24 @@ function mapService(row) {
   return { id: row.id, title: row.title, summary: row.summary, href: row.href, image: row.image, createdAt: row.created_at };
 }
 
+const DEFAULT_STATS = {
+  since: "2016",
+  workshops: "3500+",
+  youth: "30 000",
+  mobiles: "4",
+  solutions: "100+",
+  asOf: "detsember 2023"
+};
+
+function statsFrom(raw) {
+  const stats = Object.assign({}, DEFAULT_STATS);
+  if (!raw) return stats;
+  Object.keys(DEFAULT_STATS).forEach((key) => {
+    if (typeof raw[key] === "string" && raw[key].trim()) stats[key] = raw[key].trim();
+  });
+  return stats;
+}
+
 function api(driver) {
   return {
     label: driver.label,
@@ -123,8 +141,11 @@ function api(driver) {
       await driver.setSetting("imported_json", "1");
     },
     async readContent() {
+      let stored = null;
+      try { stored = JSON.parse(await driver.setting("stats", "")); } catch (err) { stored = null; }
       return {
         address: await driver.setting("address", ""),
+        stats: statsFrom(stored),
         testimonials: (await driver.all("SELECT * FROM feedback ORDER BY created_at DESC")).map(mapFeedback),
         news: (await driver.all("SELECT * FROM posts ORDER BY created_at DESC")).map(mapPost),
         gallery: (await driver.all("SELECT * FROM photos ORDER BY created_at DESC")).map(mapPhoto),
@@ -169,6 +190,9 @@ function api(driver) {
     },
     async saveAddress(address) {
       await driver.setSetting("address", address);
+    },
+    async saveStats(stats) {
+      await driver.setSetting("stats", JSON.stringify(statsFrom(stats)));
     },
     async slugTaken(slug) {
       return Boolean(await driver.get("SELECT 1 AS ok FROM posts WHERE slug = ?", [slug]));
@@ -245,4 +269,4 @@ async function openDatabase(dataDir, databaseUrl) {
   return sqliteDriver(sqliteFile(dataDir, url));
 }
 
-module.exports = { openDatabase, driverFor, isPostgres, sqliteFile };
+module.exports = { openDatabase, driverFor, isPostgres, sqliteFile, DEFAULT_STATS };

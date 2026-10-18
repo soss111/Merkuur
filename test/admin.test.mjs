@@ -83,6 +83,9 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /name="tel"/);
     assert.match(home.text, /Palun täida nimi, telefon, e-post ja nõusolek/);
     assert.match(home.text, /Töö, mis on jätnud jälje/);
+    assert.match(home.text, /data-stat="workshops"/);
+    assert.match(home.text, /data-stat="asOf"/);
+    assert.match(home.text, /data-stat="solutions"/);
     assert.doesNotMatch(home.text, /Meie töö märkamine/);
     assert.equal((home.text.match(/id="projektid"/g) || []).length, 1);
     assert.match(home.text, /xEdu/);
@@ -122,6 +125,8 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /Logi sisse Gmailiga/);
     assert.match(admin.text, /Saada kood/);
     assert.match(admin.text, /\/api\/auth\/code/);
+    assert.match(admin.text, /id="form-stats"/);
+    assert.match(admin.text, /\/api\/stats/);
 
     const hidden = await call("/data/admin.config.json");
     assert.equal(hidden.status, 404);
@@ -130,6 +135,16 @@ test("admin auth and published content", async () => {
 
     const open = await call("/api/content");
     assert.deepEqual(open.json.testimonials, []);
+    assert.deepEqual(open.json.stats, {
+      since: "2016",
+      workshops: "3500+",
+      youth: "30 000",
+      mobiles: "4",
+      solutions: "100+",
+      asOf: "detsember 2023"
+    });
+    const statsDenied = await call("/api/stats", { method: "PUT", body: { since: "2015", workshops: "1", youth: "1", mobiles: "1", solutions: "1", asOf: "nüüd" } });
+    assert.equal(statsDenied.status, 401);
 
     const denied = await call("/api/content/testimonials", { method: "POST", body: { quote: "Tere", name: "Mari" } });
     assert.equal(denied.status, 401);
@@ -188,12 +203,28 @@ test("admin auth and published content", async () => {
 
     const address = await call("/api/address", { method: "PUT", body: { address: "Näidistänav 1, Rakvere" } });
     assert.equal(address.status, 200);
+    const emptyStats = await call("/api/stats", {
+      method: "PUT",
+      body: { since: "2016", workshops: " ", youth: "1", mobiles: "1", solutions: "1", asOf: "nüüd" }
+    });
+    assert.equal(emptyStats.status, 400);
+    const savedStats = await call("/api/stats", {
+      method: "PUT",
+      body: { since: "2016", workshops: "3600+", youth: "31 000", mobiles: "5", solutions: "110+", asOf: "oktoober 2026" }
+    });
+    assert.equal(savedStats.status, 200);
+    assert.equal(savedStats.json.stats.workshops, "3600+");
 
     const published = await call("/api/content");
     assert.equal(published.json.testimonials.length, 1);
     assert.equal(published.json.news[0].title, "Uus töötuba");
     assert.equal(published.json.gallery[0].caption, "Töökojas");
     assert.equal(published.json.address, "Näidistänav 1, Rakvere");
+    assert.equal(published.json.stats.workshops, "3600+");
+    assert.equal(published.json.stats.youth, "31 000");
+    assert.equal(published.json.stats.mobiles, "5");
+    assert.equal(published.json.stats.solutions, "110+");
+    assert.equal(published.json.stats.asOf, "oktoober 2026");
     assert.ok(fs.existsSync(path.join(dataDir, "content.sqlite")));
     const dbFile = await call("/data/content.sqlite");
     assert.equal(dbFile.status, 404);
