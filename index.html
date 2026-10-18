@@ -1138,7 +1138,7 @@ Promise.all([contentReq,meReq]).then(function(pair){
     var grid=document.querySelector("#uudised .grid");
     if(grid){
       grid.replaceChildren();
-      data.news.forEach(function(item){
+      data.news.slice(0, 3).forEach(function(item){
         var card=node("article","card");
         card.setAttribute("data-item",item.id);
         card.setAttribute("data-kind","news");
