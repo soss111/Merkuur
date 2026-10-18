@@ -167,23 +167,52 @@ function openItem(data, kind, item){
     });
   });
 }
+function fieldName(key){
+  return formEl.querySelector("[name='"+key+"']");
+}
 function openCopy(nodes){
   openDialog("Muuda teksti");
+  var images=[];
   nodes.forEach(function(node){
+    var key=node.getAttribute("data-copy");
+    if(node.tagName==="IMG"){
+      images.push(node);
+      var alt=(node.getAttribute("alt")||"Pilt").replace(/\s+/g," ").slice(0,42);
+      addField({name:key,label:"Pilt — "+alt,type:"file"});
+      var restore=el("label","echeck","Taasta algne pilt");
+      var box=el("input");
+      box.type="checkbox";
+      box.name=key+"-reset";
+      restore.appendChild(box);
+      formEl.appendChild(restore);
+      return;
+    }
     var sample=node.textContent.trim().replace(/\s+/g," ").slice(0,42);
-    var name=node.classList.contains("kicker")?"Silt":(/^H[1-3]$/.test(node.tagName)?"Pealkiri":"Tekst");
-    addField({name:node.getAttribute("data-copy"),label:name+" — "+sample,tag:node.textContent.length>140?"textarea":"input",max:4000},node.textContent.trim());
+    var name=node.classList.contains("btn")?"Nupp":(node.classList.contains("kicker")?"Silt":(/^H[1-3]$/.test(node.tagName)?"Pealkiri":"Tekst"));
+    addField({name:key,label:name+" — "+sample,tag:node.textContent.length>140?"textarea":"input",max:4000},node.textContent.trim());
   });
-  formEl.appendChild(el("p","ekeep","Tühi väli taastab lehe algse teksti. Arvud ja lingiga laused jäävad oma kohale."));
+  formEl.appendChild(el("p","ekeep","Tühi tekstiväli taastab algse teksti. Uus pilt asendab praeguse. Arvud ja lingiga laused jäävad oma kohale."));
   actions(function(){
     var copy={};
-    nodes.forEach(function(node){
+    var uploads=images.map(function(node){
       var key=node.getAttribute("data-copy");
-      var input=formEl.querySelector("[name='"+key+"']");
-      var value=input?input.value.trim():"";
-      copy[key]=value===(node.getAttribute("data-original")||"")?"":value;
+      var reset=fieldName(key+"-reset");
+      if(reset&&reset.checked){copy[key]="";return Promise.resolve();}
+      var input=fieldName(key);
+      var file=input&&input.files&&input.files[0];
+      if(!file)return Promise.resolve();
+      return upload(file).then(function(url){if(url)copy[key]=url;});
     });
-    return api("/api/copy",{method:"PUT",body:{copy:copy}});
+    return Promise.all(uploads).then(function(){
+      nodes.forEach(function(node){
+        if(node.tagName==="IMG")return;
+        var key=node.getAttribute("data-copy");
+        var input=fieldName(key);
+        var value=input?input.value.trim():"";
+        copy[key]=value===(node.getAttribute("data-original")||"")?"":value;
+      });
+      return api("/api/copy",{method:"PUT",body:{copy:copy}});
+    });
   });
 }
 function openStats(data){
@@ -319,6 +348,8 @@ function mountHaldus(data, me){
     ".esheet h2{margin:0 0 12px}",
     ".esheet label{display:grid;gap:6px;margin-top:12px;font:650 .78rem Outfit,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}",
     ".esheet input,.esheet textarea{font:500 1rem 'Source Sans 3',system-ui,sans-serif;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#f4f7f4;color:var(--ink);width:100%;min-height:48px}",
+    ".esheet label.echeck{display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font:600 1rem 'Source Sans 3',system-ui,sans-serif;color:var(--ink)}",
+    ".esheet label.echeck input{width:22px;height:22px;min-height:22px;padding:0;flex:none}",
     ".esheet textarea{min-height:110px;resize:vertical}",
     ".eform-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}",
     ".eform-actions .btn{margin:0}",

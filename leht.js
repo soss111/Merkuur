@@ -18,13 +18,24 @@ function pagePrefix(){
 function markCopy(){
   var prefix=pagePrefix();
   var counts={};
+  function stamp(node, bucket, original){
+    counts[bucket]=(counts[bucket]||0)+1;
+    if(!node.getAttribute("data-original"))node.setAttribute("data-original",original);
+    node.setAttribute("data-copy",bucket+":"+counts[bucket]);
+  }
   document.querySelectorAll("main .kicker, main h1, main h2, main h3, main .prose p, main .lead").forEach(function(node){
     if(node.closest(".people, form, nav"))return;
     if(node.querySelector("*"))return;
-    var bucket=prefix+node.tagName.toLowerCase();
-    counts[bucket]=(counts[bucket]||0)+1;
-    if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.textContent.trim());
-    node.setAttribute("data-copy",bucket+":"+counts[bucket]);
+    stamp(node, prefix+node.tagName.toLowerCase(), node.textContent.trim());
+  });
+  document.querySelectorAll("main .cta a.btn").forEach(function(node){
+    if(node.closest("form, nav, header"))return;
+    stamp(node, prefix+"a", node.textContent.trim());
+  });
+  document.querySelectorAll("main img").forEach(function(node){
+    if(node.closest(".card, .gallery, .people, .person, header, footer, form, nav, a"))return;
+    if(!node.getAttribute("src"))return;
+    stamp(node, prefix+"img", node.getAttribute("src"));
   });
 }
 function applyCopy(copy){
@@ -32,7 +43,13 @@ function applyCopy(copy){
   if(!copy)return;
   document.querySelectorAll("[data-copy]").forEach(function(node){
     var value=copy[node.getAttribute("data-copy")];
-    if(typeof value==="string"&&value)node.textContent=value;
+    if(typeof value!=="string"||!value)return;
+    if(node.tagName==="IMG"){
+      var src=safeSrc(value);
+      if(src)node.src=src;
+      return;
+    }
+    node.textContent=value;
   });
 }
 function renderPeople(list){

@@ -1101,13 +1101,38 @@ function textNodes(){
     if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.textContent.trim());
     node.setAttribute("data-copy",bucket+":"+counts[bucket]);
   });
+  document.querySelectorAll("main .cta a.btn").forEach(function(node){
+    if(node.closest("form, nav, header"))return;
+    var section=node.closest("section")||node.closest(".hero")||document.body;
+    var sid=section.id||(section.classList.contains("hero")?"hero":"leht");
+    var bucket=sid+":a";
+    counts[bucket]=(counts[bucket]||0)+1;
+    if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.textContent.trim());
+    node.setAttribute("data-copy",bucket+":"+counts[bucket]);
+  });
+  document.querySelectorAll("main img").forEach(function(node){
+    if(node.closest(".card, .gallery, .people, .person, header, footer, form, nav, a"))return;
+    if(!node.getAttribute("src"))return;
+    var section=node.closest("section")||node.closest(".hero")||document.body;
+    var sid=section.id||(section.classList.contains("hero")?"hero":"leht");
+    var bucket=sid+":img";
+    counts[bucket]=(counts[bucket]||0)+1;
+    if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.getAttribute("src"));
+    node.setAttribute("data-copy",bucket+":"+counts[bucket]);
+  });
 }
 function applyCopy(copy){
   textNodes();
   if(!copy)return;
   document.querySelectorAll("[data-copy]").forEach(function(node){
     var value=copy[node.getAttribute("data-copy")];
-    if(typeof value==="string"&&value)node.textContent=value;
+    if(typeof value!=="string"||!value)return;
+    if(node.tagName==="IMG"){
+      var src=safeHref(value);
+      if(src)node.src=src;
+      return;
+    }
+    node.textContent=value;
   });
 }
 var haldusWanted=/(?:^|[?&])haldus=1(?:&|$)/.test(location.search);
