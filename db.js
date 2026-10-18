@@ -325,7 +325,8 @@ function api(driver) {
         news: (await driver.all("SELECT * FROM posts ORDER BY created_at DESC")).map(mapPost),
         gallery: (await driver.all("SELECT * FROM photos ORDER BY created_at DESC")).map(mapPhoto),
         services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService),
-        roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep)
+        roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep),
+        supportUrl: await driver.setting("support_url", "")
       };
     },
     async countOf(table) {
@@ -422,6 +423,9 @@ function api(driver) {
     },
     async saveAddress(address) {
       await driver.setSetting("address", address);
+    },
+    async saveSupportUrl(url) {
+      await driver.setSetting("support_url", url);
     },
     async saveStats(stats) {
       await driver.setSetting("stats", JSON.stringify(statsFrom(stats)));
