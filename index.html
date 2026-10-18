@@ -453,7 +453,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   .hero h1{font-size:clamp(2.5rem,3.2vw,3.35rem)}
   .hero-dock{grid-column:1/-1;grid-row:2}
   .split{grid-template-columns:1.05fr .95fr;gap:48px}
-  .road{grid-template-columns:repeat(5,1fr);gap:14px;margin-top:36px}
+  .road{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:36px}
   .road::before{display:none}
   .road li{margin-left:0;padding:18px 16px 16px}
   .road .n{position:static;width:36px;height:36px;margin-bottom:12px}
@@ -1178,6 +1178,20 @@ contentReq.then(function(data){
         body.appendChild(actions);
         card.appendChild(body);
         services.appendChild(card);
+      });
+    }
+  }
+  if(data.roadmap&&data.roadmap.length){
+    var road=document.querySelector("#teekond .road");
+    if(road){
+      road.replaceChildren();
+      data.roadmap.forEach(function(item,i){
+        var li=node("li");
+        li.appendChild(node("span","n",String(i+1)));
+        li.appendChild(node("h3",null,item.title||""));
+        if(item.detail)li.appendChild(node("p",null,item.detail));
+        if(item.tag)li.appendChild(node("span","tag",item.tag));
+        road.appendChild(li);
       });
     }
   }
