@@ -60,7 +60,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 <main>
  <div class="kicker">Haldus</div>
  <h1>Lisa lehele uut</h1>
- <p class="lead">Logi sisse Gmailiga. Pärast seda saad avalikule lehele lisada tagasisidet, uudiseid, galeriipilte ja aadressi.</p>
+ <p class="lead">Logi sisse Gmailiga. Tagasiside, blogipostitused, fotod ja teenused salvestatakse andmebaasi ning ilmuvad avalikule lehele.</p>
  <p class="note" id="status" role="status"></p>
 
  <section id="setup" class="panel" hidden>
@@ -89,8 +89,9 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
   </div>
   <div class="tabs" role="tablist">
    <button class="btn" type="button" data-tab="feedback" aria-selected="true">Tagasiside</button>
-   <button class="btn ghost" type="button" data-tab="news" aria-selected="false">Uudis</button>
-   <button class="btn ghost" type="button" data-tab="gallery" aria-selected="false">Galerii</button>
+   <button class="btn ghost" type="button" data-tab="news" aria-selected="false">Blogi</button>
+   <button class="btn ghost" type="button" data-tab="gallery" aria-selected="false">Fotod</button>
+   <button class="btn ghost" type="button" data-tab="services" aria-selected="false">Teenused</button>
    <button class="btn ghost" type="button" data-tab="address" aria-selected="false">Aadress</button>
    <button class="btn ghost" type="button" data-tab="admins" aria-selected="false">Haldurid</button>
   </div>
@@ -110,10 +111,11 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
   </section>
 
   <section class="view panel" id="view-news">
-   <h2>Uus uudis</h2>
+   <h2>Uus blogipostitus</h2>
    <form id="form-news">
     <label>Pealkiri<input name="title" required maxlength="180"></label>
     <label>Lühikirjeldus<textarea name="excerpt" maxlength="400"></textarea></label>
+    <label>Tekst<textarea name="body" maxlength="8000" placeholder="Postituse sisu. Tühi väli jätab selle lühikeseks uudiseks."></textarea></label>
     <div class="row two">
      <label>Link<input name="url" type="url" placeholder="https://"></label>
      <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
@@ -123,8 +125,22 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
    <div class="list" id="list-news"></div>
   </section>
 
+  <section class="view panel" id="view-services">
+   <h2>Uus teenus</h2>
+   <form id="form-service">
+    <label>Nimi<input name="title" required maxlength="160"></label>
+    <label>Kirjeldus<textarea name="summary" maxlength="400"></textarea></label>
+    <div class="row two">
+     <label>Link<input name="href" placeholder="/tootoad või https://"></label>
+     <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+    </div>
+    <button class="btn" type="submit">Lisa lehele</button>
+   </form>
+   <div class="list" id="list-services"></div>
+  </section>
+
   <section class="view panel" id="view-gallery">
-   <h2>Uus galeriipilt</h2>
+   <h2>Uus foto</h2>
    <form id="form-gallery">
     <label>Allkiri<input name="caption" required maxlength="120"></label>
     <label>Pilt<input name="file" class="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required></label>
@@ -219,6 +235,7 @@ function load(){
     renderList("testimonials",document.getElementById("list-feedback"),function(item){return item.name+(item.org?" · "+item.org:"");});
     renderList("news",document.getElementById("list-news"),function(item){return item.title;});
     renderList("gallery",document.getElementById("list-gallery"),function(item){return item.caption;});
+    renderList("services",document.getElementById("list-services"),function(item){return item.title;});
     document.querySelector("#form-address [name=address]").value=data.address||"";
   });
 }
@@ -237,8 +254,14 @@ document.getElementById("form-feedback").addEventListener("submit",function(e){
 document.getElementById("form-news").addEventListener("submit",function(e){
   e.preventDefault();var f=e.target;
   upload(f.file.files[0]).then(function(url){
-    return api("/api/content/news",{method:"POST",body:{title:f.title.value,excerpt:f.excerpt.value,url:f.url.value,image:url}});
-  }).then(function(){f.reset();return load();}).then(function(){say("Uudis on lehel.");}).catch(function(err){say(err.message,true);});
+    return api("/api/content/news",{method:"POST",body:{title:f.title.value,excerpt:f.excerpt.value,body:f.body.value,url:f.url.value,image:url}});
+  }).then(function(){f.reset();return load();}).then(function(){say("Blogipostitus on lehel.");}).catch(function(err){say(err.message,true);});
+});
+document.getElementById("form-service").addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target;
+  upload(f.file.files[0]).then(function(url){
+    return api("/api/content/services",{method:"POST",body:{title:f.title.value,summary:f.summary.value,href:f.href.value,image:url}});
+  }).then(function(){f.reset();return load();}).then(function(){say("Teenus on lehel.");}).catch(function(err){say(err.message,true);});
 });
 document.getElementById("form-gallery").addEventListener("submit",function(e){
   e.preventDefault();var f=e.target;

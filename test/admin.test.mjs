@@ -16,7 +16,8 @@ function startServer(dataDir) {
     env: Object.assign({}, process.env, {
       PORT: String(PORT),
       DATA_DIR: dataDir,
-      ADMIN_DEV_LOGIN: "1"
+      ADMIN_DEV_LOGIN: "1",
+      DATABASE_URL: ""
     }),
     stdio: ["ignore", "pipe", "pipe"]
   });
@@ -150,6 +151,12 @@ test("admin auth and published content", async () => {
     assert.match(uploaded.json.url, /^\/uploads\/[a-f0-9]+\.png$/);
     const file = await call(uploaded.json.url);
     assert.equal(file.status, 200);
+    fs.unlinkSync(path.join(dataDir, "uploads", path.basename(uploaded.json.url)));
+    const fromDb = await fetch(BASE + uploaded.json.url);
+    const bytes = Buffer.from(await fromDb.arrayBuffer());
+    assert.equal(fromDb.status, 200);
+    assert.equal(bytes[0], 0x89);
+    assert.equal(bytes[1], 0x50);
 
     const news = await call("/api/content/news", {
       method: "POST",
@@ -168,6 +175,33 @@ test("admin auth and published content", async () => {
     assert.equal(published.json.news[0].title, "Uus töötuba");
     assert.equal(published.json.gallery[0].caption, "Töökojas");
     assert.equal(published.json.address, "Näidistänav 1, Rakvere");
+    assert.ok(fs.existsSync(path.join(dataDir, "content.sqlite")));
+    const dbFile = await call("/data/content.sqlite");
+    assert.equal(dbFile.status, 404);
+
+    const service = await call("/api/content/services", {
+      method: "POST",
+      body: { title: "Koolitund ratastel", summary: "Tuleme kohale", href: "/tootoad", image: uploaded.json.url }
+    });
+    assert.equal(service.status, 201);
+    const badService = await call("/api/content/services", { method: "POST", body: { title: "X", href: "javascript:alert(1)" } });
+    assert.equal(badService.status, 400);
+
+    const story = await call("/api/content/news", {
+      method: "POST",
+      body: { title: "Andmebaasi postitus", excerpt: "Lühike", body: "Esimene lõik\n<script>alert(1)</script>" }
+    });
+    assert.equal(story.status, 201);
+    assert.equal(story.json.slug, "andmebaasi-postitus");
+    const storyPage = await call("/post/andmebaasi-postitus");
+    assert.equal(storyPage.status, 200);
+    assert.match(storyPage.text, /Andmebaasi postitus/);
+    assert.match(storyPage.text, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+    assert.doesNotMatch(storyPage.text, /<script>alert\(1\)<\/script>/);
+
+    const stored = await call("/api/content");
+    assert.equal(stored.json.services[0].title, "Koolitund ratastel");
+    assert.equal(stored.json.services[0].href, "/tootoad");
 
     const removed = await call("/api/content/testimonials/" + quote.json.id, { method: "DELETE" });
     assert.equal(removed.status, 200);

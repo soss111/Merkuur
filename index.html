@@ -930,6 +930,12 @@ function safeHref(v){
   try{var u=new URL(v,location.origin);if(u.protocol==="http:"||u.protocol==="https:")return u.href;}catch(e){}
   return "";
 }
+function safePage(v){
+  if(!v)return "";
+  if(v.charAt(0)==="#"&&/^#[A-Za-z0-9-]+$/.test(v))return v;
+  if(v.charAt(0)==="/"&&v.charAt(1)!=="/"&&v.indexOf("..")===-1)return v;
+  return safeHref(v);
+}
 function node(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
 fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(function(data){
   if(!data)return;
@@ -977,6 +983,34 @@ fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(functio
         fig.appendChild(img);
         fig.appendChild(node("figcaption",null,item.caption||""));
         gal.appendChild(fig);
+      });
+    }
+  }
+  if(data.services&&data.services.length){
+    var services=document.querySelector("#teenused .grid");
+    if(services){
+      data.services.forEach(function(item){
+        var card=node("article","card");
+        var imgSrc=safeHref(item.image);
+        if(imgSrc){var img=node("img");img.alt=item.title||"";img.loading="lazy";img.src=imgSrc;card.appendChild(img);}
+        var body=node("div");
+        body.appendChild(node("h3",null,item.title));
+        if(item.summary)body.appendChild(node("p",null,item.summary));
+        var actions=node("div","actions");
+        var ask=node("a",null,"Küsi pakkumist");
+        ask.href="#kontakt";
+        if(item.title)ask.setAttribute("data-teenus",item.title);
+        actions.appendChild(ask);
+        var moreHref=safePage(item.href);
+        if(moreHref&&moreHref!=="#kontakt"){
+          var more=node("a","quiet","Loe lähemalt →");
+          more.href=moreHref;
+          if(/^https?:/.test(moreHref)){more.target="_blank";more.rel="noopener";}
+          actions.appendChild(more);
+        }
+        body.appendChild(actions);
+        card.appendChild(body);
+        services.appendChild(card);
       });
     }
   }
