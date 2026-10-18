@@ -373,6 +373,7 @@ function api(driver) {
         "UPDATE steps SET title = ?, detail = ?, tag = ? WHERE id = ?",
         [item.title, item.detail, item.tag, item.id]
       );
+    },
     async findItem(kind, id) {
       const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
       const map = { testimonials: mapFeedback, news: mapPost, gallery: mapPhoto, services: mapService }[kind];

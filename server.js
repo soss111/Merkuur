@@ -769,6 +769,8 @@ async function handle(req, res) {
           const id = parts[3];
           if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });
           const item = await updateRoadmap(id, await readBody(req));
+          return send(res, 200, item);
+        }
         if (req.method === "PUT" && parts.length === 4) {
           const id = parts[3];
           if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });

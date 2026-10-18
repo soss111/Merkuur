@@ -79,7 +79,7 @@ a{color:inherit}
 }
 .skip:focus{transform:none;top:10px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
-h1,h2,h3,.logo,nav a,.btn,.stats b,.hero-facts b,.foot-brand p,.foot-label,.tiles b,.gains b,.person b,.quote figcaption b,.priv summary{
+h1,h2,h3,.logo,nav a,.btn,.hero-facts b,.foot-brand p,.foot-label,.tiles b,.gains b,.person b,.quote figcaption b,.priv summary{
   font-family:"Outfit",system-ui,sans-serif;
 }
 h1,h2,h3{overflow-wrap:break-word;text-wrap:balance;margin:0;font-weight:650;letter-spacing:-.02em}
@@ -268,13 +268,6 @@ section{padding:72px 0}
 #frantsiis .en a{color:var(--accent);font-weight:700;text-underline-offset:3px}
 .dock-cta{display:none}
 
-.stats{background:transparent;color:var(--ink)}
-.stats section{padding:28px 0 48px}
-.stats .wrap{display:grid;grid-template-columns:1fr;gap:12px}
-.stats .wrap>div{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px}
-.stats b{display:block;font-size:clamp(2.2rem,6vw,3rem);font-weight:700;line-height:1;color:var(--accent);letter-spacing:-.03em}
-.stats span{display:block;margin-top:6px;color:var(--muted)}
-.stats .asof{text-align:center;margin:18px 20px 0;font-size:.82rem;color:var(--muted)}
 .slogan{
   display:block;margin:22px 0 8px;padding:0;max-width:16em;
   background:transparent;color:var(--accent);border:0;box-shadow:none;
@@ -423,7 +416,6 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 @media(min-width:640px){
   .cform .row{grid-template-columns:1fr 1fr}
   .cform .row.contact{grid-template-columns:1.1fr .9fr 1.2fr}
-  .stats .wrap{grid-template-columns:1fr 1fr}
   .hero-facts{grid-template-columns:repeat(4,1fr)}
   .foot{grid-template-columns:1.4fr 1fr 1fr;gap:28px}
 }
@@ -459,9 +451,6 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   .road .n{position:static;width:36px;height:36px;margin-bottom:12px}
   .road .tag{margin-top:auto}
   section{padding:88px 0}
-}
-@media(min-width:1000px){
-  .stats .wrap{grid-template-columns:repeat(4,1fr);gap:14px}
 }
 @media(min-width:1101px){
   #mnav a.nav-mile{display:none}
@@ -652,13 +641,6 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
   <a href="/huviringid"><b>Noorsootöö, laagrid ja malevad</b><span>Huviringid ja tegevused noorsootöö asutustele ja ürituste korraldajatele</span></a>
  </div>
 </div></section>
-
-<div class="stats"><section><div class="wrap">
- <div><b data-stat="workshops">3500+</b><span>töötuba teaduse, tehnoloogia ja inseneeria vallas</span></div>
- <div><b data-stat="youth">30 000</b><span>noort on töötubades osalenud</span></div>
- <div><b data-stat="solutions">100+</b><span>erinevat õppelahendust</span></div>
- <div><b data-stat="mobiles">4</b><span>iseehitatud mobiilset töökoda</span></div>
-</div><p class="asof">Seisuga <span data-stat="asOf">detsember 2023</span></p></section></div>
 
 <section id="meist"><div class="wrap">
  <div class="split">
