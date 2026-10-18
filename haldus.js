@@ -300,6 +300,7 @@ function mountHaldus(data, me){
   document.head.appendChild(style);
   var bar=el("div","haldus-bar");
   bar.appendChild(el("b",null,"Muudad lehte"));
+  if(me&&me.database)bar.appendChild(el("span","note",me.database));
   var status=el("span","note","");
   say=function(text){status.textContent=text||"";};
   var view=el("a","ebtn","Avalik vaade");
