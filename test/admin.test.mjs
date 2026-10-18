@@ -21,7 +21,9 @@ function startServer(dataDir, opts) {
     DATABASE_URL: ""
   });
   delete env.LOGIN_API_URL;
+  delete env.ADMIN_PASSWORD;
   if (opts.loginApi) env.LOGIN_API_URL = opts.loginApi;
+  if (opts.password) env.ADMIN_PASSWORD = opts.password;
   const child = spawn(process.execPath, ["server.js"], {
     cwd: ROOT,
     env: env,
@@ -156,6 +158,7 @@ test("admin auth and published content", async () => {
     const admin = await call("/admin");
     assert.equal(admin.status, 200);
     assert.match(admin.text, /Logi sisse Gmailiga/);
+    assert.match(admin.text, /id="form-password"/);
     assert.match(admin.text, /Saada kood/);
     assert.match(admin.text, /\/api\/auth\/code/);
     assert.match(admin.text, /src="files\/merkuur-logo\.png"/);
@@ -167,6 +170,11 @@ test("admin auth and published content", async () => {
     assert.equal(hidden.status, 404);
     const escape = await call("/uploads/../server.js");
     assert.equal(escape.status, 404);
+
+    const closed = await call("/api/auth/password", { method: "POST", body: { password: "merkuur-ajutine" } });
+    assert.equal(closed.status, 404);
+    const config = await call("/api/auth/config");
+    assert.equal(config.json.passwordLogin, false);
 
     const open = await call("/api/content");
     assert.deepEqual(open.json.testimonials, []);
@@ -373,5 +381,45 @@ test("gmail code login uses the metalhub login service", async () => {
   } finally {
     child.kill("SIGTERM");
     login.close();
+  }
+});
+
+test("temporary admin password opens a session when configured", async () => {
+  const shortDir = fs.mkdtempSync(path.join(os.tmpdir(), "merkuur-pass-short-"));
+  const short = await startServer(shortDir, { port: 8793, password: "luhike" });
+  const shortCall = client("http://127.0.0.1:8793");
+  try {
+    const off = await shortCall("/api/auth/config");
+    assert.equal(off.json.passwordLogin, false);
+    const hidden = await shortCall("/api/auth/password", { method: "POST", body: { password: "luhike" } });
+    assert.equal(hidden.status, 404);
+  } finally {
+    short.kill("SIGTERM");
+  }
+
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "merkuur-pass-"));
+  const child = await startServer(dataDir, { port: 8794, password: "merkuur-ajutine" });
+  const call = client("http://127.0.0.1:8794");
+  try {
+    const config = await call("/api/auth/config");
+    assert.equal(config.json.passwordLogin, true);
+    assert.equal(JSON.stringify(config.json).includes("merkuur-ajutine"), false);
+
+    const foreign = await call("/api/auth/password", { method: "POST", origin: "https://evil.example", body: { password: "merkuur-ajutine" } });
+    assert.equal(foreign.status, 403);
+
+    const wrong = await call("/api/auth/password", { method: "POST", body: { password: "vale-parool" } });
+    assert.equal(wrong.status, 401);
+    const stillOut = await call("/api/auth/me");
+    assert.equal(stillOut.status, 401);
+
+    const ok = await call("/api/auth/password", { method: "POST", body: { password: "merkuur-ajutine" } });
+    assert.equal(ok.status, 200);
+    assert.equal(ok.json.email, "info@merkuur.eu");
+    const me = await call("/api/auth/me");
+    assert.equal(me.status, 200);
+    assert.equal(me.json.email, "info@merkuur.eu");
+  } finally {
+    child.kill("SIGTERM");
   }
 });
