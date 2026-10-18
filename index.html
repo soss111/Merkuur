@@ -195,7 +195,7 @@ section{padding:72px 0}
   padding:6px 9px;box-shadow:0 6px 16px rgba(18,52,58,.15);
 }
 
-#varustus,#vaartus,#projektid,#kontakt{background:color-mix(in srgb, var(--surface) 72%, transparent)}
+#varustus,#vaartus,#projektid,#kontakt,#verstapostid{background:color-mix(in srgb, var(--surface) 72%, transparent)}
 .split{display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
 .split>*{min-width:0}
 .split img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:24px;box-shadow:var(--shadow)}
@@ -282,6 +282,18 @@ section{padding:72px 0}
 .road .tag{
   align-self:flex-start;margin-top:12px;font-family:"Outfit",system-ui,sans-serif;font-size:.72rem;font-weight:650;
   letter-spacing:.04em;text-transform:uppercase;color:var(--accent-deep);background:var(--highlight);padding:4px 8px;border-radius:999px;
+}
+.milestones{list-style:none;margin:28px 0 0;padding:0;position:relative;display:grid;gap:14px}
+.milestones::before{content:"";position:absolute;left:7px;top:18px;bottom:18px;width:2px;background:var(--line);border-radius:99px}
+.milestones li{position:relative;margin:0 0 0 28px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px 14px;box-shadow:0 8px 22px rgba(18,52,58,.04)}
+.milestones li::before{content:"";position:absolute;left:-28px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg)}
+.milestones .when{margin:0 0 4px;font:700 .95rem/1.2 "Outfit",system-ui,sans-serif;color:var(--accent)}
+.milestones h3{margin:0 0 6px;font-size:1.25rem}
+.milestones p{margin:0 0 8px;color:var(--muted)}
+.milestones p:last-child{margin:0}
+.milestones a{color:var(--accent);font-weight:700;text-underline-offset:3px}
+@media(min-width:800px){
+  .milestones{max-width:820px}
 }
 
 .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:28px}
@@ -425,6 +437,9 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 @media(min-width:1000px){
   .stats .wrap{grid-template-columns:repeat(4,1fr);gap:14px}
 }
+@media(min-width:1101px){
+  #mnav a.nav-mile{display:none}
+}
 @media(max-width:1100px){
   .burger{display:flex}
   header nav{
@@ -492,7 +507,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 <div class="wrap bar">
  <a class="logo" href="#top"><img alt="" src="https://static.wixstatic.com/media/a7f28e_7402480051cd40d093fe59e1f28aa045~mv2.jpg/v1/fill/w_120,h_120,al_c,q_85/a.jpg" width="44" height="44">Merkuur</a>
  <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
- <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
+ <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="/kalender-1">Kalender</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a class="nav-mile" href="#verstapostid">Verstapostid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
 </div>
 </header>
 
@@ -611,6 +626,74 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a></div>
   </div>
  </div>
+</div></section>
+
+<section id="verstapostid"><div class="wrap">
+ <div class="kicker">Ajalugu</div>
+ <h2>Olulised verstapostid</h2>
+ <p class="lead">Ettevõtte teekond alates 2016. aastast. Koondarvud on seisuga detsember 2023.</p>
+ <ol class="milestones">
+  <li>
+   <p class="when"><time datetime="2016">2016</time></p>
+   <h3>Tegevuse algus</h3>
+   <p>Mobiilsed töötoad sündisid Haridus- ja Teadusministeeriumi ning Eesti Noorsootöö Keskuse algatusel, et aidata leevendada tööjõupuudust puidu- ja metallitööstuses. Merkuur ehitas ratastel metalli- ja puidutöökoja ning viis töötoad otse noorte juurde.</p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2016/2017">2016–2017</time></p>
+   <h3>Parim sotsiaalne ettevõte</h3>
+   <p>Ajujahi 10. hooajal tunnistati Merkuur parimaks sotsiaalseks ettevõtteks.</p>
+   <p><a href="#tunnustused">Tunnustused</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2017">2017</time></p>
+   <h3>Aasta tegu ja haridustegu</h3>
+   <p>Eesti Masinatööstuse Liit tunnustas Merkuuri aasta teona. Jõelähtme vald nimetas Merkuuri 2017. aasta haridusteo laureaadiks.</p>
+   <p><a href="#tunnustused">Tunnustused</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2018/2019">2018–2019</time></p>
+   <h3>Töötoad üle Eesti</h3>
+   <p>Võsu kool tunnustas aasta ringijuhti 2018/2019. Tegevuskaart koondab mobiilsete töötubade korralduse aastatel 2017–2019.</p>
+   <p><a href="/merkuuri-toeoetubade-kaart">Tegevuskaart</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2019">2019</time></p>
+   <h3>xEdu ja ProgeTiiger</h3>
+   <p>Merkuur osales Helsingi xEdu kiirendis. HITSA ProgeTiigri programmi seadmed olid kasutuses 2019/2020/2021. Eesti Teadusagentuuri teaduse populariseerimise projektid algasid 2019–2020 ja jätkusid 2022 ning 2023.</p>
+   <p><a href="/progetiiger">Progetiiger CNC</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2020">2020</time></p>
+   <h3>Euroopa tunnustus</h3>
+   <p>Majandus- ja kommunikatsiooniministeerium valis Merkuuri „Tunnusta ettevõtluse edendajat 2020“ võitjaks. Projekt jõudis Euroopa ettevõtluse edendamise auhinna (EEPA) 2020 lühinimekirja. Erasmus+ Lab4Stem algas 1. oktoobril 2020.</p>
+   <p><a href="#tunnustused">Tunnustused</a> · <a href="/lab4stem">Lab4Stem</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2021/2022">2021–2022</time></p>
+   <h3>Õpik, karjäär ja Leader</h3>
+   <p>Digiõpik «Arvjuhitavad seadmed» valmis 01.10.2021–01.10.2022. Erasmus+ BetterCareer kestis 1.11.2021–31.10.2022. Leader-projekt viidi ellu 2022. Lab4Stem lõppes 31. detsembril 2022.</p>
+   <p><a href="/õpik-arvjuhitavad-seadmed-cnc">Digiõpik</a> · <a href="/bettercareer">BetterCareer</a> · <a href="/leader">Leader</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2022/2023">2022–2023</time></p>
+   <h3>SmartGrowth ja teaduse populariseerimine</h3>
+   <p>Erasmus+ SmartGrowth kestis 1. veebruar 2022 – 30. september 2023. 2023. aasta CNC-projektis osales 326 noort ja toimus 25 õpituba.</p>
+   <p><a href="/smarthgrowth">SmartGrowth</a> · <a href="/teaduse-populariseerimine-2023">Teaduse populariseerimine</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2023">2023</time></p>
+   <h3>Uued töökojad ja Ida-Viru</h3>
+   <p>Valmis kaks uut mobiilset tehnoloogiaklassi, neist üks MTÜ Sõmeru Startile. Ida-Viru projekt Startup Estonia toel: 44 õppetegevust ja 831 osalejat (01.05–31.12.2023). Valikkursus „Inseneeria ja tootmine“ on läbi viidud kolm korda Rakvere Riigigümnaasiumis ning Pelgulinna, Narva Eesti ja Jüri gümnaasiumis. 2023. aastal osales valikkursustel 105 noort.</p>
+   <p>Seisuga detsember 2023: üle 3500 töötoa, umbes 30&nbsp;000 noort, neli iseehitatud mobiilset töökoda ja üle 100 õppelahenduse.</p>
+   <p><a href="/idaviruprojekt">Ida-Viru 2023</a> · <a href="/post/2023-aastal-osales-inseneeria-ja-tootmise-valikkursustel-105-noort">Valikkursus</a></p>
+  </li>
+  <li>
+   <p class="when"><time datetime="2024">2024</time></p>
+   <h3>Ida-Viru projekt jätkus</h3>
+   <p>18.03–30.11.2024 toimus Ida-Viru projektis 27 õpituba ja osales 354 noort.</p>
+   <p><a href="/ida-viru-projekt-2024">Ida-Viru 2024</a></p>
+  </li>
+ </ol>
 </div></section>
 
 <section id="teekond"><div class="wrap">
@@ -790,6 +873,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <a href="#kontakt">Küsi pakkumist</a>
    <a href="#frantsiis">Frantsiis</a>
    <a href="#tunnustused">Tunnustused</a>
+   <a href="#verstapostid">Verstapostid</a>
   </div>
  </div>
  <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="/admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
