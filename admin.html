@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Haldus – Merkuur</title>
-<link rel="icon" type="image/png" href="/files/merkuur-logo.png"><link rel="apple-touch-icon" href="/files/merkuur-logo.png">
+<link rel="icon" type="image/png" href="files/merkuur-logo.png"><link rel="apple-touch-icon" href="files/merkuur-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500..700&family=Source+Sans+3:wght@400..700&display=swap" rel="stylesheet">
@@ -15,7 +15,8 @@
 body{margin:0;font-family:"Source Sans 3",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
 header{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .bar{max-width:980px;margin:0 auto;padding:0 20px;height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.logo{font:700 1.35rem/1 "Outfit",system-ui,sans-serif;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.logo{display:flex;align-items:center;gap:10px;flex:none;font:700 1.35rem/1 "Outfit",system-ui,sans-serif;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.logo img{width:52px;height:52px;min-width:52px;max-width:none;flex:none;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(18,52,58,.12)}
 .bar a.back{color:var(--accent);font-weight:650;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 main{max-width:980px;margin:0 auto;padding:36px 20px 64px}
 h1,h2{font-family:"Outfit",system-ui,sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0 0 12px}
@@ -56,7 +57,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
 </style>
 </head>
 <body>
-<header><div class="bar"><a class="logo" href="/">Merkuur</a><a class="back" href="/">← Avalik leht</a></div></header>
+<header><div class="bar"><a class="logo" href="index.html"><img alt="Merkuur" src="files/merkuur-logo.png" width="52" height="52">Merkuur</a><a class="back" href="index.html">← Avalik leht</a></div></header>
 <main>
  <div class="kicker">Haldus</div>
  <h1>Lisa lehele uut</h1>
@@ -192,8 +193,12 @@ var statusEl=document.getElementById("status");
 function say(text,bad){statusEl.textContent=text||"";statusEl.className=bad?"note bad":"note";}
 function api(path,opts){
   opts=opts||{};
+  if(location.hostname.endsWith("github.io")){
+    return Promise.reject(new Error("GitHubi eelvaade ei võta sisselogimist vastu. Ava haldus Merkuuri serveris."));
+  }
   return fetch(path,{method:opts.method||"GET",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:opts.body?JSON.stringify(opts.body):undefined}).then(function(res){
     return res.json().catch(function(){return {};}).then(function(data){
+      if(res.status===405)throw new Error("See aadress ei võta sisselogimist vastu. Ava haldus Merkuuri serveris.");
       if(!res.ok)throw new Error(data.error||"Viga");
       return data;
     });
