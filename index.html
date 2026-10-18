@@ -1082,7 +1082,6 @@ if(qform)qform.addEventListener("submit",function(e){
     note.textContent="Aitäh. Sinu tagasiside on lehel.";
   }).catch(function(err){note.textContent=err.message;});
 });
-fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(function(data){
 var contentReq=location.hostname.endsWith("github.io")?Promise.resolve(null):fetch("/api/content").then(function(r){return r.ok?r.json():null;});
 contentReq.then(function(data){
   if(!data)return;
