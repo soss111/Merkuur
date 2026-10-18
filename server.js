@@ -34,6 +34,7 @@ async function ensureData() {
   database = await db.openDatabase(DATA);
   await database.importJsonOnce(CONTENT_FILE);
   await database.seedCatalogOnce();
+  dropRemovedAdmins();
 }
 
 function readJson(file, fallback) {
@@ -50,13 +51,23 @@ function writeJson(file, data) {
   fs.renameSync(tmp, file);
 }
 
+function dropRemovedAdmins() {
+  const raw = readJson(CONFIG_FILE, {});
+  const emails = Array.isArray(raw.allowedEmails) ? raw.allowedEmails : [];
+  const kept = emails.map((s) => String(s).trim().toLowerCase()).filter((email) => email && REMOVED_ADMINS.indexOf(email) === -1);
+  if (kept.length === emails.length) return;
+  const cfg = loadConfig();
+  cfg.allowedEmails = kept.length ? kept : ["info@merkuur.eu"];
+  saveConfig(cfg);
+}
+
 function loadConfig() {
   const cfg = Object.assign({}, DEFAULT_CONFIG, readJson(CONFIG_FILE, {}));
   if (process.env.GOOGLE_CLIENT_ID) cfg.googleClientId = process.env.GOOGLE_CLIENT_ID;
   if (process.env.GOOGLE_ALLOWED_EMAILS) {
     cfg.allowedEmails = process.env.GOOGLE_ALLOWED_EMAILS.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
   }
-  cfg.allowedEmails = (cfg.allowedEmails || []).map((s) => String(s).trim().toLowerCase()).filter(Boolean);
+  cfg.allowedEmails = (cfg.allowedEmails || []).map((s) => String(s).trim().toLowerCase()).filter((email) => email && REMOVED_ADMINS.indexOf(email) === -1);
   cfg.allowFirstGoogleLogin = cfg.allowFirstGoogleLogin !== false;
   return cfg;
 }
@@ -208,7 +219,8 @@ function readBody(req) {
   });
 }
 
-const STAFF_EMAILS = ["laurisoosaar@gmail.com", "lauri.soosaar@gmail.com", "lauri.soosaar@venten.ee"];
+const STAFF_EMAILS = ["laurisoosaar@gmail.com", "lauri.soosaar@gmail.com"];
+const REMOVED_ADMINS = ["lauri.soosaar@venten.ee"];
 const LOGIN_API = process.env.LOGIN_API_URL || "https://metalhub.ee/api/exec";
 const authHits = new Map();
 function rateLimit(req) {
