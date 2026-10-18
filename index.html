@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.merkuur.eu">
 <meta property="og:image" content="https://static.wixstatic.com/media/a7f28e_213e5225ab8e411cbaf145b82b54c3d9~mv2_d_4032_3024_s_4_2.jpg/v1/fit/w_1600,h_900,al_c/a.jpg">
-<link rel="icon" type="image/png" href="/files/merkuur-logo.png"><link rel="apple-touch-icon" href="/files/merkuur-logo.png">
+<link rel="icon" type="image/png" href="files/merkuur-logo.png"><link rel="apple-touch-icon" href="files/merkuur-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500..700&family=Source+Sans+3:wght@400..700&display=swap" rel="stylesheet">
@@ -100,10 +100,10 @@ header{
 }
 .bar{display:flex;align-items:center;height:72px;gap:16px}
 .logo{
-  display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--header-ink);
+  display:flex;align-items:center;gap:10px;flex:none;text-decoration:none;color:var(--header-ink);
   font-weight:700;letter-spacing:-.02em;font-size:1.35rem;line-height:1;
 }
-.logo img{width:44px;height:44px;object-fit:cover;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(18,52,58,.12)}
+.logo img{width:52px;height:52px;min-width:52px;max-width:none;flex:none;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(18,52,58,.12)}
 nav{display:flex;gap:14px;align-items:center;margin-left:auto}
 nav a{
   text-decoration:none;color:var(--header-ink);font-size:.92rem;font-weight:550;
@@ -407,7 +407,7 @@ a.mile-more,.mile-fold summary{
 
 footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 .foot{display:grid;grid-template-columns:1fr;gap:22px;padding-top:36px;padding-bottom:8px}
-.foot-brand img{width:64px;height:64px;object-fit:cover;border-radius:18px;background:#fff}
+.foot-brand img{width:72px;height:72px;min-width:72px;max-width:none;object-fit:contain;border-radius:18px;background:#fff}
 .foot-brand p{margin:12px 0 0;max-width:24ch;color:#fff;font-weight:650;font-size:1.25rem;line-height:1.25;letter-spacing:-.02em}
 .foot-label{margin:0 0 8px;color:#fff;font-weight:650;font-size:1rem}
 .foot a{display:flex;align-items:center;min-height:44px;color:#b7ebe0;text-decoration:none;font-weight:600}
@@ -530,7 +530,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 <a class="skip" href="#top">Sisu juurde</a>
 <header>
 <div class="wrap bar">
- <a class="logo" href="#top"><img alt="" src="/files/merkuur-logo.png" width="44" height="44">Merkuur</a>
+ <a class="logo" href="#top"><img alt="Merkuur" src="files/merkuur-logo.png" width="52" height="52">Merkuur</a>
  <button class="burger" id="burger" type="button" aria-label="Menüü" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
  <nav id="mnav" aria-label="Põhimenüü"><a href="#top">Pealeht</a><a href="#teemad">Teemad</a><a href="#teenused">Teenused</a><a href="#varustus">Kooli varustus</a><a href="#pood">Makerset'id</a><a href="#frantsiis">Frantsiis</a><a href="#projektid">Projektid</a><a class="nav-mile" href="#verstapostid">Verstapostid</a><a href="#uudised">Blogi</a><a href="#tagasiside">Tagasiside</a><a href="#meeskond">Meeskond</a><a class="btn" href="#kontakt">Küsi pakkumist</a></nav>
 </div>
@@ -945,7 +945,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
 <footer>
  <div class="wrap foot">
   <div class="foot-brand">
-   <img alt="" src="/files/merkuur-logo.png" width="72" height="72">
+   <img alt="Merkuur" src="files/merkuur-logo.png" width="72" height="72">
    <p>Meie investeerime noortesse. Investeeri Sina ka!</p>
   </div>
   <div>
@@ -964,7 +964,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
    <a href="#verstapostid">Verstapostid</a>
   </div>
  </div>
- <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="/admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
+ <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
 </footer>
 <a class="dock-cta" id="dockcta" href="#kontakt" hidden>Küsi pakkumist</a>
 <script>
@@ -1049,7 +1049,8 @@ function safePage(v){
   return safeHref(v);
 }
 function node(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
-fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(function(data){
+var contentReq=location.hostname.endsWith("github.io")?Promise.resolve(null):fetch("/api/content").then(function(r){return r.ok?r.json():null;});
+contentReq.then(function(data){
   if(!data)return;
   if(data.testimonials&&data.testimonials.length){
     var box=document.querySelector("#tagasiside .quotes");

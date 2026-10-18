@@ -75,7 +75,9 @@ test("admin auth and published content", async () => {
     const home = await call("/");
     assert.equal(home.status, 200);
     assert.match(home.text, /Haldus/);
-    assert.match(home.text, /\/files\/merkuur-logo\.png/);
+    assert.match(home.text, /src="files\/merkuur-logo\.png"/);
+    assert.match(home.text, /href="admin"/);
+    assert.doesNotMatch(home.text, /(?:href|src)="\/files\//);
     assert.doesNotMatch(home.text, /M28 68V34/);
     assert.match(home.text, /\/api\/content/);
     assert.match(home.text, /frantsiisipartnereid/);
@@ -137,6 +139,8 @@ test("admin auth and published content", async () => {
     assert.equal(hiddenPage.status, 404);
     const css = await call("/site.css");
     assert.equal(css.status, 200);
+    assert.match(css.text, /\.logo img\{[^}]*min-width:52px/);
+    assert.match(team.text, /class="foot-brand"/);
     const icon = await call("/favicon.ico");
     assert.equal(icon.status, 200);
     const logo = await call("/files/merkuur-logo.png");
@@ -147,6 +151,8 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /Logi sisse Gmailiga/);
     assert.match(admin.text, /Saada kood/);
     assert.match(admin.text, /\/api\/auth\/code/);
+    assert.match(admin.text, /src="files\/merkuur-logo\.png"/);
+    assert.match(admin.text, /GitHubi eelvaade ei võta sisselogimist vastu/);
     assert.match(admin.text, /id="form-stats"/);
     assert.match(admin.text, /\/api\/stats/);
 
