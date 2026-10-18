@@ -431,7 +431,7 @@ function renderPost(post) {
     .map((line) => "<p>" + escapeHtml(line) + "</p>").join("\n");
   const image = post.image ? "<figure class=\"shots\"><img src=\"" + escapeHtml(post.image) + "\" alt=\"\"></figure>" : "";
   const title = escapeHtml(post.title);
-  return "<!DOCTYPE html>\n<html lang=\"et\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>" + title + " · Merkuur</title>\n<link rel=\"canonical\" href=\"https://www.merkuur.eu/post/" + escapeHtml(post.slug) + "\">\n<link rel=\"icon\" href=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f6e5c'/%3E%3C/svg%3E\">\n<link rel=\"stylesheet\" href=\"/site.css\">\n</head>\n<body>\n<header><div class=\"wrap bar\"><a class=\"logo\" href=\"/\">Merkuur</a><button class=\"burger\" id=\"burger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"mnav\" aria-label=\"Menüü\"><span></span><span></span><span></span></button><nav id=\"mnav\" aria-label=\"Põhimenüü\"><a href=\"/\">Pealeht</a><a href=\"/#teenused\">Teenused</a><a href=\"/blog\">Blogi</a><a class=\"btn\" href=\"/#kontakt\">Küsi pakkumist</a></nav></div></header>\n<main id=\"sisu\"><div class=\"wrap sheet wide\"><p class=\"kicker\">Blogi</p><h1>" + title + "</h1><div class=\"prose\">" + paragraphs + "</div>" + image + "<div class=\"cta\"><a class=\"btn\" href=\"/#kontakt\">Küsi pakkumist</a><a class=\"btn ghost\" href=\"/\">Tagasi avalehele</a></div></div></main>\n<footer><div class=\"wrap legal\">© Merkuur OÜ · reg 11544602</div></footer>\n<script src=\"/site.js\"></script>\n</body>\n</html>\n";
+  return "<!DOCTYPE html>\n<html lang=\"et\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>" + title + " · Merkuur</title>\n<link rel=\"canonical\" href=\"https://www.merkuur.eu/post/" + escapeHtml(post.slug) + "\">\n<link rel=\"icon\" type=\"image/png\" href=\"/files/merkuur-logo.png\"><link rel=\"apple-touch-icon\" href=\"/files/merkuur-logo.png\">\n<link rel=\"stylesheet\" href=\"/site.css\">\n</head>\n<body>\n<header><div class=\"wrap bar\"><a class=\"logo\" href=\"/\"><img alt=\"\" src=\"/files/merkuur-logo.png\" width=\"44\" height=\"44\">Merkuur</a><button class=\"burger\" id=\"burger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"mnav\" aria-label=\"Menüü\"><span></span><span></span><span></span></button><nav id=\"mnav\" aria-label=\"Põhimenüü\"><a href=\"/\">Pealeht</a><a href=\"/#teenused\">Teenused</a><a href=\"/blog\">Blogi</a><a class=\"btn\" href=\"/#kontakt\">Küsi pakkumist</a></nav></div></header>\n<main id=\"sisu\"><div class=\"wrap sheet wide\"><p class=\"kicker\">Blogi</p><h1>" + title + "</h1><div class=\"prose\">" + paragraphs + "</div>" + image + "<div class=\"cta\"><a class=\"btn\" href=\"/#kontakt\">Küsi pakkumist</a><a class=\"btn ghost\" href=\"/\">Tagasi avalehele</a></div></div></main>\n<footer><div class=\"wrap legal\">© Merkuur OÜ · reg 11544602</div></footer>\n<script src=\"/site.js\"></script>\n</body>\n</html>\n";
 }
 
 const MIME = {
@@ -457,7 +457,8 @@ function resolvePublic(pathname) {
     "/admin/": path.join(ROOT, "admin.html"),
     "/admin.html": path.join(ROOT, "admin.html"),
     "/site.css": path.join(ROOT, "site.css"),
-    "/site.js": path.join(ROOT, "site.js")
+    "/site.js": path.join(ROOT, "site.js"),
+    "/favicon.ico": path.join(ROOT, "favicon.ico")
   };
   if (fixed[pathname]) return fixed[pathname];
   let clean = pathname;

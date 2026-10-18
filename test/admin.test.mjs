@@ -75,6 +75,8 @@ test("admin auth and published content", async () => {
     const home = await call("/");
     assert.equal(home.status, 200);
     assert.match(home.text, /Haldus/);
+    assert.match(home.text, /\/files\/merkuur-logo\.png/);
+    assert.doesNotMatch(home.text, /M28 68V34/);
     assert.match(home.text, /\/api\/content/);
     assert.match(home.text, /frantsiisipartnereid/);
     assert.match(home.text, /Franchise partners worldwide/);
@@ -109,9 +111,12 @@ test("admin auth and published content", async () => {
     const workshop = await call("/tootoad");
     assert.equal(workshop.status, 200);
     assert.match(workshop.text, /käed-külge/);
+    assert.match(workshop.text, /\/files\/merkuur-logo\.png/);
+    assert.doesNotMatch(workshop.text, /M28 68V34/);
     const post = await call("/post/" + encodeURIComponent("ida-viru-projektis-osales-kokku-354-osalejat"));
     assert.equal(post.status, 200);
     assert.match(post.text, /354le noorele|354/);
+    assert.match(post.text, /\/files\/merkuur-logo\.png/);
     const textbook = await call("/" + encodeURIComponent("õpik-arvjuhitavad-seadmed-cnc"));
     assert.equal(textbook.status, 200);
     assert.match(textbook.text, /e-koolikott\.ee/);
@@ -119,6 +124,10 @@ test("admin auth and published content", async () => {
     assert.equal(hiddenPage.status, 404);
     const css = await call("/site.css");
     assert.equal(css.status, 200);
+    const icon = await call("/favicon.ico");
+    assert.equal(icon.status, 200);
+    const logo = await call("/files/merkuur-logo.png");
+    assert.equal(logo.status, 200);
 
     const admin = await call("/admin");
     assert.equal(admin.status, 200);
