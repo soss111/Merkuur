@@ -376,6 +376,34 @@ function roadmapFields(body) {
   return { title: title, detail: detail, tag: clip(body.tag, 40) };
 }
 
+async function moveItem(kind, id, direction) {
+  const spec = {
+    testimonials: { table: "feedback", key: "testimonials" },
+    news: { table: "posts", key: "news" },
+    gallery: { table: "photos", key: "gallery" },
+    services: { table: "services", key: "services" },
+    roadmap: { table: "steps", key: "roadmap" }
+  }[kind];
+  if (!spec) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
+  if (direction !== "up" && direction !== "down") throw Object.assign(new Error("Suund ei sobi."), { status: 400 });
+  const content = await database.readContent();
+  const items = content[spec.key] || [];
+  const index = items.findIndex((item) => item.id === id);
+  if (index < 0) throw Object.assign(new Error("Kirjet ei leitud."), { status: 404 });
+  const swapWith = direction === "up" ? index - 1 : index + 1;
+  if (swapWith < 0 || swapWith >= items.length) return;
+  const current = items[index];
+  const neighbor = items[swapWith];
+  let currentAt = neighbor.createdAt;
+  let neighborAt = current.createdAt;
+  if (currentAt === neighborAt) {
+    const shift = direction === "up" ? -1000 : 1000;
+    currentAt = new Date(new Date(currentAt).getTime() + shift).toISOString();
+  }
+  await database.setCreatedAt(spec.table, current.id, currentAt);
+  await database.setCreatedAt(spec.table, neighbor.id, neighborAt);
+}
+
 async function updateRoadmap(id, body) {
   const existing = await database.findStep(id);
   if (!existing) throw Object.assign(new Error("Kirjet ei leitud."), { status: 404 });
@@ -563,6 +591,18 @@ async function saveCopy(body) {
   if (Object.keys(next).length > 400) throw Object.assign(new Error("Liiga palju tekste."), { status: 400 });
   await database.saveCopy(next);
   return next;
+    supportUrl: content.supportUrl || ""
+  };
+}
+
+function paymentUrl(value) {
+  const raw = clip(value, 500);
+  if (!raw) return "";
+  const url = safeUrl(raw);
+  if (!url || !url.startsWith("https://")) {
+    throw Object.assign(new Error("Makselink peab olema https-aadress."), { status: 400 });
+  }
+  return url;
 }
 
 async function saveStats(body) {
@@ -782,6 +822,12 @@ async function handle(req, res) {
         const address = clip(body.address, 240);
         await database.saveAddress(address);
         return send(res, 200, { address: address });
+      }
+      if (req.method === "PUT" && pathname === "/api/support") {
+        const body = await readBody(req);
+        const supportUrl = paymentUrl(body.supportUrl);
+        await database.saveSupportUrl(supportUrl);
+        return send(res, 200, { supportUrl: supportUrl });
       }
       if (req.method === "PUT" && pathname === "/api/stats") {
         const stats = await saveStats(await readBody(req));

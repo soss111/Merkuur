@@ -327,6 +327,7 @@ function api(driver) {
         services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService),
         roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep),
         copy: await this.readCopy()
+        supportUrl: await driver.setting("support_url", "")
       };
     },
     async readCopy() {
@@ -393,6 +394,11 @@ function api(driver) {
         [item.title, item.detail, item.tag, item.id]
       );
     },
+    async setCreatedAt(table, id, createdAt) {
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1 };
+      if (!allowed[table]) throw new Error("Tundmatu tabel.");
+      await driver.run("UPDATE " + table + " SET created_at = ? WHERE id = ?", [createdAt, id]);
+    },
     async findItem(kind, id) {
       const table = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services" }[kind];
       const map = { testimonials: mapFeedback, news: mapPost, gallery: mapPhoto, services: mapService }[kind];
@@ -436,6 +442,9 @@ function api(driver) {
     },
     async saveAddress(address) {
       await driver.setSetting("address", address);
+    },
+    async saveSupportUrl(url) {
+      await driver.setSetting("support_url", url);
     },
     async saveStats(stats) {
       await driver.setSetting("stats", JSON.stringify(statsFrom(stats)));

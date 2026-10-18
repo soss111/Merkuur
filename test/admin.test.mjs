@@ -82,6 +82,8 @@ test("admin auth and published content", async () => {
     assert.doesNotMatch(home.text, /(?:href|src)="\/files\//);
     assert.doesNotMatch(home.text, /M28 68V34/);
     assert.match(home.text, /\/api\/content/);
+    assert.match(home.text, /id="toeta"/);
+    assert.match(home.text, /Soovin toetada teie ägedaid tegevusi/);
     assert.match(home.text, /id="qform"/);
     assert.match(home.text, /Jäta tagasiside/);
     assert.match(home.text, /<select name="role"><option value="">Vali…<\/option><option>õpetaja<\/option><option>õpilane<\/option><option>lapsevanem<\/option><option value="uus">Lisa uus<\/option><\/select>/);
@@ -171,8 +173,16 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /src="files\/merkuur-logo\.png"/);
     assert.match(admin.text, /GitHubi eelvaade ei võta sisselogimist vastu/);
     assert.match(admin.text, /id="form-stats"/);
+    assert.match(admin.text, /id="section-links"/);
+    assert.match(admin.text, /<option value="\/tootoad">Töötoad<\/option>/);
+    assert.match(admin.text, /<option value="external">Muu aadress<\/option>/);
+    assert.match(admin.text, /select class="section"/);
     assert.match(admin.text, /data-tab="roadmap"/);
     assert.match(admin.text, /id="form-roadmap"/);
+    assert.match(admin.text, /data-tab="home"/);
+    assert.match(admin.text, /Üles/);
+    assert.match(admin.text, /id="form-support"/);
+    assert.match(admin.text, /\/api\/support/);
     assert.match(admin.text, /\/api\/stats/);
     assert.match(admin.text, /Muuda/);
     assert.match(admin.text, /Katkesta/);
@@ -204,6 +214,7 @@ test("admin auth and published content", async () => {
     assert.equal(copyDenied.status, 401);
     const moveDenied = await call("/api/content/services/5eed5e4700000002/move", { method: "POST", body: { direction: "up" } });
     assert.equal(moveDenied.status, 401);
+    assert.equal(open.json.supportUrl, "");
     assert.deepEqual(open.json.stats, {
       since: "2016",
       workshops: "3500+",
@@ -212,6 +223,8 @@ test("admin auth and published content", async () => {
       solutions: "100+",
       asOf: "detsember 2023"
     });
+    const supportDenied = await call("/api/support", { method: "PUT", body: { supportUrl: "https://pay.example/merkuur" } });
+    assert.equal(supportDenied.status, 401);
     const statsDenied = await call("/api/stats", { method: "PUT", body: { since: "2015", workshops: "1", youth: "1", mobiles: "1", solutions: "1", asOf: "nüüd" } });
     assert.equal(statsDenied.status, 401);
 
@@ -219,6 +232,8 @@ test("admin auth and published content", async () => {
     assert.equal(denied.status, 401);
     const roadmapDenied = await call("/api/content/roadmap", { method: "POST", body: { title: "Uus etapp", detail: "Kirjeldus" } });
     assert.equal(roadmapDenied.status, 401);
+    const moveDenied = await call("/api/content/services/5eed5e4700000002/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(moveDenied.status, 401);
     const editDenied = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Ei" } });
     assert.equal(editDenied.status, 401);
     const noConsent = await call("/api/feedback", { method: "POST", body: { quote: "Tere", name: "Mari" } });
@@ -251,6 +266,24 @@ test("admin auth and published content", async () => {
     const first = await call("/api/auth/dev", { method: "POST", body: { email: "owner@gmail.com" } });
     assert.equal(first.status, 200);
     assert.equal(first.json.email, "owner@gmail.com");
+    const seeded = await call("/api/content");
+    const secondService = seeded.json.services[1];
+    const moved = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(moved.status, 200);
+    const reordered = await call("/api/content");
+    assert.equal(reordered.json.services[0].title, "Tehnoloogiatunnid");
+    assert.equal(reordered.json.services[1].title, "Töötoad");
+    const stuck = await call("/api/content/services/" + reordered.json.services[0].id + "/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(stuck.status, 200);
+    const stillFirst = await call("/api/content");
+    assert.equal(stillFirst.json.services[0].title, "Tehnoloogiatunnid");
+    const badDir = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "kõrvale" } });
+    assert.equal(badDir.status, 400);
+    const back = await call("/api/content/services/" + stillFirst.json.services[0].id + "/move", { method: "POST", body: { direction: "down" } });
+    assert.equal(back.status, 200);
+    const restored = await call("/api/content");
+    assert.equal(restored.json.services[0].title, "Töötoad");
+    assert.equal(restored.json.services[1].title, "Tehnoloogiatunnid");
 
     const outsider = client();
     const blocked = await outsider("/api/auth/dev", { method: "POST", body: { email: "other@gmail.com" } });
@@ -289,6 +322,13 @@ test("admin auth and published content", async () => {
 
     const address = await call("/api/address", { method: "PUT", body: { address: "Näidistänav 1, Rakvere" } });
     assert.equal(address.status, 200);
+    const badPay = await call("/api/support", { method: "PUT", body: { supportUrl: "javascript:alert(1)" } });
+    assert.equal(badPay.status, 400);
+    const httpPay = await call("/api/support", { method: "PUT", body: { supportUrl: "http://pay.example/merkuur" } });
+    assert.equal(httpPay.status, 400);
+    const pay = await call("/api/support", { method: "PUT", body: { supportUrl: "https://pay.example/merkuur" } });
+    assert.equal(pay.status, 200);
+    assert.equal(pay.json.supportUrl, "https://pay.example/merkuur");
     const emptyStats = await call("/api/stats", {
       method: "PUT",
       body: { since: "2016", workshops: " ", youth: "1", mobiles: "1", solutions: "1", asOf: "nüüd" }
@@ -306,6 +346,7 @@ test("admin auth and published content", async () => {
     assert.equal(published.json.news[0].title, "Uus töötuba");
     assert.equal(published.json.gallery[0].caption, "Töökojas");
     assert.equal(published.json.address, "Näidistänav 1, Rakvere");
+    assert.equal(published.json.supportUrl, "https://pay.example/merkuur");
     assert.equal(published.json.stats.workshops, "3600+");
     assert.equal(published.json.stats.youth, "31 000");
     assert.equal(published.json.stats.mobiles, "5");
