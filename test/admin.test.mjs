@@ -78,6 +78,9 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /\/files\/merkuur-logo\.png/);
     assert.doesNotMatch(home.text, /M28 68V34/);
     assert.match(home.text, /\/api\/content/);
+    assert.match(home.text, /id="qform"/);
+    assert.match(home.text, /Jäta tagasiside/);
+    assert.doesNotMatch(home.text, /Lisa siia kliendi tagasiside tekst/);
     assert.match(home.text, /frantsiisipartnereid/);
     assert.match(home.text, /Franchise partners worldwide/);
     assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
@@ -170,6 +173,19 @@ test("admin auth and published content", async () => {
 
     const denied = await call("/api/content/testimonials", { method: "POST", body: { quote: "Tere", name: "Mari" } });
     assert.equal(denied.status, 401);
+    const noConsent = await call("/api/feedback", { method: "POST", body: { quote: "Tere", name: "Mari" } });
+    assert.equal(noConsent.status, 400);
+    const guest = await call("/api/feedback", { method: "POST", body: { quote: "Väga hea töötuba", name: "Kati Kask", role: "õpetaja", org: "Neeme Kool", ok: true } });
+    assert.equal(guest.status, 201);
+    assert.equal(guest.json.testimonial.name, "Kati Kask");
+    const honey = await call("/api/feedback", { method: "POST", body: { quote: "Rämps", name: "Bot", ok: true, website: "http://spam.test" } });
+    assert.equal(honey.status, 200);
+    assert.equal(honey.json.testimonial, undefined);
+    const listed = await call("/api/content");
+    assert.equal(listed.json.testimonials.length, 1);
+    assert.equal(listed.json.testimonials[0].quote, "Väga hea töötuba");
+    const foreign = await call("/api/feedback", { method: "POST", origin: "https://evil.example", body: { quote: "Tere", name: "Mari", ok: true } });
+    assert.equal(foreign.status, 403);
 
     const unconfigured = await call("/api/auth/google", { method: "POST", body: { credential: "aaa.bbb.ccc" } });
     assert.equal(unconfigured.status, 503);
@@ -238,7 +254,7 @@ test("admin auth and published content", async () => {
     assert.equal(savedStats.json.stats.workshops, "3600+");
 
     const published = await call("/api/content");
-    assert.equal(published.json.testimonials.length, 1);
+    assert.equal(published.json.testimonials.length, 2);
     assert.equal(published.json.news[0].title, "Uus töötuba");
     assert.equal(published.json.gallery[0].caption, "Töökojas");
     assert.equal(published.json.address, "Näidistänav 1, Rakvere");
@@ -278,7 +294,8 @@ test("admin auth and published content", async () => {
     const removed = await call("/api/content/testimonials/" + quote.json.id, { method: "DELETE" });
     assert.equal(removed.status, 200);
     const after = await call("/api/content");
-    assert.equal(after.json.testimonials.length, 0);
+    assert.equal(after.json.testimonials.length, 1);
+    assert.equal(after.json.testimonials[0].name, "Kati Kask");
 
     const bye = await call("/api/auth/logout", { method: "POST", body: {} });
     assert.equal(bye.status, 200);
