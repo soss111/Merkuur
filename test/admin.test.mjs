@@ -203,8 +203,10 @@ test("admin auth and published content", async () => {
     assert.deepEqual(open.json.testimonials, []);
     assert.equal(open.json.services.length, 6);
     assert.equal(open.json.services[0].title, "Töötoad");
-    assert.equal(open.json.news.length, 3);
+    assert.equal(open.json.news.length, 20);
     assert.equal(open.json.news[0].url, "/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde-1");
+    assert.match(open.json.news.find((item) => item.slug === "ida-viru-projektis-osales-kokku-354-osalejat").body, /354le noorele/);
+    assert.ok(open.json.news.some((item) => item.slug === "tehnoloogiatund-30-tule-torni" && item.body));
     assert.equal(open.json.gallery.length, 4);
     assert.equal(open.json.gallery[0].caption, "Neeme küla");
     assert.equal(open.json.roadmap.length, 5);
