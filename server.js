@@ -277,6 +277,26 @@ async function postLogin(action, fields) {
   return data;
 }
 
+function adminPassword() {
+  const value = String(process.env.ADMIN_PASSWORD || "");
+  if (value.length < 8) return "";
+  return value;
+}
+
+function passwordMatches(given) {
+  const expected = adminPassword();
+  if (!expected) return false;
+  const actual = crypto.createHash("sha256").update(String(given || ""), "utf8").digest();
+  const wanted = crypto.createHash("sha256").update(expected, "utf8").digest();
+  return crypto.timingSafeEqual(actual, wanted);
+}
+
+function passwordSessionEmail() {
+  const emails = withStaff(loadConfig()).allowedEmails;
+  if (emails.indexOf("info@merkuur.eu") !== -1) return "info@merkuur.eu";
+  return emails[0];
+}
+
 function acceptEmail(email, opts) {
   opts = opts || {};
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -507,7 +527,8 @@ async function handle(req, res) {
         return send(res, 200, {
           configured: Boolean(cfg.googleClientId),
           clientId: cfg.googleClientId || "",
-          allowFirstGoogleLogin: cfg.allowFirstGoogleLogin
+          allowFirstGoogleLogin: cfg.allowFirstGoogleLogin,
+          passwordLogin: Boolean(adminPassword())
         });
       }
       if (req.method === "GET" && pathname === "/api/auth/me") {
@@ -535,6 +556,16 @@ async function handle(req, res) {
         if (body.ok !== true) return send(res, 400, { error: "Nõusolek on vajalik." });
         const item = await addItem("testimonials", body);
         return send(res, 201, { ok: true, testimonial: { quote: item.quote, name: item.name, role: item.role, org: item.org } });
+      }
+      if (req.method === "POST" && pathname === "/api/auth/password") {
+        if (!adminPassword()) return send(res, 404, { error: "Ei leitud." });
+        if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
+        const body = await readBody(req);
+        if (!passwordMatches(body.password)) return send(res, 401, { error: "Vale parool." });
+        const email = passwordSessionEmail();
+        const id = createSession(email);
+        setSessionCookie(req, res, id, Math.floor(SESSION_MS / 1000));
+        return send(res, 200, { email: email });
       }
       if (req.method === "POST" && pathname === "/api/auth/code") {
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });

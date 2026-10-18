@@ -65,6 +65,12 @@ input:focus,textarea:focus,select:focus{outline:3px solid var(--accent);outline-
  <p class="note" id="status" role="status"></p>
 
  <section id="login" class="panel" hidden>
+  <form id="form-password" hidden>
+   <h2>Ajutine parool</h2>
+   <p class="lead">Parooliga sisselogimine on sees seni, kuni serveris on määratud ADMIN_PASSWORD. E-posti kood jääb alles.</p>
+   <label>Parool<input name="password" type="password" required autocomplete="current-password"></label>
+   <button class="btn" type="submit">Logi sisse parooliga</button>
+  </form>
   <h2>Logi sisse Gmailiga</h2>
   <p>Sisesta halduri e-post. Saadame ühekordse koodi samamoodi nagu <a href="https://metalhub.ee/admin/" target="_blank" rel="noopener">metalHUB halduses</a>.</p>
   <form id="form-email">
@@ -315,6 +321,7 @@ document.getElementById("logout").addEventListener("click",function(){
   api("/api/auth/logout",{method:"POST",body:{}}).then(function(){location.reload();});
 });
 function showApp(me){
+  say("");
   document.getElementById("login").hidden=true;
   document.getElementById("app").hidden=false;
   document.getElementById("who").textContent=me.email;
@@ -344,8 +351,18 @@ document.getElementById("other-email").addEventListener("click",function(){
   document.getElementById("form-email").hidden=false;
   say("");
 });
+document.getElementById("form-password").addEventListener("submit",function(e){
+  e.preventDefault();
+  api("/api/auth/password",{method:"POST",body:{password:e.target.password.value}}).then(function(){
+    e.target.reset();
+    return api("/api/auth/me");
+  }).then(showApp).catch(function(err){say(err.message,true);});
+});
 api("/api/auth/me").then(showApp).catch(function(){
   document.getElementById("login").hidden=false;
+  api("/api/auth/config").then(function(cfg){
+    if(cfg.passwordLogin)document.getElementById("form-password").hidden=false;
+  }).catch(function(){});
 });
 })();
 </script>
