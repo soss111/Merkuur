@@ -442,6 +442,11 @@ test("admin auth and published content", async () => {
     const pageCopy = await call("/api/copy", { method: "PUT", body: { copy: { "meeskond:h1:1": "Meie inimesed" } } });
     assert.equal(pageCopy.status, 200);
     assert.equal(pageCopy.json.copy["meeskond:h1:1"], "Meie inimesed");
+    const layout = await call("/api/copy", { method: "PUT", body: { copy: { "home:order": "pood,teenused", "pood:a:1:href": "https://mw.yrgel.com", "pood:a:2:href": "javascript:alert(1)" } } });
+    assert.equal(layout.status, 200);
+    assert.equal(layout.json.copy["home:order"], "pood,teenused");
+    assert.equal(layout.json.copy["pood:a:1:href"], "https://mw.yrgel.com/");
+    assert.equal(layout.json.copy["pood:a:2:href"], undefined);
     const badPerson = await call("/api/content/people", { method: "POST", body: { name: " ", phone: "abc" } });
     assert.equal(badPerson.status, 400);
     const person = await call("/api/content/people", {

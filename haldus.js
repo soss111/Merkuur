@@ -188,8 +188,9 @@ function openCopy(nodes){
       return;
     }
     var sample=node.textContent.trim().replace(/\s+/g," ").slice(0,42);
-    var name=node.classList.contains("btn")?"Nupp":(node.classList.contains("kicker")?"Silt":(/^H[1-3]$/.test(node.tagName)?"Pealkiri":"Tekst"));
-    addField({name:key,label:name+" — "+sample,tag:node.textContent.length>140?"textarea":"input",max:4000},node.textContent.trim());
+    var name=node.classList.contains("btn")?"Nupp":(node.classList.contains("note")?"Märkus":(node.tagName==="LI"?"Rida":(node.closest(".topic")?"Teema":(node.classList.contains("kicker")?"Silt":(node.tagName==="A"?"Link":(/^H[1-3]$/.test(node.tagName)?"Pealkiri":"Tekst"))))));
+    if(!(node.tagName==="A"&&node.querySelector("*")))addField({name:key,label:name+" — "+sample,tag:node.textContent.length>140?"textarea":"input",max:4000},node.textContent.trim());
+    if(node.tagName==="A")addField({name:key+":href",label:"Aadress — "+sample,max:500},node.getAttribute("href")||"");
   });
   formEl.appendChild(el("p","ekeep","Tühi tekstiväli taastab algse teksti. Uus pilt asendab praeguse. Arvud ja lingiga laused jäävad oma kohale."));
   actions(function(){
@@ -208,8 +209,17 @@ function openCopy(nodes){
         if(node.tagName==="IMG")return;
         var key=node.getAttribute("data-copy");
         var input=fieldName(key);
-        var value=input?input.value.trim():"";
-        copy[key]=value===(node.getAttribute("data-original")||"")?"":value;
+        if(input){
+          var value=input.value.trim();
+          copy[key]=value===(node.getAttribute("data-original")||"")?"":value;
+        }
+        if(node.tagName==="A"){
+          var hrefInput=fieldName(key+":href");
+          if(hrefInput){
+            var href=hrefInput.value.trim();
+            copy[key+":href"]=href===(node.getAttribute("data-original-href")||"")?"":href;
+          }
+        }
       });
       return api("/api/copy",{method:"PUT",body:{copy:copy}});
     });
@@ -267,7 +277,7 @@ function host(group){
 }
 function toolbar(group){
   var home=host(group);
-  var box=home.querySelector(":scope > .eadd");
+  var box=home.querySelector(".eadd");
   if(box)return box;
   box=el("div","eadd");
   if(group.classList.contains("hero")){
@@ -320,10 +330,55 @@ function mountTools(data){
     if(!nodes.length)return;
     toolbar(group).appendChild(button("Muuda teksti","btn ghost",function(){openCopy(nodes);}));
   });
+  mountMoves();
   var dock=document.querySelector(".hero-dock .wrap")||document.querySelector(".hero-dock");
   if(dock)dock.appendChild(button("Muuda arve","btn ghost",function(){openStats(data);}));
   var slot=document.getElementById("address-slot");
   if(slot&&slot.parentNode)slot.parentNode.appendChild(button("Muuda aadressi","btn ghost",function(){openAddress(data);}));
+}
+function pageOrderKey(){
+  var path=location.pathname.replace(/\/index\.html$/,"").replace(/\/$/,"")||"/";
+  if(path==="/")return "home:order";
+  var slug=path.slice(1).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9/]+/g,"-").replace(/\//g,":");
+  if(slug.length>36)slug=slug.slice(0,36);
+  return slug+":order";
+}
+function pageBlocks(){
+  var main=document.querySelector("main");
+  var blocks=[];
+  if(!main)return blocks;
+  for(var i=0;i<main.children.length;i++){
+    var child=main.children[i];
+    if(child.classList.contains("hero")||(child.tagName==="SECTION"&&child.id))blocks.push(child);
+  }
+  return blocks;
+}
+function shiftBlock(block, delta){
+  var blocks=pageBlocks();
+  var index=-1;
+  for(var i=0;i<blocks.length;i++)if(blocks[i]===block)index=i;
+  var next=index+delta;
+  if(index<0||next<0||next>=blocks.length)return;
+  var order=blocks.map(function(node){return node.id;});
+  var swap=order[index];
+  order[index]=order[next];
+  order[next]=swap;
+  var body={};
+  body[pageOrderKey()]=order.join(",");
+  api("/api/copy",{method:"PUT",body:{copy:body}}).then(refresh).catch(function(err){say(err.message);});
+}
+function mountMoves(){
+  var blocks=pageBlocks();
+  if(blocks.length<2)return;
+  blocks.forEach(function(block, index){
+    var bar=toolbar(block);
+    var up=button("Plokk üles","btn ghost",function(){shiftBlock(block,-1);});
+    var down=button("Plokk alla","btn ghost",function(){shiftBlock(block,1);});
+    if(index===0)up.disabled=true;
+    if(index===blocks.length-1)down.disabled=true;
+    bar.insertBefore(down, bar.firstChild);
+    bar.insertBefore(up, bar.firstChild);
+  });
 }
 function mountHaldus(data, me){
   document.body.classList.add("haldus");
@@ -337,6 +392,7 @@ function mountHaldus(data, me){
     "body.haldus header{top:var(--hbar,64px)}",
     "body.haldus .card:hover{transform:none}",
     ".eadd{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}",
+    ".eadd .btn:disabled{opacity:.4;cursor:default}",
     ".eadd .btn{margin:0}",
     ".etools{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:8px 12px 12px}",
     ".ebtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font:650 .92rem Outfit,system-ui,sans-serif;cursor:pointer}",

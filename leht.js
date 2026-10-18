@@ -28,9 +28,10 @@ function markCopy(){
     if(node.querySelector("*"))return;
     stamp(node, prefix+node.tagName.toLowerCase(), node.textContent.trim());
   });
-  document.querySelectorAll("main .cta a.btn").forEach(function(node){
+  document.querySelectorAll("main .cta a.btn, main .hero-more a, main a.mile-more, main .proj a").forEach(function(node){
     if(node.closest("form, nav, header"))return;
-    stamp(node, prefix+"a", node.textContent.trim());
+    if(!node.hasAttribute("data-original-href"))node.setAttribute("data-original-href",node.getAttribute("href")||"");
+    stamp(node, prefix+(node.classList.contains("btn")?"a":"link"), node.textContent.trim());
   });
   document.querySelectorAll("main img").forEach(function(node){
     if(node.closest(".card, .gallery, .people, .person, header, footer, form, nav, a"))return;
@@ -38,18 +39,48 @@ function markCopy(){
     stamp(node, prefix+"img", node.getAttribute("src"));
   });
 }
+function applyHref(node, href){
+  if(!href)return;
+  var safe="";
+  if(href.charAt(0)==="#"&&/^#[A-Za-z0-9-]+$/.test(href))safe=href;
+  else if(href.charAt(0)==="/"&&href.charAt(1)!=="/"&&href.indexOf("..")===-1)safe=href;
+  else if(/^mailto:[^\s]+$/i.test(href))safe=href;
+  else if(/^tel:\+?[0-9]{5,20}$/.test(href))safe=href;
+  else safe=safeSrc(href);
+  if(!safe)return;
+  node.setAttribute("href",safe);
+}
+function applyBlocks(order){
+  if(!order)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var blocks=[];
+  for(var i=0;i<main.children.length;i++){
+    var child=main.children[i];
+    if(child.tagName==="SECTION"&&child.id)blocks.push(child);
+  }
+  var by={};
+  blocks.forEach(function(node){by[node.id]=node;});
+  var placed={};
+  String(order).split(",").forEach(function(id){
+    if(!by[id]||placed[id])return;
+    main.appendChild(by[id]);
+    placed[id]=1;
+  });
+  blocks.forEach(function(node){if(!placed[node.id])main.appendChild(node);});
+}
 function applyCopy(copy){
   markCopy();
   if(!copy)return;
   document.querySelectorAll("[data-copy]").forEach(function(node){
-    var value=copy[node.getAttribute("data-copy")];
-    if(typeof value!=="string"||!value)return;
+    var key=node.getAttribute("data-copy");
+    var value=copy[key];
     if(node.tagName==="IMG"){
-      var src=safeSrc(value);
-      if(src)node.src=src;
+      if(typeof value==="string"&&value){var src=safeSrc(value);if(src)node.src=src;}
       return;
     }
-    node.textContent=value;
+    if(typeof value==="string"&&value&&!node.querySelector("*"))node.textContent=value;
+    if(node.tagName==="A")applyHref(node,copy[key+":href"]);
   });
 }
 function renderPeople(list){
@@ -102,6 +133,7 @@ Promise.all([contentReq,meReq]).then(function(pair){
   var me=pair[1];
   if(haldusWanted&&!me){location.replace("/admin");return;}
   renderPeople(data.people);
+  applyBlocks(data.copy&&data.copy[pagePrefix()+"order"]);
   applyCopy(data.copy);
   if(!me)return;
   var editor=document.createElement("script");
