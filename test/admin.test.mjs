@@ -82,6 +82,8 @@ test("admin auth and published content", async () => {
     assert.doesNotMatch(home.text, /(?:href|src)="\/files\//);
     assert.doesNotMatch(home.text, /M28 68V34/);
     assert.match(home.text, /\/api\/content/);
+    assert.match(home.text, /id="toeta"/);
+    assert.match(home.text, /Soovin toetada teie ägedaid tegevusi/);
     assert.match(home.text, /id="qform"/);
     assert.match(home.text, /Jäta tagasiside/);
     assert.match(home.text, /<select name="role"><option value="">Vali…<\/option><option>õpetaja<\/option><option>õpilane<\/option><option>lapsevanem<\/option><option value="uus">Lisa uus<\/option><\/select>/);
@@ -172,6 +174,8 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /select class="section"/);
     assert.match(admin.text, /data-tab="roadmap"/);
     assert.match(admin.text, /id="form-roadmap"/);
+    assert.match(admin.text, /id="form-support"/);
+    assert.match(admin.text, /\/api\/support/);
     assert.match(admin.text, /\/api\/stats/);
     assert.match(admin.text, /Muuda/);
     assert.match(admin.text, /Katkesta/);
@@ -197,6 +201,7 @@ test("admin auth and published content", async () => {
     assert.equal(open.json.roadmap.length, 5);
     assert.equal(open.json.roadmap[0].title, "Tutvumine");
     assert.equal(open.json.roadmap[4].title, "Tugi ja areng");
+    assert.equal(open.json.supportUrl, "");
     assert.deepEqual(open.json.stats, {
       since: "2016",
       workshops: "3500+",
@@ -205,6 +210,8 @@ test("admin auth and published content", async () => {
       solutions: "100+",
       asOf: "detsember 2023"
     });
+    const supportDenied = await call("/api/support", { method: "PUT", body: { supportUrl: "https://pay.example/merkuur" } });
+    assert.equal(supportDenied.status, 401);
     const statsDenied = await call("/api/stats", { method: "PUT", body: { since: "2015", workshops: "1", youth: "1", mobiles: "1", solutions: "1", asOf: "nüüd" } });
     assert.equal(statsDenied.status, 401);
 
@@ -282,6 +289,13 @@ test("admin auth and published content", async () => {
 
     const address = await call("/api/address", { method: "PUT", body: { address: "Näidistänav 1, Rakvere" } });
     assert.equal(address.status, 200);
+    const badPay = await call("/api/support", { method: "PUT", body: { supportUrl: "javascript:alert(1)" } });
+    assert.equal(badPay.status, 400);
+    const httpPay = await call("/api/support", { method: "PUT", body: { supportUrl: "http://pay.example/merkuur" } });
+    assert.equal(httpPay.status, 400);
+    const pay = await call("/api/support", { method: "PUT", body: { supportUrl: "https://pay.example/merkuur" } });
+    assert.equal(pay.status, 200);
+    assert.equal(pay.json.supportUrl, "https://pay.example/merkuur");
     const emptyStats = await call("/api/stats", {
       method: "PUT",
       body: { since: "2016", workshops: " ", youth: "1", mobiles: "1", solutions: "1", asOf: "nüüd" }
@@ -299,6 +313,7 @@ test("admin auth and published content", async () => {
     assert.equal(published.json.news[0].title, "Uus töötuba");
     assert.equal(published.json.gallery[0].caption, "Töökojas");
     assert.equal(published.json.address, "Näidistänav 1, Rakvere");
+    assert.equal(published.json.supportUrl, "https://pay.example/merkuur");
     assert.equal(published.json.stats.workshops, "3600+");
     assert.equal(published.json.stats.youth, "31 000");
     assert.equal(published.json.stats.mobiles, "5");
@@ -342,20 +357,21 @@ test("admin auth and published content", async () => {
     assert.equal(edited.status, 200);
     assert.equal(edited.json.id, step.json.id);
     assert.equal(edited.json.createdAt, step.json.createdAt);
-    const missing = await call("/api/content/roadmap/0123456789abcdef", {
+    const missingStep = await call("/api/content/roadmap/0123456789abcdef", {
       method: "PUT",
       body: { title: "Puudub", detail: "Ei ole." }
     });
-    const edited = await call("/api/content/news/" + news.json.id, {
+    assert.equal(missingStep.status, 404);
+    const newsEdit = await call("/api/content/news/" + news.json.id, {
       method: "PUT",
       body: { title: "Muudetud töötuba", excerpt: "Uus tekst", body: "Esimene lõik", url: "/tootoad" }
     });
-    assert.equal(edited.status, 200);
-    assert.equal(edited.json.id, news.json.id);
-    assert.equal(edited.json.title, "Muudetud töötuba");
-    assert.equal(edited.json.slug, news.json.slug);
-    assert.equal(edited.json.url, "/tootoad");
-    assert.equal(edited.json.image, uploaded.json.url);
+    assert.equal(newsEdit.status, 200);
+    assert.equal(newsEdit.json.id, news.json.id);
+    assert.equal(newsEdit.json.title, "Muudetud töötuba");
+    assert.equal(newsEdit.json.slug, news.json.slug);
+    assert.equal(newsEdit.json.url, "/tootoad");
+    assert.equal(newsEdit.json.image, uploaded.json.url);
     const photoEdit = await call("/api/content/gallery/" + photo.json.id, {
       method: "PUT",
       body: { caption: "Töökojas täna" }
@@ -363,8 +379,8 @@ test("admin auth and published content", async () => {
     assert.equal(photoEdit.status, 200);
     assert.equal(photoEdit.json.caption, "Töökojas täna");
     assert.equal(photoEdit.json.image, uploaded.json.url);
-    const missing = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Puudub" } });
-    assert.equal(missing.status, 404);
+    const missingNews = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Puudub" } });
+    assert.equal(missingNews.status, 404);
 
     const stored = await call("/api/content");
     assert.equal(stored.json.services.length, 7);
