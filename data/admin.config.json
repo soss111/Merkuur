@@ -1,0 +1,5 @@
+{
+  "googleClientId": "",
+  "allowedEmails": ["info@merkuur.eu"],
+  "allowFirstGoogleLogin": true
+}

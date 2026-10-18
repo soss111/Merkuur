@@ -374,11 +374,12 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
   .foot{grid-template-columns:1.3fr 1fr 1fr;gap:28px}
 }
 @media(min-width:800px){
-  .gallery{grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:250px 250px}
+  .gallery{grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:250px 250px;grid-auto-rows:250px}
   .gallery figure:nth-child(1){grid-column:1;grid-row:1/span 2}
   .gallery figure:nth-child(2){grid-column:2/span 2;grid-row:1}
   .gallery figure:nth-child(3){grid-column:2;grid-row:2}
   .gallery figure:nth-child(4){grid-column:3;grid-row:2}
+  .gallery figure:nth-child(n+5){grid-column:auto;grid-row:auto}
   .gallery img{height:100%;aspect-ratio:auto}
 }
 @media(min-width:900px){
@@ -676,7 +677,7 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <p><b>Eesmärk ja alus.</b> Kasutame andmeid ainult sinu päringule vastamiseks ja pakkumise tegemiseks (nõusolek ja lepingueelsed toimingud).</p>
    <p><b>Säilitamine.</b> Päringuid hoiame kuni pakkumise või koostöö lõppemiseni, kuid mitte kauem kui 12 kuud, kui seadus ei nõua pikemat säilitamist.</p>
    <p><b>Sinu õigused.</b> Võid küsida juurdepääsu andmetele, nende parandamist või kustutamist ning nõusolekut tagasi võtta, kirjutades info@merkuur.eu. Kaebuse saad esitada Andmekaitse Inspektsioonile (aki.ee).</p>
-   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega.</p>
+   <p><b>Küpsised ja kolmandad osapooled.</b> See leht ei kasuta jälgimisküpsiseid. Kirjatüübid laetakse Google Fontsist, mis võib edastada sinu IP-aadressi Google'ile. E-pood (mw.yrgel.com) ja Facebook on eraldi teenused oma tingimustega. Haldusleht /admin kasutab sisselogimiseks Google'i kontot ja seansi küpsist; avaliku lehe külastajale seda küpsist ei seata.</p>
   </details>
  </div>
 </div></section>
@@ -701,7 +702,7 @@ footer{background:var(--steel);color:#c5ccd6;padding:0 0 8px}
    <a href="#kontakt">Küsi pakkumist</a>
   </div>
  </div>
- <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a></span><span class="todo">Aadress: [täida]</span></div>
+ <div class="wrap legal"><span>© Merkuur OÜ · reg 11544602 · merkuur.eu · <a href="#privaatsus" data-open="privaatsus">Privaatsus</a> · <a href="/admin">Haldus</a></span><span class="todo" id="address-slot">Aadress: [täida]</span></div>
 </footer>
 <script>
 (function(){
@@ -718,6 +719,71 @@ document.getElementById("cform").addEventListener("submit",function(e){
  note.textContent="Avame sinu e-posti programmi – vaata sõnum üle ja vajuta Saada.";
  location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+f.teenus.value)+"&body="+encodeURIComponent(body);
 });
+})();
+</script>
+<script>
+(function(){
+function safeHref(v){
+  if(!v)return "";
+  if(v.charAt(0)==="/"&&/^\/uploads\/[a-zA-Z0-9._-]+$/.test(v))return v;
+  try{var u=new URL(v,location.origin);if(u.protocol==="http:"||u.protocol==="https:")return u.href;}catch(e){}
+  return "";
+}
+function node(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
+fetch("/api/content").then(function(r){return r.ok?r.json():null;}).then(function(data){
+  if(!data)return;
+  if(data.testimonials&&data.testimonials.length){
+    var box=document.querySelector("#tagasiside .quotes");
+    if(box){
+      box.replaceChildren();
+      data.testimonials.forEach(function(t){
+        var fig=node("figure","quote");
+        fig.appendChild(node("blockquote",null,t.quote));
+        var cap=node("figcaption");
+        cap.appendChild(node("b",null,[t.name,t.role].filter(Boolean).join(", ")));
+        if(t.org)cap.appendChild(node("span",null,t.org));
+        fig.appendChild(cap);
+        box.appendChild(fig);
+      });
+    }
+  }
+  if(data.news&&data.news.length){
+    var grid=document.querySelector("#uudised .grid");
+    if(grid){
+      data.news.slice().reverse().forEach(function(item){
+        var card=node("article","card");
+        var imgSrc=safeHref(item.image);
+        if(imgSrc){var img=node("img");img.alt="";img.loading="lazy";img.src=imgSrc;card.appendChild(img);}
+        var body=node("div");
+        body.appendChild(node("h3",null,item.title));
+        if(item.excerpt)body.appendChild(node("p",null,item.excerpt));
+        var href=safeHref(item.url);
+        if(href){var a=node("a",null,"Loe edasi →");a.href=href;if(/^https?:/.test(href)){a.target="_blank";a.rel="noopener";}body.appendChild(a);}
+        card.appendChild(body);
+        grid.insertBefore(card,grid.firstChild);
+      });
+    }
+  }
+  if(data.gallery&&data.gallery.length){
+    var gal=document.querySelector("#galerii .gallery");
+    if(gal){
+      data.gallery.forEach(function(item){
+        var src=safeHref(item.image);
+        if(!src)return;
+        var fig=node("figure");
+        var img=node("img");
+        img.loading="lazy";img.alt=item.caption||"";img.src=src;
+        fig.appendChild(img);
+        fig.appendChild(node("figcaption",null,item.caption||""));
+        gal.appendChild(fig);
+      });
+    }
+  }
+  if(data.address){
+    var slot=document.getElementById("address-slot");
+    if(slot){slot.textContent=data.address;slot.classList.remove("todo");}
+  }
+}).catch(function(){});
 })();
 </script>
 </body>
