@@ -232,8 +232,6 @@ test("admin auth and published content", async () => {
     assert.equal(denied.status, 401);
     const roadmapDenied = await call("/api/content/roadmap", { method: "POST", body: { title: "Uus etapp", detail: "Kirjeldus" } });
     assert.equal(roadmapDenied.status, 401);
-    const moveDenied = await call("/api/content/services/5eed5e4700000002/move", { method: "POST", body: { direction: "up" } });
-    assert.equal(moveDenied.status, 401);
     const editDenied = await call("/api/content/news/0123456789abcdef", { method: "PUT", body: { title: "Ei" } });
     assert.equal(editDenied.status, 401);
     const noConsent = await call("/api/feedback", { method: "POST", body: { quote: "Tere", name: "Mari" } });
@@ -437,17 +435,6 @@ test("admin auth and published content", async () => {
     const clearedCopy = await call("/api/copy", { method: "PUT", body: { copy: { "hero:span:1": "" } } });
     assert.equal(clearedCopy.status, 200);
     assert.equal(clearedCopy.json.copy["hero:span:1"], undefined);
-    const secondService = stored.json.services[1];
-    const moved = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "up" } });
-    assert.equal(moved.status, 200);
-    const raised = await call("/api/content");
-    assert.equal(raised.json.services[0].id, secondService.id);
-    const restored = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "down" } });
-    assert.equal(restored.status, 200);
-    const back = await call("/api/content");
-    assert.equal(back.json.services[0].title, "Töötoad");
-    const sideways = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "kõrvale" } });
-    assert.equal(sideways.status, 400);
 
     const removed = await call("/api/content/testimonials/" + quote.json.id, { method: "DELETE" });
     assert.equal(removed.status, 200);

@@ -326,7 +326,7 @@ function api(driver) {
         gallery: (await driver.all("SELECT * FROM photos ORDER BY created_at DESC")).map(mapPhoto),
         services: (await driver.all("SELECT * FROM services ORDER BY created_at ASC")).map(mapService),
         roadmap: (await driver.all("SELECT * FROM steps ORDER BY created_at ASC")).map(mapStep),
-        copy: await this.readCopy()
+        copy: await this.readCopy(),
         supportUrl: await driver.setting("support_url", "")
       };
     },

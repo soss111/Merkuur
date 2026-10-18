@@ -542,7 +542,8 @@ function publicContent(content) {
     gallery: content.gallery,
     services: content.services,
     roadmap: content.roadmap,
-    copy: content.copy || {}
+    copy: content.copy || {},
+    supportUrl: content.supportUrl || ""
   };
 }
 
@@ -591,8 +592,6 @@ async function saveCopy(body) {
   if (Object.keys(next).length > 400) throw Object.assign(new Error("Liiga palju tekste."), { status: 400 });
   await database.saveCopy(next);
   return next;
-    supportUrl: content.supportUrl || ""
-  };
 }
 
 function paymentUrl(value) {
