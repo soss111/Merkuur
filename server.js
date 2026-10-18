@@ -542,6 +542,55 @@ function publicContent(content) {
     gallery: content.gallery,
     services: content.services,
     roadmap: content.roadmap,
+    copy: content.copy || {}
+  };
+}
+
+async function moveItem(kind, id, direction) {
+  const spec = {
+    testimonials: { table: "feedback", key: "testimonials" },
+    news: { table: "posts", key: "news" },
+    gallery: { table: "photos", key: "gallery" },
+    services: { table: "services", key: "services" },
+    roadmap: { table: "steps", key: "roadmap" }
+  }[kind];
+  if (!spec) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
+  if (direction !== "up" && direction !== "down") throw Object.assign(new Error("Suund ei sobi."), { status: 400 });
+  const content = await database.readContent();
+  const items = content[spec.key] || [];
+  const index = items.findIndex((item) => item.id === id);
+  if (index < 0) throw Object.assign(new Error("Kirjet ei leitud."), { status: 404 });
+  const swapWith = direction === "up" ? index - 1 : index + 1;
+  if (swapWith < 0 || swapWith >= items.length) return;
+  const current = items[index];
+  const neighbor = items[swapWith];
+  let currentAt = neighbor.createdAt;
+  let neighborAt = current.createdAt;
+  if (currentAt === neighborAt) {
+    const shift = direction === "up" ? -1000 : 1000;
+    currentAt = new Date(new Date(currentAt).getTime() + shift).toISOString();
+  }
+  await database.setCreatedAt(spec.table, current.id, currentAt);
+  await database.setCreatedAt(spec.table, neighbor.id, neighborAt);
+}
+
+async function saveCopy(body) {
+  const incoming = body && body.copy;
+  if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) {
+    throw Object.assign(new Error("Tekst ei sobi."), { status: 400 });
+  }
+  const next = Object.assign({}, await database.readCopy());
+  const keys = Object.keys(incoming);
+  if (keys.length > 80) throw Object.assign(new Error("Liiga palju välju."), { status: 400 });
+  keys.forEach((key) => {
+    if (!/^[a-z0-9:-]{1,80}$/.test(key)) return;
+    const value = clip(incoming[key], 4000);
+    if (!value) delete next[key];
+    else next[key] = value;
+  });
+  if (Object.keys(next).length > 400) throw Object.assign(new Error("Liiga palju tekste."), { status: 400 });
+  await database.saveCopy(next);
+  return next;
     supportUrl: content.supportUrl || ""
   };
 }
@@ -621,6 +670,7 @@ function resolvePublic(pathname) {
     "/admin.html": path.join(ROOT, "admin.html"),
     "/site.css": path.join(ROOT, "site.css"),
     "/site.js": path.join(ROOT, "site.js"),
+    "/haldus.js": path.join(ROOT, "haldus.js"),
     "/favicon.ico": path.join(ROOT, "favicon.ico")
   };
   if (fixed[pathname]) return fixed[pathname];
@@ -650,7 +700,7 @@ function serveFile(res, file) {
     "Content-Type": type,
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "same-origin",
-    "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=86400"
+    "Cache-Control": ext === ".html" || ext === ".js" ? "no-cache" : "public, max-age=86400"
   });
   fs.createReadStream(file).pipe(res);
 }
@@ -782,6 +832,10 @@ async function handle(req, res) {
       if (req.method === "PUT" && pathname === "/api/stats") {
         const stats = await saveStats(await readBody(req));
         return send(res, 200, { stats: stats });
+      }
+      if (req.method === "PUT" && pathname === "/api/copy") {
+        const copy = await saveCopy(await readBody(req));
+        return send(res, 200, { copy: copy });
       }
       if (req.method === "POST" && pathname === "/api/admins") {
         const body = await readBody(req);

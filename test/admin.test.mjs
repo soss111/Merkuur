@@ -111,6 +111,9 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /data-stat="workshops"/);
     assert.match(home.text, /data-stat="asOf"/);
     assert.match(home.text, /data-stat="solutions"/);
+    assert.match(home.text, /haldus\.js/);
+    assert.match(home.text, /data-copy/);
+    assert.match(home.text, /mountHaldus/);
     assert.doesNotMatch(home.text, /class="stats"/);
     assert.doesNotMatch(home.text, /iseehitatud mobiilset töökoda/);
     assert.doesNotMatch(home.text, /Meie töö märkamine/);
@@ -183,6 +186,7 @@ test("admin auth and published content", async () => {
     assert.match(admin.text, /\/api\/stats/);
     assert.match(admin.text, /Muuda/);
     assert.match(admin.text, /Katkesta/);
+    assert.match(admin.text, /\/\?haldus=1/);
 
     const hidden = await call("/data/admin.config.json");
     assert.equal(hidden.status, 404);
@@ -205,6 +209,11 @@ test("admin auth and published content", async () => {
     assert.equal(open.json.roadmap.length, 5);
     assert.equal(open.json.roadmap[0].title, "Tutvumine");
     assert.equal(open.json.roadmap[4].title, "Tugi ja areng");
+    assert.deepEqual(open.json.copy, {});
+    const copyDenied = await call("/api/copy", { method: "PUT", body: { copy: { "hero:span:1": "X" } } });
+    assert.equal(copyDenied.status, 401);
+    const moveDenied = await call("/api/content/services/5eed5e4700000002/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(moveDenied.status, 401);
     assert.equal(open.json.supportUrl, "");
     assert.deepEqual(open.json.stats, {
       since: "2016",
@@ -421,6 +430,24 @@ test("admin auth and published content", async () => {
     assert.ok(stored.json.gallery.some((item) => item.id === photo.json.id && item.caption === "Töökojas täna"));
     assert.ok(stored.json.services.some((item) => item.title === "Koolitund ratastel" && item.href === "/tootoad"));
     assert.equal(stored.json.services[0].title, "Töötoad");
+    const savedCopy = await call("/api/copy", { method: "PUT", body: { copy: { "hero:span:1": "Tule kohale!", "<bad>": "ei" } } });
+    assert.equal(savedCopy.status, 200);
+    assert.equal(savedCopy.json.copy["hero:span:1"], "Tule kohale!");
+    assert.equal(savedCopy.json.copy["<bad>"], undefined);
+    const clearedCopy = await call("/api/copy", { method: "PUT", body: { copy: { "hero:span:1": "" } } });
+    assert.equal(clearedCopy.status, 200);
+    assert.equal(clearedCopy.json.copy["hero:span:1"], undefined);
+    const secondService = stored.json.services[1];
+    const moved = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "up" } });
+    assert.equal(moved.status, 200);
+    const raised = await call("/api/content");
+    assert.equal(raised.json.services[0].id, secondService.id);
+    const restored = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "down" } });
+    assert.equal(restored.status, 200);
+    const back = await call("/api/content");
+    assert.equal(back.json.services[0].title, "Töötoad");
+    const sideways = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "kõrvale" } });
+    assert.equal(sideways.status, 400);
 
     const removed = await call("/api/content/testimonials/" + quote.json.id, { method: "DELETE" });
     assert.equal(removed.status, 200);

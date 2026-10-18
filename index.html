@@ -147,7 +147,8 @@ header nav .btn:hover{color:var(--accent-ink)}
 .hero-panel{position:relative;padding:26px 2px 8px}
 .hero .kicker{background:transparent;color:var(--accent);padding:0;letter-spacing:.12em}
 .hero h1{font-size:clamp(2.35rem,8vw,3.15rem);max-width:12em;color:var(--ink)}
-.hero h1 span{display:block;color:var(--accent);margin-top:.12em}
+.hero h1 span{display:block;color:inherit}
+.hero h1 span+span{color:var(--accent);margin-top:.12em}
 .hero-panel p{max-width:38em;font-size:1.12rem;color:var(--muted);margin:16px 0 0}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 .hero-more{margin:16px 0 0;font-size:1.02rem}
@@ -535,7 +536,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:8px 0 8px}
  </div>
  <div class="hero-panel">
   <div class="kicker">Mobiilsed töötoad · Tehnoloogia · Inseneeria</div>
-  <h1>Tule töötuppa!<span>Või töötuba tuleb sinu juurde.</span></h1>
+  <h1><span>Tule töötuppa!</span><span>Või töötuba tuleb sinu juurde.</span></h1>
   <p>Töötuba tuleb kooli, noortekeskusesse või ettevõttesse üle Eesti. Osalejad töötavad päris tööriistade, CNC-seadmete ja 3D-printeritega. Kirjuta meile – vastame pakkumisega.</p>
   <div class="cta"><a class="btn" href="#kontakt">Küsi pakkumist</a><a class="btn ghost" href="#teenused">Vaata teenuseid</a></div>
   <p class="hero-more"><a href="https://mw.yrgel.com" target="_blank" rel="noopener">või telli makerset e-poest →</a></p>
@@ -1050,6 +1051,7 @@ function addQuote(t, box, first){
   cap.appendChild(node("b",null,[t.name,t.role].filter(Boolean).join(", ")));
   if(t.org)cap.appendChild(node("span",null,t.org));
   fig.appendChild(cap);
+  if(t.id){fig.setAttribute("data-item",t.id);fig.setAttribute("data-kind","testimonials");}
   if(first&&box.firstChild)box.insertBefore(fig, box.firstChild);
   else box.appendChild(fig);
 }
@@ -1086,8 +1088,36 @@ if(qform)qform.addEventListener("submit",function(e){
     note.textContent="Aitäh. Sinu tagasiside on lehel.";
   }).catch(function(err){note.textContent=err.message;});
 });
+function textNodes(){
+  var counts={};
+  var selector=".hero h1 span,.hero-panel > p,.kicker,main h2,main h3,main .lead,main .slogan,main .tiles b,main .tiles span,main .gains b,main .gains p,main .keywords span,.person b,.person .role,.order h3,.order > p,.mile-copy h3,.mile-copy > p,footer .foot-brand p,footer .foot-label";
+  document.querySelectorAll(selector).forEach(function(node){
+    if(node.closest("form,.quotes,.gallery,.road,#teenused .grid,#uudised .grid,.hero-facts"))return;
+    if(node.querySelector("*"))return;
+    var section=node.closest("section")||node.closest(".hero")||node.closest("footer")||document.body;
+    var sid=section.id||(section.classList.contains("hero")?"hero":"leht");
+    var bucket=sid+":"+node.tagName.toLowerCase();
+    counts[bucket]=(counts[bucket]||0)+1;
+    if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.textContent.trim());
+    node.setAttribute("data-copy",bucket+":"+counts[bucket]);
+  });
+}
+function applyCopy(copy){
+  textNodes();
+  if(!copy)return;
+  document.querySelectorAll("[data-copy]").forEach(function(node){
+    var value=copy[node.getAttribute("data-copy")];
+    if(typeof value==="string"&&value)node.textContent=value;
+  });
+}
+var haldusWanted=/(?:^|[?&])haldus=1(?:&|$)/.test(location.search);
+var haldusUser=null;
 var contentReq=location.hostname.endsWith("github.io")?Promise.resolve(null):fetch("/api/content").then(function(r){return r.ok?r.json():null;});
-contentReq.then(function(data){
+var meReq=!haldusWanted?Promise.resolve(null):fetch("/api/auth/me",{credentials:"same-origin"}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+Promise.all([contentReq,meReq]).then(function(pair){
+  var data=pair[0];
+  haldusUser=pair[1];
+  if(haldusWanted&&!haldusUser){location.replace("/admin");return;}
   if(!data)return;
   if(data.testimonials&&data.testimonials.length){
     var box=document.querySelector("#tagasiside .quotes");
@@ -1110,6 +1140,8 @@ contentReq.then(function(data){
       grid.replaceChildren();
       data.news.forEach(function(item){
         var card=node("article","card");
+        card.setAttribute("data-item",item.id);
+        card.setAttribute("data-kind","news");
         var imgSrc=safeHref(item.image);
         if(imgSrc){var img=node("img");img.alt="";img.loading="lazy";img.src=imgSrc;card.appendChild(img);}
         var body=node("div");
@@ -1128,11 +1160,15 @@ contentReq.then(function(data){
       gal.replaceChildren();
       data.gallery.forEach(function(item){
         var src=safeHref(item.image);
-        if(!src)return;
+        if(!src&&!haldusUser)return;
         var fig=node("figure");
-        var img=node("img");
-        img.loading="lazy";img.alt=item.caption||"";img.src=src;
-        fig.appendChild(img);
+        fig.setAttribute("data-item",item.id);
+        fig.setAttribute("data-kind","gallery");
+        if(src){
+          var img=node("img");
+          img.loading="lazy";img.alt=item.caption||"";img.src=src;
+          fig.appendChild(img);
+        }
         fig.appendChild(node("figcaption",null,item.caption||""));
         gal.appendChild(fig);
       });
@@ -1144,6 +1180,8 @@ contentReq.then(function(data){
       services.replaceChildren();
       data.services.forEach(function(item){
         var card=node("article","card");
+        card.setAttribute("data-item",item.id);
+        card.setAttribute("data-kind","services");
         var imgSrc=safeHref(item.image);
         if(imgSrc){var img=node("img");img.alt=item.title||"";img.loading="lazy";img.src=imgSrc;card.appendChild(img);}
         var body=node("div");
@@ -1179,6 +1217,8 @@ contentReq.then(function(data){
       road.replaceChildren();
       data.roadmap.forEach(function(item,i){
         var li=node("li");
+        li.setAttribute("data-item",item.id);
+        li.setAttribute("data-kind","roadmap");
         li.appendChild(node("span","n",String(i+1)));
         li.appendChild(node("h3",null,item.title||""));
         if(item.detail)li.appendChild(node("p",null,item.detail));
@@ -1205,6 +1245,13 @@ contentReq.then(function(data){
   if(data.address){
     var slot=document.getElementById("address-slot");
     if(slot){slot.textContent=data.address;slot.classList.remove("todo");}
+  }
+  applyCopy(data.copy);
+  if(haldusUser){
+    var editor=document.createElement("script");
+    editor.src="haldus.js";
+    editor.onload=function(){if(window.mountHaldus)window.mountHaldus(data,haldusUser);};
+    document.body.appendChild(editor);
   }
 }).catch(function(){});
 })();
