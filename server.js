@@ -628,6 +628,17 @@ async function handle(req, res) {
     return;
   }
 
+  if (pathname === "/kalender-1" || pathname === "/kalender-1/") {
+    res.writeHead(302, {
+      Location: "/#teemad",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "same-origin"
+    });
+    res.end();
+    return;
+  }
+
   const file = resolvePublic(pathname);
   if (file) return serveFile(res, file);
   if (req.method === "GET") {
