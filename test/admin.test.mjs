@@ -83,6 +83,10 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /Aasta ringijuht 2018\/2019 Võsu kool/);
     assert.match(home.text, /Ajujahi 10\. hooaeg/);
     assert.match(home.text, /name="tel"/);
+    assert.match(home.text, /alt="Liis Proos"/);
+    assert.match(home.text, /tel:\+37253039287/);
+    assert.doesNotMatch(home.text, /Lauri Soosaar/);
+    assert.doesNotMatch(home.text, /5185404/);
     assert.match(home.text, /Palun täida nimi, telefon, e-post ja nõusolek/);
     assert.match(home.text, /Töö, mis on jätnud jälje/);
     assert.match(home.text, /data-stat="workshops"/);
@@ -108,6 +112,11 @@ test("admin auth and published content", async () => {
     assert.equal(oldCalendar.status, 302);
     assert.equal(oldCalendar.headers.get("location"), "/#teemad");
 
+    const team = await call("/meeskond");
+    assert.equal(team.status, 200);
+    assert.ok(team.text.indexOf("Liis Proos") < team.text.indexOf("Lauri Soosaar"));
+    assert.match(team.text, /Kaasasutaja</);
+    assert.doesNotMatch(team.text, /5185404/);
     const workshop = await call("/tootoad");
     assert.equal(workshop.status, 200);
     assert.match(workshop.text, /käed-külge/);
