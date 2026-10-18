@@ -111,6 +111,8 @@ test("admin auth and published content", async () => {
     assert.match(home.text, /data-stat="workshops"/);
     assert.match(home.text, /data-stat="asOf"/);
     assert.match(home.text, /data-stat="solutions"/);
+    assert.doesNotMatch(home.text, /class="stats"/);
+    assert.doesNotMatch(home.text, /iseehitatud mobiilset töökoda/);
     assert.doesNotMatch(home.text, /Meie töö märkamine/);
     assert.equal((home.text.match(/id="projektid"/g) || []).length, 1);
     assert.match(home.text, /xEdu/);
