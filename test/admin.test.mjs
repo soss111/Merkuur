@@ -138,6 +138,7 @@ test("admin auth and published content", async () => {
 
     const team = await call("/meeskond");
     assert.equal(team.status, 200);
+    assert.match(team.text, /src="\/leht\.js"/);
     assert.ok(team.text.indexOf("Liis Proos") < team.text.indexOf("Lauri Soosaar"));
     assert.match(team.text, /Kaasasutaja</);
     assert.doesNotMatch(team.text, /5185404/);
@@ -209,6 +210,9 @@ test("admin auth and published content", async () => {
     assert.equal(open.json.roadmap.length, 5);
     assert.equal(open.json.roadmap[0].title, "Tutvumine");
     assert.equal(open.json.roadmap[4].title, "Tugi ja areng");
+    assert.equal(open.json.people.length, 8);
+    assert.equal(open.json.people[0].name, "Liis Proos");
+    assert.equal(open.json.people[7].name, "Lauri Soosaar");
     assert.deepEqual(open.json.copy, {});
     const copyDenied = await call("/api/copy", { method: "PUT", body: { copy: { "hero:span:1": "X" } } });
     assert.equal(copyDenied.status, 401);
@@ -435,6 +439,28 @@ test("admin auth and published content", async () => {
     const clearedCopy = await call("/api/copy", { method: "PUT", body: { copy: { "hero:span:1": "" } } });
     assert.equal(clearedCopy.status, 200);
     assert.equal(clearedCopy.json.copy["hero:span:1"], undefined);
+    const pageCopy = await call("/api/copy", { method: "PUT", body: { copy: { "meeskond:h1:1": "Meie inimesed" } } });
+    assert.equal(pageCopy.status, 200);
+    assert.equal(pageCopy.json.copy["meeskond:h1:1"], "Meie inimesed");
+    const badPerson = await call("/api/content/people", { method: "POST", body: { name: " ", phone: "abc" } });
+    assert.equal(badPerson.status, 400);
+    const person = await call("/api/content/people", {
+      method: "POST",
+      body: { name: "Uus juhendaja", role: "Töötuba", phone: "+372 5555 0000", email: "uus@merkuur.eu" }
+    });
+    assert.equal(person.status, 201);
+    const personEdit = await call("/api/content/people/" + person.json.id, {
+      method: "PUT",
+      body: { name: "Uus juhendaja", role: "Metallitöökoda", phone: "+372 5555 0000", email: "uus@merkuur.eu" }
+    });
+    assert.equal(personEdit.status, 200);
+    assert.equal(personEdit.json.role, "Metallitöökoda");
+    assert.equal(personEdit.json.createdAt, person.json.createdAt);
+    const peopleNow = await call("/api/content");
+    assert.equal(peopleNow.json.people.length, 9);
+    assert.equal(peopleNow.json.people[8].name, "Uus juhendaja");
+    const personGone = await call("/api/content/people/" + person.json.id, { method: "DELETE" });
+    assert.equal(personGone.status, 200);
 
     const removed = await call("/api/content/testimonials/" + quote.json.id, { method: "DELETE" });
     assert.equal(removed.status, 200);

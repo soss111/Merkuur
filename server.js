@@ -376,13 +376,34 @@ function roadmapFields(body) {
   return { title: title, detail: detail, tag: clip(body.tag, 40) };
 }
 
+function personFields(body, existing) {
+  const name = clip(body.name, 120);
+  if (!name) throw Object.assign(new Error("Lisa nimi."), { status: 400 });
+  const phone = clip(body.phone, 40);
+  if (phone && !/^[0-9+().\s-]{5,40}$/.test(phone)) {
+    throw Object.assign(new Error("Telefoninumber ei sobi."), { status: 400 });
+  }
+  const email = clip(body.email, 160);
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw Object.assign(new Error("E-post ei sobi."), { status: 400 });
+  }
+  let image = existing && existing.image ? existing.image : "";
+  if (body.image) {
+    const next = safeUrl(body.image);
+    if (next == null) throw Object.assign(new Error("Pildi aadress ei sobi."), { status: 400 });
+    image = next;
+  }
+  return { name: name, role: clip(body.role, 160), phone: phone, email: email, image: image };
+}
+
 async function moveItem(kind, id, direction) {
   const spec = {
     testimonials: { table: "feedback", key: "testimonials" },
     news: { table: "posts", key: "news" },
     gallery: { table: "photos", key: "gallery" },
     services: { table: "services", key: "services" },
-    roadmap: { table: "steps", key: "roadmap" }
+    roadmap: { table: "steps", key: "roadmap" },
+    people: { table: "people", key: "people" }
   }[kind];
   if (!spec) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (direction !== "up" && direction !== "down") throw Object.assign(new Error("Suund ei sobi."), { status: 400 });
@@ -414,7 +435,7 @@ async function updateRoadmap(id, body) {
 }
 
 async function addItem(kind, body) {
-  const tables = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps" };
+  const tables = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps", people: "people" };
   if (!tables[kind]) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (await database.countOf(tables[kind]) >= MAX_ITEMS) throw Object.assign(new Error("Kirjeid on juba maksimaalselt."), { status: 400 });
   const createdAt = new Date().toISOString();
@@ -461,6 +482,12 @@ async function addItem(kind, body) {
     await database.insertStep(item);
     return item;
   }
+  if (kind === "people") {
+    const fields = personFields(body, null);
+    const item = { id: id, name: fields.name, role: fields.role, phone: fields.phone, email: fields.email, image: fields.image, createdAt: createdAt };
+    await database.insertPerson(item);
+    return item;
+  }
   const title = clip(body.title, 160);
   if (!title) throw Object.assign(new Error("Lisa teenuse nimi."), { status: 400 });
   const href = serviceHref(body.href);
@@ -482,6 +509,12 @@ function keptImage(body, existing) {
 async function updateItem(kind, id, body) {
   const existing = await database.findItem(kind, id);
   if (!existing) throw Object.assign(new Error("Kirjet ei leitud."), { status: 404 });
+  if (kind === "people") {
+    const fields = personFields(body, existing);
+    const item = { id: id, name: fields.name, role: fields.role, phone: fields.phone, email: fields.email, image: fields.image, createdAt: existing.createdAt };
+    await database.updatePerson(item);
+    return item;
+  }
   if (kind === "testimonials") {
     const quote = clip(body.quote, 800);
     const name = clip(body.name, 120);
@@ -542,6 +575,7 @@ function publicContent(content) {
     gallery: content.gallery,
     services: content.services,
     roadmap: content.roadmap,
+    people: content.people,
     copy: content.copy || {},
     supportUrl: content.supportUrl || ""
   };
@@ -553,7 +587,8 @@ async function moveItem(kind, id, direction) {
     news: { table: "posts", key: "news" },
     gallery: { table: "photos", key: "gallery" },
     services: { table: "services", key: "services" },
-    roadmap: { table: "steps", key: "roadmap" }
+    roadmap: { table: "steps", key: "roadmap" },
+    people: { table: "people", key: "people" }
   }[kind];
   if (!spec) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (direction !== "up" && direction !== "down") throw Object.assign(new Error("Suund ei sobi."), { status: 400 });
@@ -642,7 +677,7 @@ function renderPost(post) {
     .map((line) => "<p>" + escapeHtml(line) + "</p>").join("\n");
   const image = post.image ? "<figure class=\"shots\"><img src=\"" + escapeHtml(post.image) + "\" alt=\"\"></figure>" : "";
   const title = escapeHtml(post.title);
-  return "<!DOCTYPE html>\n<html lang=\"et\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>" + title + " · Merkuur</title>\n<link rel=\"canonical\" href=\"https://www.merkuur.eu/post/" + escapeHtml(post.slug) + "\">\n<link rel=\"icon\" type=\"image/png\" href=\"../../files/merkuur-logo.png\"><link rel=\"apple-touch-icon\" href=\"../../files/merkuur-logo.png\">\n<link rel=\"stylesheet\" href=\"../../site.css\">\n</head>\n<body>\n<header><div class=\"wrap bar\"><a class=\"logo\" href=\"../../index.html\"><img alt=\"Merkuur\" src=\"../../files/merkuur-logo.png\" width=\"52\" height=\"52\">Merkuur</a><button class=\"burger\" id=\"burger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"mnav\" aria-label=\"Menüü\"><span></span><span></span><span></span></button><nav id=\"mnav\" aria-label=\"Põhimenüü\"><a href=\"../../index.html\">Pealeht</a><a href=\"../../index.html#teenused\">Teenused</a><a href=\"/blog\">Blogi</a><a class=\"btn\" href=\"../../index.html#kontakt\">Küsi pakkumist</a></nav></div></header>\n<main id=\"sisu\"><div class=\"wrap sheet wide\"><p class=\"kicker\">Blogi</p><h1>" + title + "</h1><div class=\"prose\">" + paragraphs + "</div>" + image + "<div class=\"cta\"><a class=\"btn\" href=\"../../index.html#kontakt\">Küsi pakkumist</a><a class=\"btn ghost\" href=\"../../index.html\">Tagasi avalehele</a></div></div></main>\n<footer><div class=\"wrap legal\">© Merkuur OÜ · reg 11544602</div></footer>\n<script src=\"../../site.js\"></script>\n</body>\n</html>\n";
+  return "<!DOCTYPE html>\n<html lang=\"et\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>" + title + " · Merkuur</title>\n<link rel=\"canonical\" href=\"https://www.merkuur.eu/post/" + escapeHtml(post.slug) + "\">\n<link rel=\"icon\" type=\"image/png\" href=\"../../files/merkuur-logo.png\"><link rel=\"apple-touch-icon\" href=\"../../files/merkuur-logo.png\">\n<link rel=\"stylesheet\" href=\"../../site.css\">\n</head>\n<body>\n<header><div class=\"wrap bar\"><a class=\"logo\" href=\"../../index.html\"><img alt=\"Merkuur\" src=\"../../files/merkuur-logo.png\" width=\"52\" height=\"52\">Merkuur</a><button class=\"burger\" id=\"burger\" type=\"button\" aria-expanded=\"false\" aria-controls=\"mnav\" aria-label=\"Menüü\"><span></span><span></span><span></span></button><nav id=\"mnav\" aria-label=\"Põhimenüü\"><a href=\"../../index.html\">Pealeht</a><a href=\"../../index.html#teenused\">Teenused</a><a href=\"/blog\">Blogi</a><a class=\"btn\" href=\"../../index.html#kontakt\">Küsi pakkumist</a></nav></div></header>\n<main id=\"sisu\"><div class=\"wrap sheet wide\"><p class=\"kicker\">Blogi</p><h1>" + title + "</h1><div class=\"prose\">" + paragraphs + "</div>" + image + "<div class=\"cta\"><a class=\"btn\" href=\"../../index.html#kontakt\">Küsi pakkumist</a><a class=\"btn ghost\" href=\"../../index.html\">Tagasi avalehele</a></div></div></main>\n<footer><div class=\"wrap legal\">© Merkuur OÜ · reg 11544602</div></footer>\n<script src=\"../../site.js\"></script>\n<script src=\"/leht.js\"></script>\n</body>\n</html>\n";
 }
 
 const MIME = {
@@ -670,6 +705,7 @@ function resolvePublic(pathname) {
     "/site.css": path.join(ROOT, "site.css"),
     "/site.js": path.join(ROOT, "site.js"),
     "/haldus.js": path.join(ROOT, "haldus.js"),
+    "/leht.js": path.join(ROOT, "leht.js"),
     "/favicon.ico": path.join(ROOT, "favicon.ico")
   };
   if (fixed[pathname]) return fixed[pathname];
@@ -694,6 +730,19 @@ function resolvePublic(pathname) {
 
 function serveFile(res, file) {
   const ext = path.extname(file).toLowerCase();
+  const pagesRoot = path.resolve(ROOT, "pages") + path.sep;
+  if (ext === ".html" && file.startsWith(pagesRoot)) {
+    let html = fs.readFileSync(file, "utf8");
+    if (!html.includes("/leht.js")) html = html.replace("</body>", "<script src=\"/leht.js\"></script>\n</body>");
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "same-origin",
+      "Cache-Control": "no-cache"
+    });
+    res.end(html);
+    return;
+  }
   const type = MIME[ext] || "application/octet-stream";
   res.writeHead(200, {
     "Content-Type": type,
@@ -858,7 +907,7 @@ async function handle(req, res) {
       }
 
       const parts = pathname.split("/").filter(Boolean);
-      if (parts[0] === "api" && parts[1] === "content" && parts[2] && ["testimonials", "news", "gallery", "services", "roadmap"].indexOf(parts[2]) !== -1) {
+      if (parts[0] === "api" && parts[1] === "content" && parts[2] && ["testimonials", "news", "gallery", "services", "roadmap", "people"].indexOf(parts[2]) !== -1) {
         if (req.method === "POST" && parts.length === 3) {
           const item = await addItem(parts[2], await readBody(req));
           return send(res, 201, item);
