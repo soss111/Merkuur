@@ -77,7 +77,11 @@ test("admin auth and published content", async () => {
   try {
     const home = await call("/");
     assert.equal(home.status, 200);
-    assert.match(home.text, /Haldus/);
+    assert.match(home.text, /Päring salvestatakse Merkuurile/);
+    assert.match(home.text, /\/api\/inquiries/);
+    const editor = await call("/haldus.js");
+    assert.equal(editor.status, 200);
+    assert.match(editor.text, /Päringud/);
     assert.match(home.text, /src="files\/merkuur-logo\.png"/);
     assert.match(home.text, /href="admin"/);
     assert.doesNotMatch(home.text, /(?:href|src)="\/files\//);
@@ -255,6 +259,23 @@ test("admin auth and published content", async () => {
     assert.equal(listed.json.testimonials[0].quote, "Väga hea töötuba");
     const foreign = await call("/api/feedback", { method: "POST", origin: "https://evil.example", body: { quote: "Tere", name: "Mari", ok: true } });
     assert.equal(foreign.status, 403);
+    const inquiryDenied = await call("/api/inquiries");
+    assert.equal(inquiryDenied.status, 401);
+    const inquiryBad = await call("/api/inquiries", { method: "POST", body: { nimi: "Mari", tel: "55555", email: "mari@kool.ee", teenus: "Töötuba" } });
+    assert.equal(inquiryBad.status, 400);
+    const inquiry = await call("/api/inquiries", {
+      method: "POST",
+      body: { nimi: "Mari Mets", tel: "+372 5555 0000", email: "Mari@Kool.ee", teenus: "Töötuba", topics: ["Metall", "Puit"], osalejad: "20", aeg: "märts", asukoht: "Tartu", sonum: "Tuleme kooli", ok: true }
+    });
+    assert.equal(inquiry.status, 201);
+    assert.match(inquiry.json.id, /^[a-f0-9]{16}$/);
+    const inquiryHoney = await call("/api/inquiries", { method: "POST", body: { nimi: "Bot", tel: "55555", email: "bot@spam.test", teenus: "Töötuba", ok: true, website: "http://spam.test" } });
+    assert.equal(inquiryHoney.status, 200);
+    assert.equal(inquiryHoney.json.id, undefined);
+    const inquiryForeign = await call("/api/inquiries", { method: "POST", origin: "https://evil.example", body: { nimi: "Mari", tel: "55555", email: "mari@kool.ee", teenus: "Töötuba", ok: true } });
+    assert.equal(inquiryForeign.status, 403);
+    const leaked = await call("/api/content");
+    assert.equal(leaked.json.inquiries, undefined);
 
     const unconfigured = await call("/api/auth/google", { method: "POST", body: { credential: "aaa.bbb.ccc" } });
     assert.equal(unconfigured.status, 503);
@@ -272,6 +293,17 @@ test("admin auth and published content", async () => {
     const first = await call("/api/auth/dev", { method: "POST", body: { email: "owner@gmail.com" } });
     assert.equal(first.status, 200);
     assert.equal(first.json.email, "owner@gmail.com");
+    const inbox = await call("/api/inquiries");
+    assert.equal(inbox.status, 200);
+    assert.equal(inbox.json.total, 1);
+    assert.equal(inbox.json.inquiries[0].name, "Mari Mets");
+    assert.equal(inbox.json.inquiries[0].email, "mari@kool.ee");
+    assert.equal(inbox.json.inquiries[0].topics, "Metall, Puit");
+    assert.equal(inbox.json.inquiries[0].place, "Tartu");
+    const removedInquiry = await call("/api/inquiries/" + inbox.json.inquiries[0].id, { method: "DELETE" });
+    assert.equal(removedInquiry.status, 200);
+    const emptyInbox = await call("/api/inquiries");
+    assert.equal(emptyInbox.json.total, 0);
     const seeded = await call("/api/content");
     const secondService = seeded.json.services[1];
     const moved = await call("/api/content/services/" + secondService.id + "/move", { method: "POST", body: { direction: "up" } });

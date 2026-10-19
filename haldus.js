@@ -252,6 +252,42 @@ function openAddress(data){
     return api("/api/address",{method:"PUT",body:{address:formEl.querySelector("[name=address]").value}});
   });
 }
+function stamp(iso){
+  var d=new Date(iso);
+  if(isNaN(d.getTime()))return iso||"";
+  function p(n){return n<10?"0"+n:String(n);}
+  return p(d.getDate())+"."+p(d.getMonth()+1)+"."+d.getFullYear()+" "+p(d.getHours())+":"+p(d.getMinutes());
+}
+function openInquiries(){
+  openDialog("Päringud");
+  formEl.onsubmit=function(e){e.preventDefault();};
+  var box=el("div");
+  formEl.appendChild(box);
+  function draw(data){
+    box.replaceChildren();
+    var rows=data&&data.inquiries||[];
+    if(!rows.length){
+      box.appendChild(el("p","note","Päringuid veel ei ole."));
+      return;
+    }
+    if(data.total>rows.length)box.appendChild(el("p","note","Näitan "+rows.length+" uusimat. Kokku "+data.total+"."));
+    rows.forEach(function(item){
+      var row=el("article","einquiry");
+      row.appendChild(el("b",null,item.name+" · "+(item.service||"Päring")));
+      var meta=[stamp(item.createdAt),item.phone,item.email].filter(Boolean).join(" · ");
+      row.appendChild(el("p",null,meta));
+      var extra=[item.topics,item.participants?item.participants+" osalejat":"",item.when,item.place].filter(Boolean).join(" · ");
+      if(extra)row.appendChild(el("p",null,extra));
+      if(item.message)row.appendChild(el("p",null,item.message));
+      row.appendChild(button("Kustuta","ebtn danger",function(){
+        if(!confirm("Kustutan selle päringu?"))return;
+        api("/api/inquiries/"+item.id,{method:"DELETE"}).then(openInquiries).catch(function(err){noteEl.textContent=err.message;});
+      }));
+      box.appendChild(row);
+    });
+  }
+  api("/api/inquiries").then(draw).catch(function(err){noteEl.textContent=err.message;});
+}
 function openAdmins(emails){
   openDialog("Haldurid");
   var list=el("div","eadmins");
@@ -418,6 +454,10 @@ function mountHaldus(data, me){
     ".eform-actions .btn{margin:0}",
     ".ekeep,.esheet .note{color:var(--muted);margin:10px 0 0}",
     ".eadmin{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}",
+    ".einquiry{padding:12px 0;border-bottom:1px solid var(--line)}",
+    ".einquiry b{display:block;font-size:1.05rem}",
+    ".einquiry p{margin:4px 0 0;color:var(--muted)}",
+    ".einquiry .ebtn{margin-top:8px}",
     ".milestones .etools{grid-column:1 / -1;order:2;margin:0;padding:8px 0 0}",
     "@media(min-width:720px){.edialog{align-items:center}}"
   ].join("");
@@ -447,7 +487,7 @@ function mountHaldus(data, me){
   say=function(text){status.textContent=text||"";};
   var view=el("a","ebtn","Avalik vaade");
   view.href=here==="/"?"/":here;
-  bar.append(view,button("Haldurid","ebtn",function(){openAdmins(me.allowedEmails||[]);}),button("Logi välja","ebtn",function(){
+  bar.append(view,button("Päringud","ebtn",function(){openInquiries();}),button("Haldurid","ebtn",function(){openAdmins(me.allowedEmails||[]);}),button("Logi välja","ebtn",function(){
     api("/api/auth/logout",{method:"POST",body:{}}).then(function(){location.href="/admin";}).catch(function(err){say(err.message);});
   }),status);
   var skip=document.querySelector(".skip");
