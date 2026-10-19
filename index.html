@@ -301,36 +301,63 @@ section{padding:72px 0}
   align-self:flex-start;margin-top:12px;font-family:"Outfit",system-ui,sans-serif;font-size:.72rem;font-weight:650;
   letter-spacing:.04em;text-transform:uppercase;color:var(--accent-deep);background:var(--highlight);padding:4px 8px;border-radius:999px;
 }
-.milestones{list-style:none;margin:28px 0 0;padding:0;position:relative;display:grid;gap:14px}
-.milestones::before{content:"";position:absolute;left:7px;top:18px;bottom:18px;width:2px;background:var(--line);border-radius:99px}
-.milestones li{position:relative;margin:0 0 0 28px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 8px 22px rgba(18,52,58,.04);display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px 12px;align-items:start}
-.milestones li.solo{grid-template-columns:minmax(0,1fr)}
-.milestones li::before{content:"";position:absolute;left:-28px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg)}
-.mile-copy{min-width:0}
-.milestones .when{margin:0 0 4px;font:700 .95rem/1.2 "Outfit",system-ui,sans-serif;color:var(--accent)}
-.milestones h3{margin:0 0 6px;font-size:1.15rem}
-.milestones p{margin:0 0 8px;color:var(--muted)}
-.milestones p:last-child{margin:0}
-.mile-photo{width:84px;height:84px;object-fit:cover;border-radius:14px;background:var(--bg)}
-.mile-photo.letter{object-fit:contain;background:#fff;padding:4px}
-a.mile-more,.mile-fold summary{
-  display:inline-flex;align-items:center;min-height:44px;margin-top:2px;
-  color:var(--accent);font:700 .98rem/1.2 "Outfit",system-ui,sans-serif;
-  text-decoration:underline;text-underline-offset:3px;cursor:pointer;
+.milestones{list-style:none;margin:36px 0 0;padding:0;position:relative;display:grid;gap:18px}
+.milestones::before{
+  content:"";position:absolute;left:10px;top:24px;bottom:24px;width:3px;border-radius:99px;
+  background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 28%,var(--line)));
 }
+.milestones li{
+  position:relative;margin:0 0 0 34px;min-width:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:24px;padding:16px;box-shadow:0 18px 40px rgba(18,52,58,.07);
+  display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:stretch;
+}
+.milestones li.solo{grid-template-columns:minmax(0,1fr)}
+.milestones li::before{
+  content:"";position:absolute;left:-31px;top:28px;width:18px;height:18px;border-radius:50%;
+  background:var(--surface);border:3px solid var(--accent);box-shadow:0 0 0 4px var(--bg);
+}
+.mile-copy{min-width:0;order:1}
+.milestones .when{
+  display:inline-flex;align-items:center;min-height:34px;margin:0 0 10px;padding:0 12px;border-radius:999px;
+  background:var(--highlight);color:var(--accent-deep);
+  font:700 1rem/1 "Outfit",system-ui,sans-serif;letter-spacing:.01em;
+}
+.milestones .when time{font:inherit;color:inherit}
+.milestones h3{margin:0 0 8px;font-size:clamp(1.25rem,2vw,1.6rem);letter-spacing:-.02em}
+.milestones p{margin:0 0 10px;color:var(--muted)}
+.milestones p:last-child{margin:0}
+.mile-photo{
+  order:-1;width:100%;height:200px;object-fit:cover;border-radius:18px;background:var(--bg);
+}
+.mile-photo.letter{object-fit:contain;background:#fff;padding:14px;height:230px}
+.milestones .etools{grid-column:1 / -1;order:2;margin:0;padding:4px 0 0}
+a.mile-more,.mile-fold summary{
+  display:inline-flex;align-items:center;min-height:44px;margin-top:8px;padding:0 14px;border-radius:999px;
+  background:var(--highlight);color:var(--accent-deep);font:700 .95rem/1 "Outfit",system-ui,sans-serif;
+  text-decoration:none;cursor:pointer;
+}
+a.mile-more:hover,.mile-fold summary:hover{background:var(--accent);color:var(--accent-ink)}
 .mile-fold{margin:0}
 .mile-fold summary{list-style:none}
 .mile-fold summary::-webkit-details-marker{display:none}
 .mile-fold summary::marker{content:""}
 .mile-fold summary:focus-visible,a.mile-more:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
-.mile-extra{display:grid;gap:2px;margin-top:2px}
+.mile-extra{display:grid;gap:2px;margin-top:8px;padding:4px 2px 0}
 .mile-extra a{display:block;min-height:44px;padding:10px 0;color:var(--accent);font-weight:700;text-underline-offset:3px}
 .mile-extra .badge{display:inline-flex;align-items:center;min-height:44px;width:max-content;max-width:100%}
-.mile-extra .badge img{height:64px;width:auto;max-width:140px;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--line);padding:6px}
-@media(min-width:720px){
-  .milestones li{grid-template-columns:minmax(0,1fr) 148px;gap:12px 18px;padding:16px 18px;align-items:center}
-  .milestones h3{font-size:1.25rem}
-  .mile-photo{width:148px;height:112px}
+.mile-extra .badge img{height:72px;width:auto;max-width:160px;object-fit:contain;background:#fff;border-radius:12px;border:1px solid var(--line);padding:8px}
+@media(min-width:900px){
+  .milestones{gap:22px}
+  .milestones::before{left:12px}
+  .milestones li{
+    margin-left:46px;grid-template-columns:minmax(0,1.35fr) minmax(240px,.72fr);
+    gap:18px 28px;padding:22px 22px 22px 28px;align-items:center;
+  }
+  .milestones li.solo{grid-template-columns:minmax(0,1fr)}
+  .milestones li::before{left:-43px;top:34px}
+  .mile-copy{order:0}
+  .mile-photo{order:0;height:230px}
+  .mile-photo.letter{height:250px}
 }
 
 .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:28px}
