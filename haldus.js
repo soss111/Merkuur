@@ -31,7 +31,7 @@ var kinds={
     {name:"href",label:"Link",max:500,placeholder:"/tootoad või https://"},
     {name:"file",label:"Pilt",type:"file"}
   ]},
-  news:{add:"Lisa postitus",edit:"Muuda postitust",fresh:"Uus postitus",box:"#uudised .grid",fields:[
+  news:{add:"Lisa postitus",edit:"Muuda postitust",fresh:"Uus postitus",box:"#uudised .grid, main .cards",fields:[
     {name:"title",label:"Pealkiri",required:true,max:180},
     {name:"excerpt",label:"Lühikirjeldus",tag:"textarea",max:400},
     {name:"body",label:"Tekst",tag:"textarea",max:8000},
@@ -167,23 +167,62 @@ function openItem(data, kind, item){
     });
   });
 }
+function fieldName(key){
+  return formEl.querySelector("[name='"+key+"']");
+}
 function openCopy(nodes){
   openDialog("Muuda teksti");
+  var images=[];
   nodes.forEach(function(node){
+    var key=node.getAttribute("data-copy");
+    if(node.tagName==="IMG"){
+      images.push(node);
+      var alt=(node.getAttribute("alt")||"Pilt").replace(/\s+/g," ").slice(0,42);
+      addField({name:key,label:"Pilt — "+alt,type:"file"});
+      var restore=el("label","echeck","Taasta algne pilt");
+      var box=el("input");
+      box.type="checkbox";
+      box.name=key+"-reset";
+      restore.appendChild(box);
+      formEl.appendChild(restore);
+      return;
+    }
     var sample=node.textContent.trim().replace(/\s+/g," ").slice(0,42);
-    var name=node.classList.contains("kicker")?"Silt":(/^H[1-3]$/.test(node.tagName)?"Pealkiri":"Tekst");
-    addField({name:node.getAttribute("data-copy"),label:name+" — "+sample,tag:node.textContent.length>140?"textarea":"input",max:4000},node.textContent.trim());
+    var name=node.classList.contains("btn")?"Nupp":(node.classList.contains("note")?"Märkus":(node.tagName==="LI"?"Rida":(node.closest(".topic")?"Teema":(node.classList.contains("kicker")?"Silt":(node.tagName==="A"?"Link":(/^H[1-3]$/.test(node.tagName)?"Pealkiri":"Tekst"))))));
+    if(!(node.tagName==="A"&&node.querySelector("*")))addField({name:key,label:name+" — "+sample,tag:node.textContent.length>140?"textarea":"input",max:4000},node.textContent.trim());
+    if(node.tagName==="A")addField({name:key+":href",label:"Aadress — "+sample,max:500},node.getAttribute("href")||"");
   });
-  formEl.appendChild(el("p","ekeep","Tühi väli taastab lehe algse teksti. Arvud ja lingiga laused jäävad oma kohale."));
+  formEl.appendChild(el("p","ekeep","Tühi tekstiväli taastab algse teksti. Uus pilt asendab praeguse. Arvud ja lingiga laused jäävad oma kohale."));
   actions(function(){
     var copy={};
-    nodes.forEach(function(node){
+    var uploads=images.map(function(node){
       var key=node.getAttribute("data-copy");
-      var input=formEl.querySelector("[name='"+key+"']");
-      var value=input?input.value.trim():"";
-      copy[key]=value===(node.getAttribute("data-original")||"")?"":value;
+      var reset=fieldName(key+"-reset");
+      if(reset&&reset.checked){copy[key]="";return Promise.resolve();}
+      var input=fieldName(key);
+      var file=input&&input.files&&input.files[0];
+      if(!file)return Promise.resolve();
+      return upload(file).then(function(url){if(url)copy[key]=url;});
     });
-    return api("/api/copy",{method:"PUT",body:{copy:copy}});
+    return Promise.all(uploads).then(function(){
+      nodes.forEach(function(node){
+        if(node.tagName==="IMG")return;
+        var key=node.getAttribute("data-copy");
+        var input=fieldName(key);
+        if(input){
+          var value=input.value.trim();
+          copy[key]=value===(node.getAttribute("data-original")||"")?"":value;
+        }
+        if(node.tagName==="A"){
+          var hrefInput=fieldName(key+":href");
+          if(hrefInput){
+            var href=hrefInput.value.trim();
+            copy[key+":href"]=href===(node.getAttribute("data-original-href")||"")?"":href;
+          }
+        }
+      });
+      return api("/api/copy",{method:"PUT",body:{copy:copy}});
+    });
   });
 }
 function openStats(data){
@@ -238,7 +277,7 @@ function host(group){
 }
 function toolbar(group){
   var home=host(group);
-  var box=home.querySelector(":scope > .eadd");
+  var box=home.querySelector(".eadd");
   if(box)return box;
   box=el("div","eadd");
   if(group.classList.contains("hero")){
@@ -291,10 +330,55 @@ function mountTools(data){
     if(!nodes.length)return;
     toolbar(group).appendChild(button("Muuda teksti","btn ghost",function(){openCopy(nodes);}));
   });
+  mountMoves();
   var dock=document.querySelector(".hero-dock .wrap")||document.querySelector(".hero-dock");
   if(dock)dock.appendChild(button("Muuda arve","btn ghost",function(){openStats(data);}));
   var slot=document.getElementById("address-slot");
   if(slot&&slot.parentNode)slot.parentNode.appendChild(button("Muuda aadressi","btn ghost",function(){openAddress(data);}));
+}
+function pageOrderKey(){
+  var path=location.pathname.replace(/\/index\.html$/,"").replace(/\/$/,"")||"/";
+  if(path==="/")return "home:order";
+  var slug=path.slice(1).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9/]+/g,"-").replace(/\//g,":");
+  if(slug.length>36)slug=slug.slice(0,36);
+  return slug+":order";
+}
+function pageBlocks(){
+  var main=document.querySelector("main");
+  var blocks=[];
+  if(!main)return blocks;
+  for(var i=0;i<main.children.length;i++){
+    var child=main.children[i];
+    if(child.classList.contains("hero")||(child.tagName==="SECTION"&&child.id))blocks.push(child);
+  }
+  return blocks;
+}
+function shiftBlock(block, delta){
+  var blocks=pageBlocks();
+  var index=-1;
+  for(var i=0;i<blocks.length;i++)if(blocks[i]===block)index=i;
+  var next=index+delta;
+  if(index<0||next<0||next>=blocks.length)return;
+  var order=blocks.map(function(node){return node.id;});
+  var swap=order[index];
+  order[index]=order[next];
+  order[next]=swap;
+  var body={};
+  body[pageOrderKey()]=order.join(",");
+  api("/api/copy",{method:"PUT",body:{copy:body}}).then(refresh).catch(function(err){say(err.message);});
+}
+function mountMoves(){
+  var blocks=pageBlocks();
+  if(blocks.length<2)return;
+  blocks.forEach(function(block, index){
+    var bar=toolbar(block);
+    var up=button("Plokk üles","btn ghost",function(){shiftBlock(block,-1);});
+    var down=button("Plokk alla","btn ghost",function(){shiftBlock(block,1);});
+    if(index===0)up.disabled=true;
+    if(index===blocks.length-1)down.disabled=true;
+    bar.insertBefore(down, bar.firstChild);
+    bar.insertBefore(up, bar.firstChild);
+  });
 }
 function mountHaldus(data, me){
   document.body.classList.add("haldus");
@@ -308,6 +392,7 @@ function mountHaldus(data, me){
     "body.haldus header{top:var(--hbar,64px)}",
     "body.haldus .card:hover{transform:none}",
     ".eadd{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}",
+    ".eadd .btn:disabled{opacity:.4;cursor:default}",
     ".eadd .btn{margin:0}",
     ".etools{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:8px 12px 12px}",
     ".ebtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font:650 .92rem Outfit,system-ui,sans-serif;cursor:pointer}",
@@ -319,6 +404,8 @@ function mountHaldus(data, me){
     ".esheet h2{margin:0 0 12px}",
     ".esheet label{display:grid;gap:6px;margin-top:12px;font:650 .78rem Outfit,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}",
     ".esheet input,.esheet textarea{font:500 1rem 'Source Sans 3',system-ui,sans-serif;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#f4f7f4;color:var(--ink);width:100%;min-height:48px}",
+    ".esheet label.echeck{display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font:600 1rem 'Source Sans 3',system-ui,sans-serif;color:var(--ink)}",
+    ".esheet label.echeck input{width:22px;height:22px;min-height:22px;padding:0;flex:none}",
     ".esheet textarea{min-height:110px;resize:vertical}",
     ".eform-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}",
     ".eform-actions .btn{margin:0}",

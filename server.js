@@ -39,6 +39,21 @@ async function ensureData() {
   await database.importJsonOnce(CONTENT_FILE);
   await database.seedCatalogOnce();
   await adoptAdmins(hadConfig);
+  await database.importPosts(staticPosts());
+  dropRemovedAdmins();
+}
+
+function staticPosts() {
+  const dir = path.join(ROOT, "pages", "post");
+  let names = [];
+  try { names = fs.readdirSync(dir); } catch (err) { return []; }
+  return names.filter((name) => name.endsWith(".html") && !name.startsWith("_")).map((name) => {
+    const slug = name.slice(0, -".html".length);
+    const parsed = db.parseStaticPost(fs.readFileSync(path.join(dir, name), "utf8"), slug);
+    if (!parsed) return null;
+    parsed.id = crypto.createHash("sha256").update("merkuur-post:" + slug).digest("hex").slice(0, 16);
+    return parsed;
+  }).filter(Boolean);
 }
 
 function readJson(file, fallback) {
@@ -141,6 +156,15 @@ function safeUrl(value) {
   } catch (err) {
     return null;
   }
+}
+
+function linkValue(value) {
+  const v = clip(value, 500);
+  if (!v) return "";
+  if (/^#[A-Za-z0-9-]+$/.test(v)) return v;
+  if (/^mailto:[^\s]+$/i.test(v)) return v;
+  if (/^tel:\+?[0-9]{5,20}$/.test(v)) return v;
+  return pageOrUrl(v) || null;
 }
 
 function pageOrUrl(value) {
@@ -642,9 +666,22 @@ async function saveCopy(body) {
   }
   const next = Object.assign({}, await database.readCopy());
   const keys = Object.keys(incoming);
-  if (keys.length > 80) throw Object.assign(new Error("Liiga palju välju."), { status: 400 });
+  if (keys.length > 200) throw Object.assign(new Error("Liiga palju välju."), { status: 400 });
   keys.forEach((key) => {
     if (!/^[a-z0-9:-]{1,80}$/.test(key)) return;
+    if (key === "home:order" || key.endsWith(":order")) {
+      const ids = clip(incoming[key], 500).split(",").map((part) => part.trim()).filter((part) => /^[a-z0-9-]{1,40}$/.test(part));
+      if (!ids.length) delete next[key];
+      else next[key] = ids.join(",");
+      return;
+    }
+    if (key.endsWith(":href")) {
+      const href = linkValue(incoming[key]);
+      if (href == null) return;
+      if (!href) delete next[key];
+      else next[key] = href;
+      return;
+    }
     const value = clip(incoming[key], 4000);
     if (!value) delete next[key];
     else next[key] = value;

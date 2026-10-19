@@ -204,8 +204,10 @@ test("admin auth and published content", async () => {
     assert.deepEqual(open.json.testimonials, []);
     assert.equal(open.json.services.length, 6);
     assert.equal(open.json.services[0].title, "Töötoad");
-    assert.equal(open.json.news.length, 3);
+    assert.equal(open.json.news.length, 20);
     assert.equal(open.json.news[0].url, "/post/tule-töötuppa-või-muidu-tuleb-töötuba-sinu-juurde-1");
+    assert.match(open.json.news.find((item) => item.slug === "ida-viru-projektis-osales-kokku-354-osalejat").body, /354le noorele/);
+    assert.ok(open.json.news.some((item) => item.slug === "tehnoloogiatund-30-tule-torni" && item.body));
     assert.equal(open.json.gallery.length, 4);
     assert.equal(open.json.gallery[0].caption, "Neeme küla");
     assert.equal(open.json.roadmap.length, 5);
@@ -443,6 +445,11 @@ test("admin auth and published content", async () => {
     const pageCopy = await call("/api/copy", { method: "PUT", body: { copy: { "meeskond:h1:1": "Meie inimesed" } } });
     assert.equal(pageCopy.status, 200);
     assert.equal(pageCopy.json.copy["meeskond:h1:1"], "Meie inimesed");
+    const layout = await call("/api/copy", { method: "PUT", body: { copy: { "home:order": "pood,teenused", "pood:a:1:href": "https://mw.yrgel.com", "pood:a:2:href": "javascript:alert(1)" } } });
+    assert.equal(layout.status, 200);
+    assert.equal(layout.json.copy["home:order"], "pood,teenused");
+    assert.equal(layout.json.copy["pood:a:1:href"], "https://mw.yrgel.com/");
+    assert.equal(layout.json.copy["pood:a:2:href"], undefined);
     const badPerson = await call("/api/content/people", { method: "POST", body: { name: " ", phone: "abc" } });
     assert.equal(badPerson.status, 400);
     const person = await call("/api/content/people", {

@@ -587,6 +587,21 @@ function api(driver) {
       const row = await driver.get("SELECT * FROM posts WHERE slug = ?", [slug]);
       return row ? mapPost(row) : null;
     },
+    async importPosts(items) {
+      for (const item of items || []) {
+        if (!item || !item.slug || !item.title || !item.id) continue;
+        const existing = await this.postBySlug(item.slug);
+        if (!existing) {
+          await this.insertPost(item);
+          continue;
+        }
+        if (existing.body || !item.body) continue;
+        await driver.run(
+          "UPDATE posts SET body = ?, excerpt = CASE WHEN excerpt = '' THEN ? ELSE excerpt END, image = CASE WHEN image = '' THEN ? ELSE image END WHERE slug = ?",
+          [item.body, item.excerpt || "", item.image || "", item.slug]
+        );
+      }
+    },
     async saveMedia(name, mime, bytes) {
       await driver.run(
         "INSERT INTO media (name, mime, bytes) VALUES (?, ?, ?) ON CONFLICT(name) DO UPDATE SET mime = excluded.mime, bytes = excluded.bytes",
@@ -667,4 +682,51 @@ async function openDatabase(dataDir, databaseUrl) {
   return database;
 }
 
-module.exports = { openDatabase, driverFor, isPostgres, sqliteFile, loadEnv, resolveDatabaseUrl, DEFAULT_STATS };
+const POST_MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+
+function decodeEntities(value) {
+  return String(value || "")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
+}
+
+function plainText(html) {
+  return decodeEntities(String(html || "").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+}
+
+function postDate(meta) {
+  const match = /^([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})$/.exec(String(meta || "").trim());
+  const month = match ? POST_MONTHS[match[1].slice(0, 3).toLowerCase()] : undefined;
+  if (!match || month == null) return "2016-01-01T00:00:00.000Z";
+  return new Date(Date.UTC(Number(match[3]), month, Number(match[2]), 12)).toISOString();
+}
+
+function parseStaticPost(html, slug) {
+  const title = plainText((String(html || "").match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]);
+  if (!title || !slug || slug.startsWith("_")) return null;
+  const meta = plainText((html.match(/<p class="meta">([\s\S]*?)<\/p>/) || [])[1]);
+  const prose = (html.match(/<div class="prose">([\s\S]*?)<\/div>/) || [])[1] || "";
+  const blocks = [];
+  const pattern = /<(p|h2)>([\s\S]*?)<\/\1>/g;
+  let found;
+  while ((found = pattern.exec(prose))) {
+    const text = plainText(found[2]);
+    if (text) blocks.push(text);
+  }
+  const imageMatch = html.match(/<img[^>]+src="(https?:\/\/[^"]+)"/);
+  return {
+    slug: slug,
+    title: title.slice(0, 180),
+    excerpt: (blocks[0] || "").slice(0, 400),
+    body: blocks.join("\n\n").slice(0, 20000),
+    url: "/post/" + slug,
+    image: imageMatch ? imageMatch[1] : "",
+    createdAt: postDate(meta)
+  };
+}
+
+module.exports = { openDatabase, driverFor, isPostgres, sqliteFile, loadEnv, resolveDatabaseUrl, parseStaticPost, DEFAULT_STATS };
