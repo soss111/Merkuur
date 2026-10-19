@@ -304,6 +304,7 @@ section{padding:72px 0}
 .milestones{list-style:none;margin:28px 0 0;padding:0;position:relative;display:grid;gap:14px}
 .milestones::before{content:"";position:absolute;left:7px;top:18px;bottom:18px;width:2px;background:var(--line);border-radius:99px}
 .milestones li{position:relative;margin:0 0 0 28px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 8px 22px rgba(18,52,58,.04);display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px 12px;align-items:start}
+.milestones li.solo{grid-template-columns:minmax(0,1fr)}
 .milestones li::before{content:"";position:absolute;left:-28px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg)}
 .mile-copy{min-width:0}
 .milestones .when{margin:0 0 4px;font:700 .95rem/1.2 "Outfit",system-ui,sans-serif;color:var(--accent)}
@@ -1094,7 +1095,7 @@ function textNodes(){
   var counts={};
   var selector=".hero h1 span,.hero-panel > p,.kicker,main h2,main h3,main .lead,main .slogan,main .tiles b,main .tiles span,main .gains b,main .gains p,main .keywords span,.person b,.person .role,.order h3,.order > p,.mile-copy h3,.mile-copy > p,footer .foot-brand p,footer .foot-label";
   document.querySelectorAll(selector).forEach(function(node){
-    if(node.closest("form,.quotes,.gallery,.road,#teenused .grid,#uudised .grid,.hero-facts"))return;
+    if(node.closest("form,.quotes,.gallery,.road,#teenused .grid,#uudised .grid,.hero-facts,[data-kind=milestones]"))return;
     if(node.querySelector("*"))return;
     var section=node.closest("section")||node.closest(".hero")||node.closest("footer")||document.body;
     var sid=section.id||(section.classList.contains("hero")?"hero":"leht");
@@ -1111,7 +1112,7 @@ function textNodes(){
     return "leht";
   }
   function remember(node, kind){
-    if(node.closest("form, nav, header"))return;
+    if(node.closest("form, nav, header, [data-kind=milestones]"))return;
     var bucket=sidOf(node)+":"+kind;
     counts[bucket]=(counts[bucket]||0)+1;
     if(!node.getAttribute("data-original"))node.setAttribute("data-original",node.tagName==="IMG"?(node.getAttribute("src")||""):node.textContent.trim());
@@ -1126,7 +1127,7 @@ function textNodes(){
     else remember(node,"link");
   });
   document.querySelectorAll("main img").forEach(function(node){
-    if(node.closest(".card, .gallery, .people, .person, header, footer, form, nav, a"))return;
+    if(node.closest(".card, .gallery, .people, .person, header, footer, form, nav, a, [data-kind=milestones]"))return;
     if(!node.getAttribute("src"))return;
     remember(node,"img");
   });
@@ -1300,6 +1301,42 @@ Promise.all([contentReq,meReq]).then(function(pair){
         road.appendChild(li);
       });
     }
+  }
+  var miles=document.querySelector("#projektid .milestones");
+  if(miles&&data.milestones&&data.milestones.length){
+    data.milestones.forEach(function(item){
+      var li=node("li");
+      if(!item.image)li.className="solo";
+      li.setAttribute("data-item",item.id);
+      li.setAttribute("data-kind","milestones");
+      var copy=node("div","mile-copy");
+      if(item.period){
+        var when=node("p","when");
+        when.appendChild(node("time",null,item.period));
+        copy.appendChild(when);
+      }
+      copy.appendChild(node("h3",null,item.title||""));
+      if(item.detail)copy.appendChild(node("p",null,item.detail));
+      var mileHref=safePage(item.href);
+      if(mileHref){
+        var mileMore=node("a","mile-more","Vaata rohkem");
+        mileMore.href=mileHref;
+        if(/^https?:/.test(mileHref)){
+          try{if(new URL(mileHref,location.origin).origin!==location.origin){mileMore.target="_blank";mileMore.rel="noopener";}}catch(err){}
+        }
+        copy.appendChild(mileMore);
+      }
+      li.appendChild(copy);
+      var mileSrc=safeHref(item.image);
+      if(mileSrc){
+        var mileImg=node("img","mile-photo");
+        mileImg.loading="lazy";
+        mileImg.alt=item.title||"";
+        mileImg.src=mileSrc;
+        li.appendChild(mileImg);
+      }
+      miles.appendChild(li);
+    });
   }
   if(data.stats){
     var statKeys={since:1,workshops:1,youth:1,mobiles:1,solutions:1,asOf:1};

@@ -53,6 +53,13 @@ var kinds={
     {name:"detail",label:"Kirjeldus",tag:"textarea",max:400},
     {name:"tag",label:"Märksõna",max:80}
   ]},
+  milestones:{add:"Lisa tegevus",edit:"Muuda tegevust",fresh:"Uus tegevus",box:"#projektid .milestones",fields:[
+    {name:"period",label:"Aasta",max:40,placeholder:"2026 või 2025–2026"},
+    {name:"title",label:"Pealkiri",required:true,max:180},
+    {name:"detail",label:"Kirjeldus",tag:"textarea",required:true,max:2000},
+    {name:"href",label:"Link",max:500,placeholder:"/leht või https://"},
+    {name:"file",label:"Pilt",type:"file"}
+  ]},
   people:{add:"Lisa inimene",edit:"Muuda inimest",fresh:"Uus inimene",box:".people",fields:[
     {name:"name",label:"Nimi",required:true,max:120},
     {name:"role",label:"Roll",max:160},
@@ -148,7 +155,7 @@ function openItem(data, kind, item){
     var existingFile=formEl.querySelector("input[type=file]");
     if(existingFile)existingFile.required=false;
   }
-  if(item&&(kind==="news"||kind==="gallery"||kind==="services"||kind==="people")){
+  if(item&&(kind==="news"||kind==="gallery"||kind==="services"||kind==="people"||kind==="milestones")){
     formEl.appendChild(el("p","ekeep","Praegune pilt jääb alles, kui uut ei vali."));
   }
   actions(function(){
@@ -411,6 +418,7 @@ function mountHaldus(data, me){
     ".eform-actions .btn{margin:0}",
     ".ekeep,.esheet .note{color:var(--muted);margin:10px 0 0}",
     ".eadmin{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}",
+    ".milestones .etools{grid-column:1 / -1;margin:0;padding:8px 0 0}",
     "@media(min-width:720px){.edialog{align-items:center}}"
   ].join("");
   document.head.appendChild(style);
