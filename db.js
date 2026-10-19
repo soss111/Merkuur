@@ -567,6 +567,19 @@ function api(driver) {
     async saveStats(stats) {
       await driver.setSetting("stats", JSON.stringify(statsFrom(stats)));
     },
+    async adminConfig() {
+      const raw = await driver.setting("admin_config", "");
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : null;
+      } catch (err) {
+        return null;
+      }
+    },
+    async saveAdminConfig(cfg) {
+      await driver.setSetting("admin_config", JSON.stringify(cfg));
+    },
     async slugTaken(slug) {
       return Boolean(await driver.get("SELECT 1 AS ok FROM posts WHERE slug = ?", [slug]));
     },

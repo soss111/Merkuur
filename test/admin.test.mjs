@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import assert from "node:assert/strict";
+import { DatabaseSync } from "node:sqlite";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const PORT = 8791;
@@ -587,5 +588,78 @@ test("temporary admin password opens a session when configured", async () => {
     assert.equal(me.json.email, "info@merkuur.eu");
   } finally {
     child.kill("SIGTERM");
+  }
+});
+
+function stopServer(child) {
+  return new Promise((resolve) => {
+    if (child.exitCode !== null || child.signalCode !== null) return resolve();
+    child.once("exit", () => resolve());
+    child.kill("SIGTERM");
+  });
+}
+
+function storedAdmins(dataDir) {
+  const sqlite = new DatabaseSync(path.join(dataDir, "content.sqlite"));
+  try {
+    const row = sqlite.prepare("SELECT value FROM settings WHERE key = ?").get("admin_config");
+    return row ? JSON.parse(row.value) : null;
+  } finally {
+    sqlite.close();
+  }
+}
+
+test("added admins stay in the database after the config file is replaced", async () => {
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "merkuur-admins-"));
+  const port = 8871;
+  const base = "http://127.0.0.1:" + port;
+  const child = await startServer(dataDir, { port: port });
+  const call = client(base);
+  try {
+    const login = await call("/api/auth/dev", { method: "POST", body: { email: "info@merkuur.eu" } });
+    assert.equal(login.status, 200);
+    const added = await call("/api/admins", { method: "POST", body: { email: "Uus.Haldur@gmail.com" } });
+    assert.equal(added.status, 200);
+    assert.equal(added.json.allowedEmails.includes("uus.haldur@gmail.com"), true);
+  } finally {
+    await stopServer(child);
+  }
+
+  const row = storedAdmins(dataDir);
+  assert.equal(row.allowedEmails.includes("uus.haldur@gmail.com"), true);
+  fs.writeFileSync(path.join(dataDir, "admin.config.json"), JSON.stringify({
+    googleClientId: "",
+    allowedEmails: ["info@merkuur.eu"],
+    allowFirstGoogleLogin: false
+  }));
+
+  const restarted = await startServer(dataDir, { port: 8872 });
+  const again = client("http://127.0.0.1:8872");
+  try {
+    const file = JSON.parse(fs.readFileSync(path.join(dataDir, "admin.config.json"), "utf8"));
+    assert.equal(file.allowedEmails.includes("uus.haldur@gmail.com"), false);
+    const config = await again("/api/auth/config");
+    assert.equal(config.json.allowFirstGoogleLogin, false);
+    const login = await again("/api/auth/dev", { method: "POST", body: { email: "uus.haldur@gmail.com" } });
+    assert.equal(login.status, 200);
+    const me = await again("/api/auth/me");
+    assert.equal(me.json.allowedEmails.includes("uus.haldur@gmail.com"), true);
+  } finally {
+    await stopServer(restarted);
+  }
+
+  fs.rmSync(path.join(dataDir, "admin.config.json"));
+  const wiped = await startServer(dataDir, { port: 8873 });
+  const afterWipe = client("http://127.0.0.1:8873");
+  try {
+    const config = await afterWipe("/api/auth/config");
+    assert.equal(config.json.allowFirstGoogleLogin, false);
+    const login = await afterWipe("/api/auth/dev", { method: "POST", body: { email: "uus.haldur@gmail.com" } });
+    assert.equal(login.status, 200);
+    const me = await afterWipe("/api/auth/me");
+    assert.equal(me.json.allowedEmails.includes("uus.haldur@gmail.com"), true);
+    assert.equal(me.json.allowedEmails.includes("info@merkuur.eu"), true);
+  } finally {
+    await stopServer(wiped);
   }
 });
