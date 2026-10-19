@@ -460,6 +460,47 @@ function personFields(body, existing) {
   return { name: name, role: clip(body.role, 160), phone: phone, email: email, image: image };
 }
 
+function inquiryFields(body) {
+  const name = clip(body.nimi || body.name, 120);
+  const phone = clip(body.tel || body.phone, 40);
+  const email = clip(body.email, 160).toLowerCase();
+  const service = clip(body.teenus || body.service, 80);
+  if (!name || !service) throw Object.assign(new Error("Lisa nimi ja vali, mis huvitab."), { status: 400 });
+  if (!phone || phone.replace(/\D/g, "").length < 5 || !/^[0-9+().\s-]{5,40}$/.test(phone)) {
+    throw Object.assign(new Error("Telefoninumber ei sobi."), { status: 400 });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw Object.assign(new Error("E-post ei sobi."), { status: 400 });
+  }
+  let topics = "";
+  if (Array.isArray(body.topics)) {
+    topics = body.topics.map((item) => clip(item, 40)).filter(Boolean).slice(0, 12).join(", ");
+  } else {
+    topics = clip(body.topics, 400);
+  }
+  return {
+    name: name,
+    phone: phone,
+    email: email,
+    service: service,
+    topics: topics,
+    participants: clip(body.osalejad || body.participants, 20),
+    when: clip(body.aeg || body.when, 80),
+    place: clip(body.asukoht || body.place, 120),
+    message: clip(body.sonum || body.message, 2000)
+  };
+}
+
+async function addInquiry(body) {
+  if (await database.countOf("inquiries") >= 500) {
+    throw Object.assign(new Error("Päringuid on juba palju. Kirjuta info@merkuur.eu."), { status: 400 });
+  }
+  const fields = inquiryFields(body);
+  const item = Object.assign({ id: newId(), createdAt: new Date().toISOString() }, fields);
+  await database.insertInquiry(item);
+  return { id: item.id };
+}
+
 async function moveItem(kind, id, direction) {
   const spec = {
     testimonials: { table: "feedback", key: "testimonials" },
@@ -890,6 +931,14 @@ async function handle(req, res) {
         const item = await addItem("testimonials", body);
         return send(res, 201, { ok: true, testimonial: { quote: item.quote, name: item.name, role: item.role, org: item.org } });
       }
+      if (req.method === "POST" && pathname === "/api/inquiries") {
+        if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
+        const body = await readBody(req);
+        if (clip(body.website, 200)) return send(res, 200, { ok: true });
+        if (body.ok !== true) return send(res, 400, { error: "Nõusolek on vajalik." });
+        const saved = await addInquiry(body);
+        return send(res, 201, { ok: true, id: saved.id });
+      }
       if (req.method === "POST" && pathname === "/api/auth/password") {
         if (!adminPassword()) return send(res, 404, { error: "Ei leitud." });
         if (!rateLimit(req)) return send(res, 429, { error: "Liiga palju katseid. Proovi hiljem." });
@@ -952,6 +1001,17 @@ async function handle(req, res) {
 
       const user = requireUser(req, res);
       if (!user) return;
+
+      if (req.method === "GET" && pathname === "/api/inquiries") {
+        return send(res, 200, await database.listInquiries());
+      }
+      if (req.method === "DELETE" && pathname.indexOf("/api/inquiries/") === 0) {
+        const id = pathname.slice("/api/inquiries/".length);
+        if (!/^[a-f0-9]{16}$/.test(id)) return send(res, 400, { error: "Vigane id." });
+        const removed = await database.deleteInquiry(id);
+        if (!removed) return send(res, 404, { error: "Kirjet ei leitud." });
+        return send(res, 200, { ok: true });
+      }
 
       if (req.method === "POST" && pathname === "/api/upload") {
         const body = await readBody(req);

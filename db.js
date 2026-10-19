@@ -65,6 +65,19 @@ const TABLES = [
     href TEXT NOT NULL DEFAULT '',
     image TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS inquiries (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT NOT NULL,
+    service TEXT NOT NULL DEFAULT '',
+    topics TEXT NOT NULL DEFAULT '',
+    participants TEXT NOT NULL DEFAULT '',
+    when_text TEXT NOT NULL DEFAULT '',
+    place TEXT NOT NULL DEFAULT '',
+    message TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL
   )`
 ];
 
@@ -153,6 +166,22 @@ function mapStep(row) {
 
 function mapPerson(row) {
   return { id: row.id, name: row.name, role: row.role, phone: row.phone, email: row.email, image: row.image, createdAt: row.created_at };
+}
+
+function mapInquiry(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    phone: row.phone,
+    email: row.email,
+    service: row.service || "",
+    topics: row.topics || "",
+    participants: row.participants || "",
+    when: row.when_text || "",
+    place: row.place || "",
+    message: row.message || "",
+    createdAt: row.created_at
+  };
 }
 
 function mapMilestone(row) {
@@ -343,7 +372,8 @@ const COPY_TABLES = [
   { table: "photos", cols: ["id", "image", "caption", "created_at"] },
   { table: "services", cols: ["id", "title", "summary", "href", "image", "created_at"] },
   { table: "steps", cols: ["id", "title", "detail", "tag", "created_at"] },
-  { table: "milestones", cols: ["id", "period", "title", "detail", "href", "image", "created_at"] }
+  { table: "milestones", cols: ["id", "period", "title", "detail", "href", "image", "created_at"] },
+  { table: "inquiries", cols: ["id", "name", "phone", "email", "service", "topics", "participants", "when_text", "place", "message", "created_at"] }
 ];
 
 async function copyMissing(source, target) {
@@ -465,7 +495,7 @@ function api(driver) {
       await driver.setSetting("copy", JSON.stringify(copy));
     },
     async countOf(table) {
-      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1, people: 1, milestones: 1 };
+      const allowed = { feedback: 1, posts: 1, photos: 1, services: 1, steps: 1, people: 1, milestones: 1, inquiries: 1 };
       if (!allowed[table]) throw new Error("Tundmatu tabel.");
       const row = await driver.get("SELECT COUNT(*) AS n FROM " + table);
       return Number(row.n);
@@ -511,6 +541,21 @@ function api(driver) {
         "INSERT INTO milestones (id, period, title, detail, href, image, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
         [item.id, item.period || "", item.title, item.detail || "", item.href || "", item.image || "", item.createdAt]
       );
+    },
+    async insertInquiry(item) {
+      await driver.run(
+        "INSERT INTO inquiries (id, name, phone, email, service, topics, participants, when_text, place, message, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [item.id, item.name, item.phone, item.email, item.service || "", item.topics || "", item.participants || "", item.when || "", item.place || "", item.message || "", item.createdAt]
+      );
+    },
+    async listInquiries() {
+      const total = await this.countOf("inquiries");
+      const rows = await driver.all("SELECT * FROM inquiries ORDER BY created_at DESC LIMIT 100");
+      return { total: total, inquiries: rows.map(mapInquiry) };
+    },
+    async deleteInquiry(id) {
+      const changes = await driver.run("DELETE FROM inquiries WHERE id = ?", [id]);
+      return changes > 0;
     },
     async updateMilestone(item) {
       await driver.run(

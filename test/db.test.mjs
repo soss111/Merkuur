@@ -114,6 +114,19 @@ test("rows written to sqlite are copied into the database HSL shows", async () =
     image: "",
     createdAt: "2026-10-18T12:00:02.000Z"
   });
+  await source.insertInquiry({
+    id: "inq-1",
+    name: "Mari Mets",
+    phone: "+37255550000",
+    email: "mari@kool.ee",
+    service: "Töötuba",
+    topics: "Metall, Puit",
+    participants: "20",
+    when: "märts",
+    place: "Tartu",
+    message: "Tuleme kooli",
+    createdAt: "2026-10-18T12:00:03.000Z"
+  });
   await source.saveCopy({ "hero:h1:1": "Uus pealkiri" });
   await source.saveAddress("Tartu");
 
@@ -121,7 +134,7 @@ test("rows written to sqlite are copied into the database HSL shows", async () =
   const dest = await openDatabase(destDir, "");
   await dest.saveStats({ since: "2016", workshops: "1", youth: "2", mobiles: "3", solutions: "4", asOf: "jaanuar" });
   const copied = await dest.pullMissingFrom(path.join(sourceDir, "content.sqlite"));
-  assert.equal(copied, 5);
+  assert.equal(copied, 6);
   const again = await dest.pullMissingFrom(path.join(sourceDir, "content.sqlite"));
   assert.equal(again, 0);
   const content = await dest.readContent();
@@ -130,6 +143,11 @@ test("rows written to sqlite are copied into the database HSL shows", async () =
   assert.equal(content.roadmap.some((item) => item.title === "Uus etapp"), true);
   assert.equal(content.milestones.length, 1);
   assert.equal(content.milestones[0].title, "Uus tegevus");
+  const inbox = await dest.listInquiries();
+  assert.equal(inbox.total, 1);
+  assert.equal(inbox.inquiries[0].name, "Mari Mets");
+  assert.equal(inbox.inquiries[0].topics, "Metall, Puit");
+  assert.equal(inbox.inquiries[0].place, "Tartu");
   assert.equal(content.copy["hero:h1:1"], "Uus pealkiri");
   assert.equal(content.address, "Tartu");
   assert.equal(content.stats.workshops, "1");

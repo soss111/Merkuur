@@ -121,7 +121,8 @@ nav a:not(.btn)::after{
   border-radius:99px;transform:scaleX(0);transform-origin:left;transition:transform .16s ease;
 }
 nav a:not(.btn):hover{color:var(--accent)}
-nav a:not(.btn):hover::after,nav a:not(.btn):focus-visible::after{transform:scaleX(1)}
+nav a:not(.btn):hover::after,nav a:not(.btn):focus-visible::after,nav a[aria-current]::after{transform:scaleX(1)}
+nav a[aria-current]{color:var(--accent)}
 #support-link{white-space:normal;text-align:center;line-height:1.3;max-width:min(100%,36rem)}
 #support-link[hidden]{display:none !important}
 .btn{
@@ -386,7 +387,8 @@ a.mile-more:hover,.mile-fold summary:hover{background:var(--accent);color:var(--
 .todo{background:#ffe08a;color:#3d2e00;padding:0 .28em;border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 
 .gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
-.gallery figure{margin:0;position:relative;overflow:hidden;border-radius:24px;background:#d5e4de;box-shadow:0 16px 36px rgba(18,52,58,.1)}
+.gallery figure{margin:0;position:relative;overflow:hidden;border-radius:24px;background:#d5e4de;box-shadow:0 16px 36px rgba(18,52,58,.1);cursor:zoom-in}
+.gallery figure:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:0;transition:transform .45s ease}
 .gallery figure:hover img{transform:scale(1.04)}
 .gallery figcaption{
@@ -438,6 +440,40 @@ a.mile-more:hover,.mile-fold summary:hover{background:var(--accent);color:var(--
 .cform .hint{margin:0;font-size:.98rem;color:var(--muted)}
 .cform .hint a{font-weight:700;color:var(--accent);text-underline-offset:2px}
 .cform .note{margin:0;font-weight:650;min-height:1.4em}
+.cform .note.is-ok{background:var(--highlight);color:var(--accent-deep);border-radius:18px;padding:14px 16px}
+.cform .note .btn{margin-top:10px}
+#topic-summary{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#topic-summary .pick{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:999px;background:var(--highlight);color:var(--accent-deep);font:650 .95rem/1 "Outfit",system-ui,sans-serif}
+.topic-tray{
+  position:fixed;z-index:34;left:16px;right:16px;bottom:16px;
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  background:var(--deep);color:#fff;border-radius:999px;padding:8px 8px 8px 18px;
+  box-shadow:0 18px 40px rgba(18,52,58,.28);
+}
+.topic-tray[hidden]{display:none !important}
+.topic-tray p{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 .98rem/1.3 "Outfit",system-ui,sans-serif}
+.topic-tray .btn{flex:none;min-height:44px;background:#fff;color:var(--deep)}
+.topic-tray .btn:hover{background:var(--highlight);color:var(--deep)}
+body.has-tray{padding-bottom:92px}
+body.has-dock.has-tray{padding-bottom:156px}
+.lightbox{
+  position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+  padding:24px 72px;background:rgba(8,20,22,.94);
+}
+.lightbox[hidden]{display:none !important}
+.lightbox figure{margin:0;max-width:min(1100px,100%);display:flex;flex-direction:column;gap:12px;align-items:center}
+.lightbox img{max-width:100%;max-height:min(78vh,820px);width:auto;object-fit:contain;border-radius:18px;background:#102226}
+.lightbox figcaption{margin:0;color:#fff;text-align:center;font:650 1.05rem/1.4 "Outfit",system-ui,sans-serif;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:999px}
+.lb-x,.lb-nav{
+  position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border:0;border-radius:50%;
+  background:#fff;color:var(--deep);font:700 1.4rem/1 "Outfit",system-ui,sans-serif;cursor:pointer;
+}
+.lb-x{top:18px;right:18px;transform:none}
+.lb-prev{left:16px}
+.lb-next{right:16px}
+@media(min-width:1101px){
+  .topic-tray{left:50%;right:auto;width:min(680px,calc(100% - 48px));transform:translateX(-50%);bottom:22px}
+}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .priv{margin-top:8px;border:1px solid var(--line);border-radius:16px;padding:12px 16px;background:var(--bg)}
 .priv summary{cursor:pointer;font-weight:650;font-size:1.05rem;min-height:44px;display:flex;align-items:center}
@@ -532,6 +568,7 @@ footer{background:var(--deep);color:#d5e6e1;padding:12px 0 16px}
   }
   .dock-cta[hidden]{display:none}
   body.has-dock{padding-bottom:84px}
+  body.has-dock .topic-tray{bottom:84px}
 }
 @media(max-width:560px){
   .cta .btn{flex:1 1 100%}
@@ -540,6 +577,9 @@ footer{background:var(--deep);color:#d5e6e1;padding:12px 0 16px}
   .hero-panel{padding-left:16px;padding-right:16px}
   section{padding:68px 0}
   .sheet{padding:22px 16px 18px}
+  .lightbox{padding:64px 8px 20px}
+  .lb-prev{left:6px}
+  .lb-next{right:6px}
 }
 @media(max-height:760px) and (min-width:900px){
   .hero-photo{min-height:360px}
@@ -969,9 +1009,10 @@ footer{background:var(--deep);color:#d5e6e1;padding:12px 0 16px}
    <div class="row"><label>Mis huvitab?<select name="teenus" required><option value="">Vali…</option><option>Töötuba</option><option>Kooli varustamine / tehnoloogiaklass</option><option>Tehnoloogiatund / huviring</option><option>Makerset / komplekti valik</option><option>Karjäärinõustamine / karjääritöötuba</option><option>Sünnipäev</option><option>Meeskonnaüritus</option><option>Seadmete koolitus / demo</option><option>Õppematerjalid / digiõpik</option><option>Frantsiis / partnerlus</option><option>Muu</option></select></label><label>Osalejaid<input name="osalejad" inputmode="numeric" placeholder="nt 20"></label></div>
    <div class="row"><label>Soovitud aeg<input name="aeg" placeholder="nt märts 2027"></label><label>Asukoht<input name="asukoht" placeholder="linn, kool või riik"></label></div>
    <p class="hint" id="topic-summary">Teemasid pole veel valitud. <a href="#teemad">Vali teemad</a></p>
+   <p class="hp"><label>Veebileht<input name="website" tabindex="-1" autocomplete="off"></label></p>
    <label>Sõnum<textarea name="sonum" rows="4"></textarea></label>
    <label class="chk"><input type="checkbox" name="ok" required> Nõustun, et minu andmeid kasutatakse päringule vastamiseks (<a href="#privaatsus" data-open="privaatsus">privaatsuspoliitika</a>).</label>
-   <p class="hint">Nupp avab sinu e-posti programmi. Kiirema vastuse saad helistades: <a href="tel:+37253039287">Liis +372 53 039 287</a>.</p>
+   <p class="hint">Päring salvestatakse Merkuurile. Soovi korral saad selle ka e-kirjana avada. Kiirema vastuse saad helistades: <a href="tel:+37253039287">Liis +372 53 039 287</a>.</p>
    <button class="btn" type="submit">Saada päring</button>
    <p class="note" id="fnote" role="status"></p>
   </form>
@@ -1031,19 +1072,38 @@ document.addEventListener("click",function(e){
 function selectedTopics(){
  return [].map.call(document.querySelectorAll("#teemad .topic[aria-pressed='true']"),function(b){return b.getAttribute("data-topic");});
 }
+function mailInquiry(fields, topics){
+ var body=["Nimi: "+fields.nimi,"Telefon: "+fields.tel,"E-post: "+fields.email,"Teenus: "+fields.teenus,"Teemad: "+(topics.length?topics.join(", "):"—"),"Osalejaid: "+fields.osalejad,"Soovitud aeg: "+fields.aeg,"Asukoht: "+fields.asukoht,"","Sõnum:",fields.sonum].join("\n");
+ location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+fields.teenus)+"&body="+encodeURIComponent(body);
+}
 function syncTopics(){
  var list=selectedTopics();
  var text=list.join(" + ");
  var note=document.getElementById("topic-note");
  var sum=document.getElementById("topic-summary");
+ var tray=document.getElementById("topic-tray");
  if(note)note.textContent=text?("Kokku: "+text):"Vali üks või mitu teemat.";
  if(sum){
   sum.replaceChildren();
-  sum.appendChild(document.createTextNode(text?("Valitud teemad: "+text+". "):"Teemasid pole veel valitud. "));
+  if(!list.length)sum.appendChild(document.createTextNode("Teemasid pole veel valitud. "));
+  list.forEach(function(name){
+   var chip=document.createElement("span");
+   chip.className="pick";
+   chip.textContent=name;
+   sum.appendChild(chip);
+  });
   var a=document.createElement("a");
   a.href="#teemad";
   a.textContent=text?"Muuda teemasid":"Vali teemad";
   sum.appendChild(a);
+ }
+ if(tray){
+  var label=tray.querySelector("p");
+  if(label)label.textContent=text?text:"Vali teemad";
+  var show=list.length>0&&!document.body.classList.contains("nav-open");
+  tray.hidden=!show;
+  document.body.classList.toggle("has-tray",show);
+  if(window.syncDock)window.syncDock();
  }
 }
 document.querySelectorAll("#teemad .topic").forEach(function(b){
@@ -1054,24 +1114,179 @@ document.querySelectorAll("#teemad .topic").forEach(function(b){
 });
 syncTopics();
 document.getElementById("cform").addEventListener("submit",function(e){
- e.preventDefault();var f=e.target,note=document.getElementById("fnote");
+ e.preventDefault();
+ var f=e.target,note=document.getElementById("fnote");
  var tel=f.tel.value.trim();
+ var sendBtn=f.querySelector("button[type=submit]");
+ note.className="note";
+ note.textContent="";
  if(!f.nimi.value.trim()||tel.replace(/\D/g,"").length<5||!/^\S+@\S+\.\S+$/.test(f.email.value)||!f.ok.checked){note.textContent="Palun täida nimi, telefon, e-post ja nõusolek.";return;}
  if(!f.teenus.value){note.textContent="Palun vali, mis sind huvitab.";return;}
  var topics=selectedTopics();
- var body=["Nimi: "+f.nimi.value,"Telefon: "+tel,"E-post: "+f.email.value,"Teenus: "+f.teenus.value,"Teemad: "+(topics.length?topics.join(", "):"—"),"Osalejaid: "+f.osalejad.value,"Soovitud aeg: "+f.aeg.value,"Asukoht: "+f.asukoht.value,"","Sõnum:",f.sonum.value].join("\n");
- note.textContent="Avame sinu e-posti programmi – vaata sõnum üle ja vajuta Saada.";
- location.href="mailto:info@merkuur.eu?subject="+encodeURIComponent("Päring merkuur.eu kaudu – "+f.teenus.value)+"&body="+encodeURIComponent(body);
+ var fields={nimi:f.nimi.value.trim(),tel:tel,email:f.email.value.trim(),teenus:f.teenus.value,osalejad:f.osalejad.value.trim(),aeg:f.aeg.value.trim(),asukoht:f.asukoht.value.trim(),sonum:f.sonum.value.trim()};
+ function offerMail(prefix){
+  note.textContent=prefix;
+  var mail=document.createElement("button");
+  mail.type="button";
+  mail.className="btn ghost";
+  mail.textContent="Ava e-kirjana";
+  mail.addEventListener("click",function(){mailInquiry(fields,topics);});
+  note.appendChild(mail);
+ }
+ if(location.hostname.endsWith("github.io")){
+  offerMail("GitHubi eelvaade ei salvesta päringut. ");
+  return;
+ }
+ if(sendBtn)sendBtn.disabled=true;
+ var payload={nimi:fields.nimi,tel:fields.tel,email:fields.email,teenus:fields.teenus,topics:topics,osalejad:fields.osalejad,aeg:fields.aeg,asukoht:fields.asukoht,sonum:fields.sonum,ok:true,website:f.website?f.website.value:""};
+ fetch("/api/inquiries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).then(function(res){
+  return res.json().catch(function(){return {};}).then(function(data){
+   if(!res.ok)throw new Error(data.error||"Päringut ei õnnestunud salvestada.");
+   return data;
+  });
+ }).then(function(){
+  f.reset();
+  document.querySelectorAll("#teemad .topic[aria-pressed='true']").forEach(function(b){b.setAttribute("aria-pressed","false");});
+  syncTopics();
+  note.className="note is-ok";
+  offerMail("Päring on salvestatud. Võtame ühendust. ");
+  note.scrollIntoView({block:"center"});
+ }).catch(function(){
+  note.textContent="Salvestamine ei õnnestunud. Avame e-kirja, et päring ikka kohale jõuaks.";
+  mailInquiry(fields,topics);
+ }).then(function(){if(sendBtn)sendBtn.disabled=false;});
 });
+var tray=document.createElement("div");
+tray.className="topic-tray";
+tray.id="topic-tray";
+tray.hidden=true;
+var trayText=document.createElement("p");
+trayText.textContent="Vali teemad";
+var trayGo=document.createElement("a");
+trayGo.className="btn";
+trayGo.href="#kontakt";
+trayGo.textContent="Küsi pakkumist";
+tray.appendChild(trayText);
+tray.appendChild(trayGo);
+document.body.appendChild(tray);
+syncTopics();
+document.getElementById("burger").addEventListener("click",function(){setTimeout(syncTopics,0);});
+document.getElementById("mnav").addEventListener("click",function(){setTimeout(syncTopics,0);});
+
+var lb=document.createElement("div");
+lb.className="lightbox";
+lb.hidden=true;
+lb.setAttribute("role","dialog");
+lb.setAttribute("aria-modal","true");
+lb.setAttribute("aria-label","Suur pilt");
+function lbButton(cls, label, text){
+ var b=document.createElement("button");
+ b.type="button";
+ b.className=cls;
+ b.setAttribute("aria-label",label);
+ b.textContent=text;
+ return b;
+}
+var lbPrev=lbButton("lb-nav lb-prev","Eelmine","‹");
+var lbNext=lbButton("lb-nav lb-next","Järgmine","›");
+var lbClose=lbButton("lb-x","Sulge","×");
+var lbFig=document.createElement("figure");
+var lbImg=document.createElement("img");
+lbImg.alt="";
+var lbCap=document.createElement("figcaption");
+lbFig.appendChild(lbImg);
+lbFig.appendChild(lbCap);
+lb.appendChild(lbPrev);
+lb.appendChild(lbNext);
+lb.appendChild(lbClose);
+lb.appendChild(lbFig);
+document.body.appendChild(lb);
+var lbIndex=0;
+function lbFigs(){return [].slice.call(document.querySelectorAll("#galerii .gallery figure img"));}
+function showLb(index){
+ var imgs=lbFigs();
+ if(!imgs.length)return;
+ if(index<0)index=imgs.length-1;
+ if(index>=imgs.length)index=0;
+ lbIndex=index;
+ var img=imgs[index];
+ lbImg.src=img.currentSrc||img.getAttribute("src")||"";
+ lbImg.alt=img.alt||"";
+ var cap=img.parentNode.querySelector("figcaption");
+ lbCap.textContent=cap?cap.textContent:"";
+ lb.hidden=false;
+ document.body.style.overflow="hidden";
+ lbClose.focus();
+}
+function closeLb(){
+ if(lb.hidden)return;
+ lb.hidden=true;
+ lbImg.removeAttribute("src");
+ document.body.style.overflow="";
+}
+function armGallery(){
+ [].forEach.call(document.querySelectorAll("#galerii .gallery figure"),function(fig){
+  fig.tabIndex=0;
+  fig.setAttribute("role","button");
+  if(!fig.getAttribute("aria-label"))fig.setAttribute("aria-label","Ava suur pilt");
+ });
+}
+window.armGallery=armGallery;
+armGallery();
+document.addEventListener("click",function(e){
+ if(e.target.closest(".etools,.eadd,.ebtn,.lightbox,button,a"))return;
+ var fig=e.target.closest("#galerii .gallery figure");
+ if(!fig)return;
+ var img=fig.querySelector("img");
+ var index=lbFigs().indexOf(img);
+ if(index<0)return;
+ showLb(index);
+});
+document.addEventListener("keydown",function(e){
+ if(!lb.hidden){
+  if(e.key==="Escape")closeLb();
+  if(e.key==="ArrowRight")showLb(lbIndex+1);
+  if(e.key==="ArrowLeft")showLb(lbIndex-1);
+  return;
+ }
+ var fig=e.target.closest&&e.target.closest("#galerii .gallery figure");
+ if(fig&&(e.key==="Enter"||e.key===" ")){e.preventDefault();fig.click();}
+});
+lb.addEventListener("click",function(e){if(e.target===lb)closeLb();});
+lbClose.addEventListener("click",closeLb);
+lbPrev.addEventListener("click",function(){showLb(lbIndex-1);});
+lbNext.addEventListener("click",function(){showLb(lbIndex+1);});
+
+var spyLinks=[].filter.call(document.querySelectorAll("#mnav a[href^='#']"),function(a){return !a.classList.contains("btn");});
+function spy(){
+ var mark=140;
+ var best=null;
+ var bestTop=-1e9;
+ spyLinks.forEach(function(a){
+  var el=document.getElementById(a.getAttribute("href").slice(1));
+  if(!el)return;
+  var top=el.getBoundingClientRect().top;
+  if(top<=mark&&top>bestTop){bestTop=top;best=a;}
+ });
+ spyLinks.forEach(function(a){
+  if(a===best)a.setAttribute("aria-current","true");
+  else a.removeAttribute("aria-current");
+ });
+}
+addEventListener("scroll",spy,{passive:true});
+addEventListener("resize",spy);
+spy();
+
 var dock=document.getElementById("dockcta");
 if(dock){
  var hero=document.querySelector(".hero"),kontakt=document.getElementById("kontakt");
  function syncDock(){
   var mobile=window.matchMedia("(max-width:1100px)").matches;
-  var show=mobile&&hero.getBoundingClientRect().bottom<72&&kontakt.getBoundingClientRect().top>window.innerHeight-20&&!document.body.classList.contains("nav-open");
+  var show=mobile&&!document.body.classList.contains("has-tray")&&hero.getBoundingClientRect().bottom<72&&kontakt.getBoundingClientRect().top>window.innerHeight-20&&!document.body.classList.contains("nav-open");
   dock.hidden=!show;
   document.body.classList.toggle("has-dock",show);
  }
+ window.syncDock=syncDock;
  addEventListener("scroll",syncDock,{passive:true});
  addEventListener("resize",syncDock);
  new MutationObserver(syncDock).observe(document.body,{attributes:true,attributeFilter:["class"]});
@@ -1408,6 +1623,7 @@ Promise.all([contentReq,meReq]).then(function(pair){
   }
   applyBlocks(data.copy&&data.copy["home:order"]);
   applyCopy(data.copy);
+  if(window.armGallery)window.armGallery();
   if(haldusUser){
     var editor=document.createElement("script");
     editor.src="haldus.js";
