@@ -50,6 +50,7 @@ test("an empty catalog is filled once from the public page", async () => {
   assert.equal(content.people[7].name, "Lauri Soosaar");
   assert.equal(content.people[7].role, "Kaasasutaja");
   assert.deepEqual(content.testimonials, []);
+  assert.deepEqual(content.milestones, []);
   assert.equal(content.stats.workshops, "3500+");
   assert.equal(content.stats.youth, "30 000");
   assert.equal(content.stats.asOf, "detsember 2023");
@@ -104,6 +105,15 @@ test("rows written to sqlite are copied into the database HSL shows", async () =
     tag: "Uus",
     createdAt: "2026-10-18T12:00:01.000Z"
   });
+  await source.insertMilestone({
+    id: "mile-1",
+    period: "2026",
+    title: "Uus tegevus",
+    detail: "Lisatud lehelt",
+    href: "/tootoad",
+    image: "",
+    createdAt: "2026-10-18T12:00:02.000Z"
+  });
   await source.saveCopy({ "hero:h1:1": "Uus pealkiri" });
   await source.saveAddress("Tartu");
 
@@ -111,13 +121,15 @@ test("rows written to sqlite are copied into the database HSL shows", async () =
   const dest = await openDatabase(destDir, "");
   await dest.saveStats({ since: "2016", workshops: "1", youth: "2", mobiles: "3", solutions: "4", asOf: "jaanuar" });
   const copied = await dest.pullMissingFrom(path.join(sourceDir, "content.sqlite"));
-  assert.equal(copied, 4);
+  assert.equal(copied, 5);
   const again = await dest.pullMissingFrom(path.join(sourceDir, "content.sqlite"));
   assert.equal(again, 0);
   const content = await dest.readContent();
   assert.equal(content.testimonials.length, 1);
   assert.equal(content.testimonials[0].name, "Mari");
   assert.equal(content.roadmap.some((item) => item.title === "Uus etapp"), true);
+  assert.equal(content.milestones.length, 1);
+  assert.equal(content.milestones[0].title, "Uus tegevus");
   assert.equal(content.copy["hero:h1:1"], "Uus pealkiri");
   assert.equal(content.address, "Tartu");
   assert.equal(content.stats.workshops, "1");

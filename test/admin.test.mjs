@@ -109,6 +109,7 @@ test("admin auth and published content", async () => {
     assert.doesNotMatch(home.text, /5185404/);
     assert.match(home.text, /Palun täida nimi, telefon, e-post ja nõusolek/);
     assert.match(home.text, /Töö, mis on jätnud jälje/);
+    assert.match(home.text, /data\.milestones/);
     assert.match(home.text, /data-stat="workshops"/);
     assert.match(home.text, /data-stat="asOf"/);
     assert.match(home.text, /data-stat="solutions"/);
@@ -431,6 +432,27 @@ test("admin auth and published content", async () => {
     assert.equal(dropped.status, 200);
     const afterStep = await call("/api/content");
     assert.equal(afterStep.json.roadmap.length, 5);
+    const emptyMile = await call("/api/content/milestones", { method: "POST", body: { title: " ", detail: "" } });
+    assert.equal(emptyMile.status, 400);
+    const badMile = await call("/api/content/milestones", { method: "POST", body: { title: "X", detail: "Y", href: "javascript:alert(1)" } });
+    assert.equal(badMile.status, 400);
+    const mile = await call("/api/content/milestones", {
+      method: "POST",
+      body: { period: "2026", title: "Uus töötuba", detail: "Tuli kooli õuele.", href: "/tootoad", image: uploaded.json.url }
+    });
+    assert.equal(mile.status, 201);
+    assert.equal(mile.json.period, "2026");
+    const mileEdit = await call("/api/content/milestones/" + mile.json.id, {
+      method: "PUT",
+      body: { period: "2025–2026", title: "Uus töötuba, muudetud", detail: "Kirjeldus on pikem.", href: "https://merkuur.eu/tootoad" }
+    });
+    assert.equal(mileEdit.status, 200);
+    assert.equal(mileEdit.json.title, "Uus töötuba, muudetud");
+    assert.equal(mileEdit.json.image, uploaded.json.url);
+    assert.equal(mileEdit.json.createdAt, mile.json.createdAt);
+    const mileList = await call("/api/content");
+    assert.equal(mileList.json.milestones.length, 1);
+    assert.equal(mileList.json.milestones[0].href, "https://merkuur.eu/tootoad");
     assert.ok(stored.json.news.some((item) => item.id === news.json.id && item.title === "Muudetud töötuba" && item.image === uploaded.json.url));
     assert.ok(stored.json.gallery.some((item) => item.id === photo.json.id && item.caption === "Töökojas täna"));
     assert.ok(stored.json.services.some((item) => item.title === "Koolitund ratastel" && item.href === "/tootoad"));

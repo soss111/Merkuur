@@ -418,6 +418,21 @@ async function imageFromDataUrl(dataUrl) {
   return "/uploads/" + name;
 }
 
+function milestoneFields(body, existing) {
+  const title = clip(body.title, 180);
+  const detail = clip(body.detail, 2000);
+  if (!title || !detail) throw Object.assign(new Error("Lisa pealkiri ja kirjeldus."), { status: 400 });
+  const href = pageOrUrl(body.href);
+  if (clip(body.href, 500) && href == null) throw Object.assign(new Error("Lingi aadress ei sobi."), { status: 400 });
+  let image = existing && existing.image ? existing.image : "";
+  if (body.image) {
+    const next = safeUrl(body.image);
+    if (next == null) throw Object.assign(new Error("Pildi aadress ei sobi."), { status: 400 });
+    image = next;
+  }
+  return { period: clip(body.period, 40), title: title, detail: detail, href: href || "", image: image };
+}
+
 function roadmapFields(body) {
   const title = clip(body.title, 80);
   const detail = clip(body.detail, 400);
@@ -452,7 +467,8 @@ async function moveItem(kind, id, direction) {
     gallery: { table: "photos", key: "gallery" },
     services: { table: "services", key: "services" },
     roadmap: { table: "steps", key: "roadmap" },
-    people: { table: "people", key: "people" }
+    people: { table: "people", key: "people" },
+    milestones: { table: "milestones", key: "milestones" }
   }[kind];
   if (!spec) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (direction !== "up" && direction !== "down") throw Object.assign(new Error("Suund ei sobi."), { status: 400 });
@@ -484,7 +500,7 @@ async function updateRoadmap(id, body) {
 }
 
 async function addItem(kind, body) {
-  const tables = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps", people: "people" };
+  const tables = { testimonials: "feedback", news: "posts", gallery: "photos", services: "services", roadmap: "steps", people: "people", milestones: "milestones" };
   if (!tables[kind]) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (await database.countOf(tables[kind]) >= MAX_ITEMS) throw Object.assign(new Error("Kirjeid on juba maksimaalselt."), { status: 400 });
   const createdAt = new Date().toISOString();
@@ -537,6 +553,12 @@ async function addItem(kind, body) {
     await database.insertPerson(item);
     return item;
   }
+  if (kind === "milestones") {
+    const fields = milestoneFields(body, null);
+    const item = { id: id, period: fields.period, title: fields.title, detail: fields.detail, href: fields.href, image: fields.image, createdAt: createdAt };
+    await database.insertMilestone(item);
+    return item;
+  }
   const title = clip(body.title, 160);
   if (!title) throw Object.assign(new Error("Lisa teenuse nimi."), { status: 400 });
   const href = serviceHref(body.href);
@@ -562,6 +584,12 @@ async function updateItem(kind, id, body) {
     const fields = personFields(body, existing);
     const item = { id: id, name: fields.name, role: fields.role, phone: fields.phone, email: fields.email, image: fields.image, createdAt: existing.createdAt };
     await database.updatePerson(item);
+    return item;
+  }
+  if (kind === "milestones") {
+    const fields = milestoneFields(body, existing);
+    const item = { id: id, period: fields.period, title: fields.title, detail: fields.detail, href: fields.href, image: fields.image, createdAt: existing.createdAt };
+    await database.updateMilestone(item);
     return item;
   }
   if (kind === "testimonials") {
@@ -625,6 +653,7 @@ function publicContent(content) {
     services: content.services,
     roadmap: content.roadmap,
     people: content.people,
+    milestones: content.milestones || [],
     copy: content.copy || {},
     supportUrl: content.supportUrl || ""
   };
@@ -637,7 +666,8 @@ async function moveItem(kind, id, direction) {
     gallery: { table: "photos", key: "gallery" },
     services: { table: "services", key: "services" },
     roadmap: { table: "steps", key: "roadmap" },
-    people: { table: "people", key: "people" }
+    people: { table: "people", key: "people" },
+    milestones: { table: "milestones", key: "milestones" }
   }[kind];
   if (!spec) throw Object.assign(new Error("Tundmatu liik."), { status: 400 });
   if (direction !== "up" && direction !== "down") throw Object.assign(new Error("Suund ei sobi."), { status: 400 });
@@ -970,7 +1000,7 @@ async function handle(req, res) {
       }
 
       const parts = pathname.split("/").filter(Boolean);
-      if (parts[0] === "api" && parts[1] === "content" && parts[2] && ["testimonials", "news", "gallery", "services", "roadmap", "people"].indexOf(parts[2]) !== -1) {
+      if (parts[0] === "api" && parts[1] === "content" && parts[2] && ["testimonials", "news", "gallery", "services", "roadmap", "people", "milestones"].indexOf(parts[2]) !== -1) {
         if (req.method === "POST" && parts.length === 3) {
           const item = await addItem(parts[2], await readBody(req));
           return send(res, 201, item);
